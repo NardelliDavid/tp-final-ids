@@ -286,12 +286,8 @@ Lo siguiente **no** se va a desarrollar. Surge de los supuestos anteriores:
 
 ### 4.1 Pendientes
 
-| # | Pregunta | Supuesto relacionado | Respuesta |
+| # | Pregunta | Supuesto o requisito relacionado | Respuesta |
 |---|---|---|---|
-| T1 | ¿Cómo es el proceso de escaneo del QR? | *Pendiente* |
-
-
-
-
-
-
+| T1 | ¿Cómo es el proceso de escaneo del QR? ¿Alcanza con que el administrador ingrese el token leído del QR, o se espera escanearlo con la cámara desde el navegador? | S16–S19 · Validación en el ingreso a la sala (1.3) · PB-25 · M-19 | *Pendiente* |
+| T2 | ¿Cómo implementar los gráficos de los dashboards del Backoffice sin hacer pedidos desde el navegador? ¿Se acepta una librería como Chart.js con los datos ya cargados por Jinja2, o se prefieren gráficos generados en Python o barras con CSS? | Dashboards (1.3) · S25 · PB-27 a PB-31 · M-10, M-16 | *Pendiente* |
+| T3 | El enunciado pide seguridad en todos los endpoints. ¿Pueden ser públicos (sin sesión) el registro, el inicio de sesión y las consultas de la cartelera? ¿Alcanza con un token enviado en el encabezado `Authorization`? | Seguridad en todos los endpoints (1.4) · `endpoints.md` 1.4 · PB-08 | *Pendiente* |

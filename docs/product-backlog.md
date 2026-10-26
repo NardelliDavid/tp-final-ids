@@ -41,7 +41,7 @@ Cada historia tiene un identificador (`PB-XX`), el enunciado *"Como [rol], quier
 
 ### 1.4 Estimación
 
-como medida relativa de esfuerzo y complejidad puntuamos las tareas de 1-10 
+La estimación se expresa en **Story Points (SP)**, una medida relativa de esfuerzo y complejidad. Se usa la escala de Fibonacci (1, 2, 3, 5, 8): cuanto mayor el número, más trabajo e incertidumbre tiene la historia.
 
 ---
 
@@ -153,7 +153,7 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 - [ ] El backend se conecta a MySQL usando sentencias SQL explícitas, sin ORM ni clases que mapeen tablas.
 - [ ] Al abrir cada conexión se fija la zona horaria de Argentina (S24).
 - [ ] Los pedidos y las respuestas usan JSON.
-- [ ] Los errores responden con el código HTTP y el formato definidos en las secciones 1.5 y 1.6 de `endpoints.md`.
+- [ ] Los errores responden con el código HTTP y el formato definidos en las secciones 1.4 (seguridad) y 1.5 (formato de error) de `endpoints.md`.
 - [ ] La configuración (credenciales, claves de API) se toma de variables de entorno o de un archivo excluido del repositorio, no de variables globales del código.
 
 **Prioridad:** Alta · **Estimación:** 5 SP · **Depende de:** PB-03
@@ -208,11 +208,12 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 
 **Criterios de aceptación**
 
-- [ ] Todo endpoint que no sea público rechaza los pedidos sin token o con token inválido (`401`).
+- [ ] Los endpoints de rol Público (registro, inicio de sesión y consultas de la cartelera) responden sin token.
+- [ ] Todo endpoint que no sea Público rechaza los pedidos sin token o con token inválido (`401`).
 - [ ] Los endpoints de rol Admin rechazan a los clientes (`403`).
-- [ ] Los endpoints de rol Dueño rechazan a un cliente que no hizo la compra (`403`).
+- [ ] Los endpoints de rol Dueño rechazan a cualquier usuario que no hizo la compra, incluido un administrador (`403`).
 - [ ] Las páginas del Backoffice redirigen al login si no hay sesión de administrador.
-- [ ] El mecanismo cumple lo que responda el tutor sobre "seguridad en todos los endpoints" (T6).
+- [ ] El mecanismo cumple lo que responda el tutor sobre "seguridad en todos los endpoints" (T3).
 
 **Prioridad:** Alta · **Estimación:** 5 SP · **Depende de:** PB-07
 
@@ -395,6 +396,9 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 - [ ] El pago es simulado: al confirmar, la compra queda en estado `confirmada` (S1).
 - [ ] Si otra persona compró alguna de las butacas antes, la compra se rechaza completa, se informa cuál está ocupada y no se registra nada (`409`, S23).
 - [ ] No se pueden comprar entradas para funciones pasadas o dadas de baja, ni servicios inactivos (`422`).
+- [ ] El backend rechaza una butaca que no pertenece a la sala de la función (`422`); la base de datos no lo controla.
+- [ ] Los precios se toman de la función y de los servicios guardados en la base, no de lo que envía el frontend.
+- [ ] La compra, sus entradas y sus servicios se guardan en una única transacción: si algo falla, no queda nada registrado (`ROLLBACK`).
 
 **Prioridad:** Alta · **Estimación:** 8 SP · **Depende de:** PB-18, PB-20 · **Endpoint:** `POST /compras`
 
@@ -424,11 +428,14 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 - [ ] Se cancela la compra completa: todas sus entradas y servicios; las butacas quedan libres y el QR de la compra deja de ser válido (S14).
 - [ ] Si faltan menos de 2 horas para la función, se rechaza (`422`, S13).
 - [ ] Una compra ya cancelada o utilizada no se puede cancelar (`409`).
+- [ ] El cambio de estado de la compra y la liberación de sus butacas (`entradas.activa = 0`) se hacen en una única transacción, con la compra bloqueada (`SELECT ... FOR UPDATE`) mientras se valida.
 - [ ] La compra cancelada aparece con ese estado en el perfil del cliente.
 
 **Prioridad:** Alta · **Estimación:** 5 SP · **Depende de:** PB-22 · **Endpoints:** `GET /compras/{id}`, `POST /compras/{id}/cancelacion`
 
-### 3.7 Perfil del cliente
+### 3.7 Perfil del cliente y validación de QR
+
+> PB-26 (películas vistas) depende de PB-25 (validación del QR), por eso las tres historias van juntas y en orden.
 
 #### PB-24 · Historial de compras y consumos
 
@@ -441,20 +448,6 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 - [ ] Un cliente solo ve sus propias compras.
 
 **Prioridad:** Alta · **Estimación:** 5 SP · **Depende de:** PB-21 · **Endpoints:** `GET /usuarios/me/historial`, `GET /compras/{id}/qr`
-
-#### PB-26 · Películas vistas
-
-**Historia:** Como cliente, quiero ver en mi perfil las películas que vi, para recordar lo que ya fui a ver al cine.
-
-**Criterios de aceptación**
-
-- [ ] Una película figura como vista cuando se validó al menos un QR de una compra del cliente para esa película (S22).
-- [ ] Cada película vista muestra póster, título y fecha de la función.
-- [ ] Las compras canceladas o sin QR validado no generan películas vistas.
-
-**Prioridad:** Alta · **Estimación:** 2 SP · **Depende de:** PB-24, PB-25 · **Endpoint:** `GET /usuarios/me/historial`
-
-### 3.8 Validación de QR
 
 #### PB-25 · Validación del QR en el ingreso a la sala
 
@@ -470,9 +463,21 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 - [ ] Si no es válido, se muestra el motivo: inexistente, cancelado, ya utilizado, otra función o fuera de horario.
 - [ ] La pantalla muestra los datos de la compra validada (cliente, película, sala, función y todas las butacas).
 
-**Prioridad:** Alta · **Estimación:** 8 SP · **Depende de:** PB-22 · **Endpoint:** `POST /qr/validaciones` · **Mockup:** M-19 · **Nota:** el mecanismo de escaneo depende de T1 (ver D2).
+**Prioridad:** Alta · **Estimación:** 8 SP · **Depende de:** PB-22 · **Endpoint:** `POST /qr/validaciones` · **Mockup:** M-19 · **Nota:** el mecanismo de escaneo depende de T1.
 
-### 3.9 Dashboards
+#### PB-26 · Películas vistas
+
+**Historia:** Como cliente, quiero ver en mi perfil las películas que vi, para recordar lo que ya fui a ver al cine.
+
+**Criterios de aceptación**
+
+- [ ] Una película figura como vista cuando se validó al menos un QR de una compra del cliente para esa película (S22).
+- [ ] Cada película vista muestra póster, título y fecha de la función.
+- [ ] Las compras canceladas o sin QR validado no generan películas vistas.
+
+**Prioridad:** Alta · **Estimación:** 2 SP · **Depende de:** PB-24, PB-25 · **Endpoint:** `GET /usuarios/me/historial`
+
+### 3.8 Dashboards
 
 > Todos los dashboards son exclusivos del administrador, admiten filtros por rango de fechas y local, y no cuentan las entradas de compras canceladas como vendidas. La forma de mostrar los gráficos (Chart.js o barras con CSS) depende de la respuesta a T2.
 
@@ -534,7 +539,7 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 
 **Prioridad:** Media · **Estimación:** 3 SP · **Depende de:** PB-27 a PB-30 · **Endpoint:** `GET /estadisticas/resumen` · **Mockups:** M-10, M-16
 
-### 3.10 Entrega
+### 3.9 Entrega
 
 #### PB-32 · `init.sh` e instrucciones de ejecución
 
@@ -559,7 +564,7 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 
 **Prioridad:** Alta · **Estimación:** 3 SP · **Depende de:** —
 
-### 3.11 Deseables (fuera del alcance inicial)
+### 3.10 Deseables (fuera del alcance inicial)
 
 > Estas historias solo se abordan si sobra tiempo, según la sección 3 de `alcance-y-supuestos.md`.
 
