@@ -32,7 +32,7 @@ Los códigos S1 a S25 remiten a los supuestos de `alcance-y-supuestos.md`, y los
 ### 1.1 Arquitectura
 
 - El **backend** es una API REST en Flask que se conecta a MySQL mediante sentencias SQL explícitas (sin ORM).
-- El **frontend** y el **backoffice** son aplicaciones Flask (HTML, CSS y Jinja2) que consumen esta API desde Python con la librería `requests`. El navegador nunca llama a la API directamente.
+- El **frontend** y el **backoffice** son aplicaciones Flask (HTML, CSS, Jinja2 y Bootstrap, S25) que consumen esta API desde Python con la librería `requests`. El navegador nunca llama a la API directamente.
 - Todos los cuerpos de pedido y de respuesta usan **JSON** (`Content-Type: application/json`). La única excepción es el reporte en PDF (deseable, sección 12).
 - Las rutas de este documento son relativas a la URL base de la API (por ejemplo, `http://localhost:5000`; la URL definitiva depende del despliegue).
 
@@ -64,14 +64,20 @@ El usuario (cliente o administrador) obtiene un *token* con `POST /auth/login`. 
 Authorization: Bearer <token>
 ```
 
+Todo endpoint que no sea **Público** exige ese token. El backend verifica el token y el rol en cada pedido; el frontend no decide los permisos.
+
 > [!NOTE]
 > El mecanismo exacto de seguridad y si los endpoints marcados como **Público** son aceptables están pendientes de la respuesta del tutor.
 
 | Rol | Quién puede usar el endpoint |
 |---|---|
+| **Público** | Cualquier persona, sin sesión iniciada. No requiere token. |
+| **Autenticado** | Cualquier usuario con sesión iniciada (cliente o administrador). |
 | **Cliente** | Usuario con rol cliente. |
+| **Dueño** | El cliente que hizo la compra. Ningún otro usuario, tampoco un administrador, puede ver el detalle, el QR ni cancelar una compra ajena. La única operación administrativa sobre una compra es la validación del QR (`POST /qr/validaciones`). |
 | **Admin** | Usuario con rol administrador. |
-| **Publico** | puede ser cliente o administrador |
+
+Respuestas comunes de seguridad: `401` falta el token o es inválido · `403` el rol no alcanza o la compra no es del usuario.
 
 ### 1.5 Formato de error
 
@@ -107,23 +113,25 @@ Authorization: Bearer <token>
 | 15 | Funciones | `PATCH` | `/funciones/{id}` | Admin |
 | 16 | Funciones | `DELETE` | `/funciones/{id}` | Admin |
 | 17 | Compras | `POST` | `/compras` | Cliente |
-| 18 | Compras | `GET` | `/compras/{id}` | Público |
-| 19 | Compras | `POST` | `/compras/{id}/cancelacion` | cliente |
+| 18 | Compras | `GET` | `/compras/{id}` | Dueño |
+| 19 | Compras | `POST` | `/compras/{id}/cancelacion` | Dueño |
 | 20 | Servicios | `GET` | `/servicios` | Público |
 | 21 | Servicios | `POST` | `/servicios` | Admin |
 | 22 | Servicios | `PATCH` | `/servicios/{id}` | Admin |
 | 23 | Servicios | `DELETE` | `/servicios/{id}` | Admin |
-| 24 | Perfil | `GET` | `/usuarios/me/historial` | Cliente |
-| 25 | Administración | `GET` | `/usuarios` | Admin |
-| 26 | Administración | `GET` | `/usuarios/{id}` | Admin |
-| 27 | Administración | `PATCH` | `/usuarios/{id}` | Admin |
-| 28 | Administración | `GET` | `/estadisticas/resumen` | Admin |
-| 29 | Administración | `GET` | `/estadisticas/ocupacion` | Admin |
-| 30 | Administración | `GET` | `/estadisticas/ventas-por-genero` | Admin |
-| 31 | Administración | `GET` | `/estadisticas/franjas-horarias` | Admin |
-| 32 | Administración | `GET` | `/estadisticas/cancelaciones` | Admin |
-| 33 | QR | `GET` | `/compras/{id}/qr` | publico |
-| 34 | QR | `POST` | `/qr/validaciones` | Admin |
+| 24 | Perfil | `GET` | `/usuarios/me` | Autenticado |
+| 25 | Perfil | `PATCH` | `/usuarios/me` | Autenticado |
+| 26 | Perfil | `GET` | `/usuarios/me/historial` | Cliente |
+| 27 | Administración | `GET` | `/usuarios` | Admin |
+| 28 | Administración | `GET` | `/usuarios/{id}` | Admin |
+| 29 | Administración | `PATCH` | `/usuarios/{id}` | Admin |
+| 30 | Administración | `GET` | `/estadisticas/resumen` | Admin |
+| 31 | Administración | `GET` | `/estadisticas/ocupacion` | Admin |
+| 32 | Administración | `GET` | `/estadisticas/ventas-por-genero` | Admin |
+| 33 | Administración | `GET` | `/estadisticas/franjas-horarias` | Admin |
+| 34 | Administración | `GET` | `/estadisticas/cancelaciones` | Admin |
+| 35 | QR | `GET` | `/compras/{id}/qr` | Dueño |
+| 36 | QR | `POST` | `/qr/validaciones` | Admin |
 
 Los endpoints de funcionalidades deseables están en la sección 12.
 
@@ -455,8 +463,8 @@ Estados de una compra: `confirmada` (pagada) → `utilizada` (cuando se valida e
 | Método | Ruta | Descripción | Rol |
 |---|---|---|---|
 | `POST` | `/compras` | Checkout: entradas y servicios, pago simulado, QR y correo. | Cliente |
-| `GET` | `/compras/{id}` | Detalle de una compra. | cliente |
-| `POST` | `/compras/{id}/cancelacion` | Cancela la compra completa. | cliente |
+| `GET` | `/compras/{id}` | Detalle de una compra. | Dueño |
+| `POST` | `/compras/{id}/cancelacion` | Cancela la compra completa. | Dueño |
 
 ### `POST /compras`
 
@@ -466,6 +474,15 @@ Realiza el checkout en una sola operación:
 2. Registra la compra con el pago simulado (S1). MySQL impide que una butaca se venda dos veces, incluso con compras simultáneas (S23). No hay reservas temporales.
 3. Genera el token aleatorio del QR de la compra (S17).
 4. Envía por correo el comprobante (entradas, servicios, precios y total), el QR y el botón para cancelar (S2).
+
+**Validaciones y transacción en el backend.** Algunas reglas cruzan tablas y la base no las puede garantizar sola, así que las controla el backend antes de insertar:
+
+- La función existe, está activa y todavía no empezó.
+- Hay entre 1 y 6 butacas, sin repetir (S3).
+- Cada butaca existe **y pertenece a la sala de la función**. La base aceptaría una butaca de otra sala, así que este control es obligatorio.
+- Cada servicio existe y está activo. El precio de cada entrada se toma de la función y el de cada servicio, del servicio (no del pedido).
+
+Los pasos 2 y 3 se hacen en **una única transacción**: `INSERT` en `compras`, `INSERT` de cada entrada y de cada servicio, y `COMMIT`. Si una butaca ya está vendida, MySQL rechaza el `INSERT` con el error 1062 (clave `uq_funcion_butaca`); el backend hace `ROLLBACK` completo y responde `409`. Así nunca queda una compra con solo una parte de sus entradas. El correo se envía después del `COMMIT`: si falla, la compra se conserva y el QR sigue disponible en el perfil.
 
 **Entrada**
 
@@ -517,6 +534,16 @@ Detalle de una compra, con el mismo formato que la respuesta de `POST /compras`.
 Cancela la **compra completa**: todas sus entradas y servicios. Libera las butacas e invalida el QR (S14). Solo se permite hasta 2 horas antes del inicio de la función (S13).
 
 El botón del correo abre una página del frontend que muestra la compra y pide confirmar. Abrir el enlace no cancela nada: la cancelación ocurre recién cuando el cliente confirma y el frontend llama a este endpoint (S15). Como el pago es simulado, no hay reintegro real (S1).
+
+**Transacción en el backend.** La cancelación cambia la compra y sus entradas a la vez, para que nunca queden desalineadas (por ejemplo, una compra cancelada con butacas todavía ocupadas). En una única transacción:
+
+1. `SELECT ... FOR UPDATE` de la compra, para bloquearla mientras se valida.
+2. Se verifica que el usuario sea el dueño, que el estado sea `confirmada` y que falten al menos 2 horas para la función.
+3. `UPDATE compras SET estado = 'cancelada', cancelada_en = NOW()`.
+4. `UPDATE entradas SET activa = 0 WHERE compra_id = ...` (libera las butacas).
+5. `COMMIT`. Ante cualquier error, `ROLLBACK`.
+
+El bloqueo del paso 1 evita que una cancelación y una validación del QR de la misma compra se pisen.
 
 **Entrada:** sin cuerpo.
 
@@ -587,8 +614,8 @@ Da de baja el servicio: deja de ofrecerse en nuevas compras.
 
 | Método | Ruta | Descripción | Rol |
 |---|---|---|---|
-| `GET` | `/usuarios/me` | Datos del usuario con sesión iniciada. | cliente |
-| `PATCH` | `/usuarios/me` | Modifica el nombre o la contraseña propios. | cliente |
+| `GET` | `/usuarios/me` | Datos del usuario con sesión iniciada. | Autenticado |
+| `PATCH` | `/usuarios/me` | Modifica el nombre o la contraseña propios. | Autenticado |
 | `GET` | `/usuarios/me/historial` | Compras, consumos y películas vistas. | Cliente |
 
 ### `GET /usuarios/me`
@@ -800,7 +827,7 @@ El administrador elige en el backoffice la función que está controlando y env�
 3. Que la compra corresponda a esa función.
 4. Que el momento de la validación esté dentro de la ventana permitida: desde 60 minutos antes hasta 30 minutos después del inicio de la función (S19).
 
-Si todo es correcto, marca la compra como `utilizada` y registra la fecha y hora de validación.
+Si todo es correcto, marca la compra como `utilizada` y registra la fecha y hora de validación y el administrador que validó. Ese cambio se hace con un único `UPDATE` condicional (`... WHERE qr_token = %s AND funcion_id = %s AND estado = 'confirmada'`, ver `Tablas.sql`): si dos escaneos llegan a la vez, solo uno modifica la fila y el otro recibe `QR_UTILIZADO`. Las entradas no cambian, porque una compra utilizada sigue ocupando sus butacas.
 
 **Entrada**
 
@@ -853,7 +880,7 @@ La documentación de los endpoints con Swagger también es deseable; este docume
 | 6 | Email · Comprobante de compra | Lo envía el backend al ejecutar `POST /compras` |
 | 7 | Front · Mi perfil | `GET /usuarios/me`, `PATCH /usuarios/me`, `GET /usuarios/me/historial`, `GET /compras/{id}/qr` |
 | 8 | Front · Confirmar cancelación | `GET /compras/{id}`, `POST /compras/{id}/cancelacion` |
-| 9 | Front · Vista mobile (responsive) | Los mismos que las pantallas 2 y 4 |
+| 9 | Front · Vista mobile (responsive) | Los mismos que las pantallas 2, 4 y 5 |
 | 10 | Backoffice · Resumen general | `GET /estadisticas/resumen`, `GET /estadisticas/ventas-por-genero`, `GET /estadisticas/ocupacion` |
 | 11 | Backoffice · Gestión de películas | `GET /peliculas`, `PATCH /peliculas/{id}`, `DELETE /peliculas/{id}` |
 | 12 | Backoffice · Importar película desde TMDB | `GET /tmdb/peliculas`, `POST /peliculas` |

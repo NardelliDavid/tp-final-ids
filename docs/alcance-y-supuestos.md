@@ -13,7 +13,7 @@
 2. [Requisitos obligatorios](#1-requisitos-obligatorios)
 3. [Supuestos](#2-supuestos)
 4. [Funcionalidades deseables y fuera de alcance](#3-funcionalidades-deseables-no-obligatorias)
-5. [Preguntas para el tutor](#4-preguntas-para-el-tutor)
+
 
 ---
 
@@ -286,12 +286,6 @@ Lo siguiente **no** se va a desarrollar. Surge de los supuestos anteriores:
 
 ### 4.1 Pendientes
 
-| # | Pregunta | Supuesto relacionado | Respuesta |
+| # | Pregunta | Supuesto o requisito relacionado | Respuesta |
 |---|---|---|---|
-| T1 | ¿Cómo es el proceso de escaneo del QR? | *Pendiente* |
-
-
-
-
-
-
+| T1 | ¿Cómo es el proceso de escaneo del QR?
