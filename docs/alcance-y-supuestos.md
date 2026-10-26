@@ -5,7 +5,7 @@
 | **Materia** | Introducción al Desarrollo de Software, FIUBA (Cátedra Lanzillotta, 2.º cuatrimestre 2026) |
 | **Entrega** | Hito 1 (26/10/2026) |
 | **Fuente** | Enunciado oficial: [`Proyecto integrador IDS 2026.pdf`](Proyecto%20integrador%20IDS%202026.pdf) |
-| **Documentos relacionados** | [`endpoints.md`](endpoints.md) · [`product-backlog.md`](product-backlog.md) · [`Tablas.sql`](Tablas.sql) · [`Mockups.pdf`](Mockups.pdf) |
+| **Documentos relacionados** | [`endpoints.md`](endpoints.md) · [`product-backlog.md`](product-backlog.md) · [`init_db.sql`](init_db.sql) · [`Mockups.pdf`](Mockups.pdf) |
 
 ## Índice
 
@@ -38,7 +38,7 @@ Todo lo de esta sección está definido explícitamente en el enunciado. No es n
 
 ### 1.1 Negocio
 
-- El cine tiene 3 locales, con salas de distinta capacidad de butacas.
+- El cine tiene 3 locales, con salas de misma capacidad de butacas.
 - Una butaca no puede venderse dos veces en la misma función.
 - La cancelación solo se permite hasta un tiempo determinado antes de la función. El enunciado no fija ese tiempo (ver S13).
 

@@ -72,7 +72,8 @@ CREATE TABLE compras (
     usuario_id INT NOT NULL,
     fecha      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total      DECIMAL(12,2) NOT NULL,
-    codigo_qr  CHAR(36) NOT NULL UNIQUE,
+    codigo_qr  CHAR(100) NOT NULL UNIQUE,
+    estado     ENUM('activa','utilizada','cancelada') NOT NULL DEFAULT 'activa',
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 

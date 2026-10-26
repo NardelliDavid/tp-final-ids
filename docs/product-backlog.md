@@ -4,7 +4,7 @@
 |---|---|
 | **Materia** | Introducción al Desarrollo de Software, FIUBA (Cátedra Lanzillotta, 2.º cuatrimestre 2026) |
 | **Entrega** | Hito 1 (26/10/2026) |
-| **Fuentes** | [Enunciado oficial](Proyecto%20integrador%20IDS%202026.pdf) · [`alcance-y-supuestos.md`](alcance-y-supuestos.md) · [`endpoints.md`](endpoints.md) · [`Tablas.sql`](Tablas.sql) · [`Mockups.pdf`](Mockups.pdf) (19 pantallas; la referencia "M-n" indica la página n) |
+| **Fuentes** | [Enunciado oficial](Proyecto%20integrador%20IDS%202026.pdf) · [`alcance-y-supuestos.md`](alcance-y-supuestos.md) · [`endpoints.md`](endpoints.md) · [`init_db.sql`](init_db.sql) · [`Mockups.pdf`](Mockups.pdf) (19 pantallas; la referencia "M-n" indica la página n) |
 
 ## Índice
 
@@ -137,7 +137,7 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 
 **Criterios de aceptación**
 
-- [ ] El script crea la base `cine_paradiso` en MySQL 8.0.16 o superior, con todas las tablas del esquema (`Tablas.sql`).
+- [ ] El script crea la base `cine_paradiso` en MySQL 8.0.16 o superior, con todas las tablas del esquema (`init_db.sql`).
 - [ ] Precarga los 3 locales, sus salas, todas las butacas, los géneros y la cuenta del administrador (S6, S21).
 - [ ] Toda fecha con hora se guarda en un único campo `DATETIME`.
 - [ ] El script se ejecuta sin errores sobre una instalación limpia de MySQL.
@@ -153,7 +153,7 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 - [ ] El backend se conecta a MySQL usando sentencias SQL explícitas, sin ORM ni clases que mapeen tablas.
 - [ ] Al abrir cada conexión se fija la zona horaria de Argentina (S24).
 - [ ] Los pedidos y las respuestas usan JSON.
-- [ ] Los errores responden con el código HTTP y el formato definidos en las secciones 1.5 y 1.6 de `endpoints.md`.
+- [ ] Los errores responden con el código HTTP y el formato definidos en la seccion 1.5 de `endpoints.md`.
 - [ ] La configuración (credenciales, claves de API) se toma de variables de entorno o de un archivo excluido del repositorio, no de variables globales del código.
 
 **Prioridad:** Alta · **Estimación:** 5 SP · **Depende de:** PB-03
@@ -210,9 +210,9 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 
 - [ ] Todo endpoint que no sea público rechaza los pedidos sin token o con token inválido (`401`).
 - [ ] Los endpoints de rol Admin rechazan a los clientes (`403`).
-- [ ] Los endpoints de rol Dueño rechazan a un cliente que no hizo la compra (`403`).
+- [ ] Los endpoints de rol Cliente rechazan a un usuario que no hizo la compra (`403`).
 - [ ] Las páginas del Backoffice redirigen al login si no hay sesión de administrador.
-- [ ] El mecanismo cumple lo que responda el tutor sobre "seguridad en todos los endpoints" (T6).
+- [ ] El mecanismo cumple lo que responda el tutor sobre "seguridad en todos los endpoints".
 
 **Prioridad:** Alta · **Estimación:** 5 SP · **Depende de:** PB-07
 
@@ -420,7 +420,7 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 **Criterios de aceptación**
 
 - [ ] El botón del email abre una página que pide iniciar sesión y muestra el detalle de la compra; **abrir el enlace no cancela nada** (S15).
-- [ ] La cancelación ocurre solo cuando el cliente la confirma, y solo el dueño de la compra puede hacerlo (`403`).
+- [ ] La cancelación ocurre solo cuando el cliente la confirma, y solo el cliente puede hacerlo (`403`).
 - [ ] Se cancela la compra completa: todas sus entradas y servicios; las butacas quedan libres y el QR de la compra deja de ser válido (S14).
 - [ ] Si faltan menos de 2 horas para la función, se rechaza (`422`, S13).
 - [ ] Una compra ya cancelada o utilizada no se puede cancelar (`409`).
@@ -470,11 +470,11 @@ Las historias están ordenadas por módulo, siguiendo las dependencias. Dentro d
 - [ ] Si no es válido, se muestra el motivo: inexistente, cancelado, ya utilizado, otra función o fuera de horario.
 - [ ] La pantalla muestra los datos de la compra validada (cliente, película, sala, función y todas las butacas).
 
-**Prioridad:** Alta · **Estimación:** 8 SP · **Depende de:** PB-22 · **Endpoint:** `POST /qr/validaciones` · **Mockup:** M-19 · **Nota:** el mecanismo de escaneo depende de T1 (ver D2).
+**Prioridad:** Alta · **Estimación:** 8 SP · **Depende de:** PB-22 · **Endpoint:** `POST /qr/validaciones` · **Mockup:** M-19 · **Nota:** el mecanismo de escaneo depende de T1.
 
 ### 3.9 Dashboards
 
-> Todos los dashboards son exclusivos del administrador, admiten filtros por rango de fechas y local, y no cuentan las entradas de compras canceladas como vendidas. La forma de mostrar los gráficos (Chart.js o barras con CSS) depende de la respuesta a T2.
+> Todos los dashboards son exclusivos del administrador, admiten filtros por rango de fechas y local, y no cuentan las entradas de compras canceladas como vendidas.
 
 #### PB-27 · Ocupación por función y por película
 

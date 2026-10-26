@@ -4,7 +4,7 @@
 |---|---|
 | **Materia** | Introducción al Desarrollo de Software, FIUBA (Cátedra Lanzillotta, 2.º cuatrimestre 2026) |
 | **Entrega** | Hito 1 (26/10/2026) |
-| **Fuentes** | [Enunciado oficial](Proyecto%20integrador%20IDS%202026.pdf), [`alcance-y-supuestos.md`](alcance-y-supuestos.md) y esquema [`Tablas.sql`](Tablas.sql) |
+| **Fuentes** | [Enunciado oficial](Proyecto%20integrador%20IDS%202026.pdf), [`alcance-y-supuestos.md`](alcance-y-supuestos.md) y esquema [`init_db.sql`](init_db.sql) |
 | **Documentos relacionados** | [`product-backlog.md`](product-backlog.md) · [`Mockups.pdf`](Mockups.pdf) |
 
 Los códigos S1 a S25 remiten a los supuestos de `alcance-y-supuestos.md`, y los códigos PB-XX, a las historias de `product-backlog.md`.
@@ -65,7 +65,7 @@ Authorization: Bearer <token>
 ```
 
 > [!NOTE]
-> El mecanismo exacto de seguridad y si los endpoints marcados como **Público** son aceptables están pendientes de la respuesta del tutor (pregunta T6 de `alcance-y-supuestos.md`).
+> El mecanismo exacto de seguridad y si los endpoints marcados como **Público** son aceptables están pendientes de la respuesta del tutor.
 
 | Rol | Quién puede usar el endpoint |
 |---|---|
@@ -510,7 +510,7 @@ Realiza el checkout en una sola operación:
 
 Detalle de una compra, con el mismo formato que la respuesta de `POST /compras`. También lo usa la página de confirmación de la cancelación (S15).
 
-**Errores:** `403` el cliente no es el dueño · `404` no existe.
+**Errores:** `403` si no es el cliente  · `404` no existe.
 
 ### `POST /compras/{id}/cancelacion`
 
@@ -526,7 +526,7 @@ El botón del correo abre una página del frontend que muestra la compra y pide 
 { "id": 120, "estado": "cancelada", "cancelada_en": "2026-11-04T10:05:00" }
 ```
 
-**Errores:** `403` el cliente no es el dueño · `404` no existe · `409` la compra ya está cancelada o utilizada · `422` faltan menos de 2 horas para la función (`FUERA_DE_PLAZO`).
+**Errores:** `403` si no es el cliente · `404` no existe · `409` la compra ya está cancelada o utilizada · `422` faltan menos de 2 horas para la función (`FUERA_DE_PLAZO`).
 
 ---
 
@@ -771,7 +771,7 @@ Cada compra tiene un **único QR** para todas sus entradas (S16). Al validarlo, 
 
 | Método | Ruta | Descripción | Rol |
 |---|---|---|---|
-| `GET` | `/compras/{id}/qr` | Devuelve el QR de la compra. | Dueño |
+| `GET` | `/compras/{id}/qr` | Devuelve el QR de la compra. | Cliente |
 | `POST` | `/qr/validaciones` | Valida el QR en el ingreso a la sala y lo marca como utilizado. | Admin |
 
 ### `GET /compras/{id}/qr`
@@ -789,7 +789,7 @@ Devuelve el QR para mostrarlo en el perfil del cliente. Es el mismo QR que se en
 }
 ```
 
-**Errores:** `403` el cliente no es el dueño · `404` no existe · `409` la compra está cancelada.
+**Errores:** `403` si no es el cliente · `404` no existe · `409` la compra está cancelada.
 
 ### `POST /qr/validaciones`
 
