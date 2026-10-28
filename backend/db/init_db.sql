@@ -13,7 +13,11 @@ CREATE TABLE usuarios (
 CREATE TABLE salas (
     id        INT AUTO_INCREMENT PRIMARY KEY,
     local     VARCHAR(100) NOT NULL,
-    nombre    VARCHAR(50)  NOT NULL,
+    nombre    VARCHAR(50) NOT NULL,
+    filas     SMALLINT UNSIGNED NOT NULL,
+    columnas  SMALLINT UNSIGNED NOT NULL,
+    CHECK (filas > 0),
+    CHECK (columnas > 0),
     UNIQUE KEY uq_sala_local (local, nombre)
 );
 
@@ -99,13 +103,13 @@ INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES
  'scrypt:32768:8:1$O5LVFkHA4utaEh3N$547bdbbaf9174db804128272be3eda2d47d735a2e4a3ebd965ea8dca293665ea56feb1e08f206bd9a9e233eeb8a14340a3bcc4f7e111748532e0b5ea7306cd3d',
  'administrador');
 
-INSERT INTO salas (local, nombre) VALUES
-('Cine Paradiso Centro', 'Sala 1'),
-('Cine Paradiso Centro', 'Sala 2'),
-('Cine Paradiso Norte',  'Sala 1'),
-('Cine Paradiso Norte',  'Sala 2'),
-('Cine Paradiso Sur',    'Sala 1'),
-('Cine Paradiso Sur',    'Sala 2');
+INSERT INTO salas (local, nombre, filas, columnas) VALUES
+('Cine Paradiso Centro', 'Sala 1', 10, 12),
+('Cine Paradiso Centro', 'Sala 2', 8, 10),
+('Cine Paradiso Norte',  'Sala 1', 12, 15),
+('Cine Paradiso Norte',  'Sala 2', 6, 8),
+('Cine Paradiso Sur',    'Sala 1', 9, 12),
+('Cine Paradiso Sur',    'Sala 2', 7, 10);
 
 INSERT INTO generos (nombre) VALUES
 ('Acción'), ('Aventura'), ('Animación'), ('Comedia'), ('Crimen'),
