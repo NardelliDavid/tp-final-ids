@@ -1,121 +1,8 @@
 # Cine Paradiso: alcance y supuestos
 
-| | |
-|---|---|
-| **Materia** | Introducción al Desarrollo de Software, FIUBA (Cátedra Lanzillotta, 2.º cuatrimestre 2026) |
-| **Entrega** | Hito 1 (26/10/2026) |
-| **Fuente** | Enunciado oficial: [`Proyecto integrador IDS 2026.pdf`](Proyecto%20integrador%20IDS%202026.pdf) |
-| **Documentos relacionados** | [`endpoints.md`](endpoints.md) · [`product-backlog.md`](product-backlog.md) · [`init_db.sql`](init_db.sql) · [`Mockups.pdf`](Mockups.pdf) |
+## 1. Supuestos
 
-## Índice
-
-1. [Glosario](#glosario)
-2. [Requisitos obligatorios](#1-requisitos-obligatorios)
-3. [Supuestos](#2-supuestos)
-4. [Funcionalidades deseables y fuera de alcance](#3-funcionalidades-deseables-no-obligatorias)
-
-
----
-
-## Glosario
-
-| Término | Definición |
-|---|---|
-| **Supuesto** | Decisión que toma el equipo porque el enunciado no la define. Se deja por escrito para que el corrector sepa cómo la interpretamos. |
-| **Alcance** | Límite que separa lo que el sistema **va a hacer** de lo que **no va a hacer**. |
-| **Función** | Película proyectada en una sala determinada, en una fecha y horario puntuales. Cada función tiene sus propias butacas disponibles. |
-| **Butaca** | Asiento identificado dentro de una sala. No puede venderse dos veces en la misma función. |
-| **Cartelera** | Conjunto de películas y funciones vigentes que el cine ofrece al público. |
-| **Compra** | Operación de checkout de un cliente para una función: incluye entradas y, opcionalmente, servicios. |
-| **Entrada** | Derecho a ocupar una butaca determinada en una función. |
-| **Servicio** | Producto adicional que se compra junto con las entradas (comida, bebida, estacionamiento, acceso VIP, etc.). |
-
----
-
-## 1. Requisitos obligatorios
-
-Todo lo de esta sección está definido explícitamente en el enunciado. No es negociable.
-
-### 1.1 Negocio
-
-- El cine tiene 3 locales, con salas de misma capacidad de butacas.
-- Una butaca no puede venderse dos veces en la misma función.
-- La cancelación solo se permite hasta un tiempo determinado antes de la función. El enunciado no fija ese tiempo (ver S13).
-
-### 1.2 Front (usuarios finales)
-
-- Manejo de usuarios con dos roles: administrador y cliente.
-- Perfil del cliente con información sobre sus consumos y las películas que vio anteriormente.
-- Cartelera con las películas en cartel: sinopsis, póster, duración, clasificación y funciones disponibles.
-- Acceso a la capacidad y la disponibilidad de butacas de cada sala.
-- Compra de entradas con un flujo ágil: película → función → selección de butacas (mostrando las ocupadas y las libres) → confirmación al email. Se genera un QR con los datos de la compra, que se envía por mail junto con un botón para cancelar.
-- Compra de servicios: comida, bebidas, estacionamiento, acceso VIP, entre otros.
-- Checkout de la compra con envío de la factura por mail, junto con un QR que permite el ingreso a la sala.
-
-### 1.3 Backoffice (administrador)
-
-- Cargar películas, imágenes y sinopsis, indicando sala, capacidad, local y período en que la película estará disponible.
-- Dashboards informativos: ocupación por función y por película, ventas por género, franjas horarias más vendidas y cancelaciones.
-- Cargar, modificar y dar de baja servicios. Los servicios están disponibles para todas las salas.
-- Validación al ingresar a la sala: al escanear el QR se verifica que corresponda a esa función y fecha y que no haya sido usado ni cancelado. Después se marca como usado.
-- El catálogo de películas se obtiene de una API gratuita (OMDb o TMDB).
-
-### 1.4 Técnicos
-
-- **Backend** en Flask: se conecta a la base de datos y expone endpoints que usan el verbo HTTP correcto y el formato JSON.
-- **Frontend** en Flask: se conecta al backend respetando RESTful.
-- La comunicación entre el frontend y el backend se hace en Python, con la librería `requests`.
-- **Prohibido** hacer pedidos desde el navegador (`fetch`, promises, `axios`, `XMLHttpRequest` u otros equivalentes).
-- **Prohibido** usar ORMs (SQLAlchemy, SQLModel, Django ORM, Peewee u otros), incluidas las clases de Python que mapeen tablas. Todas las consultas se escriben como sentencias SQL explícitas.
-- Base de datos **MySQL**, con al menos 3 tablas y un script de creación y carga.
-- La fecha y la hora van en un único campo `DATETIME`, nunca en dos campos separados.
-- Todos los endpoints deben tener seguridad.
-- Generación de códigos QR y un mecanismo de validación o escaneo.
-- Acceso desde dispositivos móviles: web responsive, o una app mobile hecha únicamente con Kivy.
-- Si se usan dependencias, un archivo `init.sh` que las instale.
-
-### 1.5 Proceso y entrega
-
-- Repositorio en GitHub compartido con el corrector, con ramas adecuadas al proyecto.
-- **Todos** los integrantes hacen commits. Cada commit está asociado a una tarea y su mensaje explica qué se hizo.
-- Tablero Kanban con las tareas y el backlog de producto (GitHub Projects, Trello o Jira).
-- Cada hito tiene que entregar valor al cliente.
-- Informe final con: carátula, integrantes, resumen, introducción, solución propuesta, tecnología utilizada y conclusión final, detallando las principales decisiones de diseño, las dificultades encontradas y las conclusiones.
-- Defensa oral grupal e individual.
-
-### 1.6 Condiciones de aprobación
-
-- **No** se pueden usar variables globales ni ciclos infinitos, ni escribir código repetido.
-- **No** se puede entregar un programa que no funcione o que tenga errores graves, ni entregar fuera de fecha.
-- **Sí** hay que evitar que el programa se rompa cuando el usuario interactúa con él, modularizar el código y aplicar buenas prácticas de programación.
-
-### 1.7 Resumen de funcionalidades obligatorias
-
-| # | Funcionalidad |
-|---|---|
-| 1 | Registro, inicio de sesión y roles (administrador y cliente). |
-| 2 | Cartelera y detalle de cada película con sus funciones. |
-| 3 | Mapa de butacas que muestre las libres y las ocupadas. |
-| 4 | Compra de entradas y servicios, con checkout. |
-| 5 | Mail con el comprobante, el QR y el enlace de cancelación. |
-| 6 | Cancelación con límite de tiempo. |
-| 7 | Perfil del cliente con su historial y las películas vistas. |
-| 8 | Backoffice: películas (desde la API externa), funciones y ABM de servicios. |
-| 9 | Validación del QR al ingresar. |
-| 10 | Dashboards: ocupación, ventas por género, franjas horarias y cancelaciones. |
-| 11 | Seguridad en todos los endpoints. |
-| 12 | Acceso mobile (responsive o Kivy). |
-| 13 | Requisitos de proceso: GitHub con ramas, Kanban, `init.sh`, script SQL e informe. |
-
----
-
-## 2. Supuestos
-
-Criterio general: **lo más simple que cumpla el enunciado.**
-
-Los supuestos son **decisiones del equipo**, no requisitos de la cátedra. La única excepción es S1, que confirmó el profesor.
-
-### 2.1 Resumen de supuestos
+###  Resumen de supuestos
 
 | Supuesto | Tema |
 |---|---|
@@ -145,7 +32,7 @@ Los supuestos son **decisiones del equipo**, no requisitos de la cátedra. La ú
 | S24 | Moneda, zona horaria e idioma |
 | S25 | Web responsive |
 
-### 2.2 Compra y pago
+### Compra y pago
 
 **S1. Pago simulado.** *(Confirmado por el profesor.)*
 Los pagos son siempre simulados. No se integran pasarelas de pago reales (Mercado Pago, tarjetas). Al confirmar el checkout, la compra queda como pagada.
@@ -166,7 +53,7 @@ El precio se establece por función, y todas las butacas de esa función cuestan
 Los servicios adicionales son opcionales, se compran junto con las entradas y no tienen control de stock.
 *Por qué:* así hay un solo flujo de compra.
 
-### 2.3 Locales, salas y películas
+### Locales, salas y películas
 
 **S6. Locales y salas fijos y precargados.**
 Los 3 locales y sus salas son fijos: se precargan en MySQL con el script SQL y no se crean, modifican ni eliminan desde el sistema. No hay ABM de locales ni de salas.
@@ -187,7 +74,7 @@ Se usa TMDB y se le pide la información en español. El administrador elige a m
 **S10. Período de cartelera.**
 Cada película tiene un período de cartelera con fecha de inicio y fecha de fin. Las funciones tienen que programarse dentro de ese período.
 
-### 2.4 Funciones
+### Funciones
 
 **S11. Creación manual de funciones.**
 El administrador crea a mano cada función, indicando la película, la sala, la fecha y hora (en un único campo `DATETIME`) y el precio.
@@ -198,7 +85,7 @@ El administrador crea a mano cada función, indicando la película, la sala, la 
 - No pueden superponerse en la misma sala.
 - Tienen que dejar 20 minutos de limpieza entre una proyección y la siguiente.
 
-### 2.5 Cancelaciones
+### Cancelaciones
 
 **S13. Cancelación hasta 2 horas antes.**
 Una compra se puede cancelar hasta 2 horas antes del inicio de la función.
@@ -210,7 +97,7 @@ La cancelación afecta a la compra completa, con todas sus entradas y servicios.
 El botón del correo abre una página de Cine Paradiso, donde el cliente tiene que autenticarse y confirmar la cancelación. **Abrir el enlace no cancela la compra automáticamente.**
 *Por qué:* si el enlace cancelara directamente, cualquiera que viera el mail (o un antivirus que revisa los enlaces) podría cancelar la compra sin querer.
 
-### 2.6 Códigos QR
+### Códigos QR
 
 **S16. Un único QR por compra.** *(Decisión definitiva del grupo.)*
 Cada compra tiene un único código QR, que cubre todas sus entradas. Al validarlo, la compra completa queda como utilizada y todas sus entradas ingresan juntas. Si se cancela la compra, el QR deja de ser válido (S14).
@@ -225,7 +112,7 @@ Solamente los administradores pueden escanear y validar códigos QR, desde el Ba
 **S19. Ventana de validación.**
 Los QR se pueden validar desde 60 minutos antes hasta 30 minutos después del inicio de la función.
 
-### 2.7 Usuarios
+### Usuarios
 
 **S20. Registro de clientes.**
 Los clientes se registran con nombre, correo electrónico (único) y contraseña. La contraseña se guarda protegida con un hash seguro. El backend asigna el rol cliente.
@@ -240,7 +127,7 @@ La cuenta del administrador se crea al inicializar el sistema, con la contraseñ
 
 **Limitación:** este criterio **no prueba que el comprador haya asistido en persona**. El QR habilita el ingreso de toda la compra, así que la película figura como vista para el comprador aunque hayan ingresado solo sus acompañantes.
 
-### 2.8 Concurrencia y configuración
+### Concurrencia y configuración
 
 **S23. Sin reservas temporales de butacas.**
 No hay reservas temporales: las butacas se asignan al confirmar la compra. MySQL tiene que impedir ventas duplicadas, incluso cuando dos compras se hacen al mismo tiempo.
@@ -253,39 +140,28 @@ Moneda: pesos argentinos (ARS). Zona horaria: Argentina. Idioma: español.
 Se desarrolla una web responsive con Flask, HTML, CSS, Jinja2 y Bootstrap, que se adapta a computadoras, tablets y celulares. No se desarrolla una app con Kivy.
 *Por qué:* así hay un solo frontend en lugar de dos.
 
----
+## Dentro del alcance
 
-## 3. Funcionalidades deseables (no obligatorias)
 
-**No se compromete ninguna en el alcance inicial.** Se listan como posibles mejoras y se suman solo si sobra tiempo, así no queda nada prometido sin cumplir.
+### Cliente
+- El Cliente podra entrar a la aplicacion, ver las peliculas disponibles y los servicios sin tener una cuenta registrada
+- El Cliente podra crearse una cuenta, ingresar a la cuenta creada y tambien podra eliminarla
+- El cliente podra elegir las peliculas disponibles, los asientos y servicios q desee consumir
+- El cliente podra ver el resumen de sus compras con detalle de q servicios se consumieron, q peliculas vio en que fecha y cuantos asientos reservo por funcion
 
-| Deseable | Origen | Esfuerzo estimado |
-|---|---|---|
-| Documentación de endpoints (Swagger o README) | Requisitos generales deseables | Bajo. Además, ayuda mucho al propio equipo. |
-| PDF con reporte de ventas por función y películas más vistas | Enunciado de Cine Paradiso | Medio. |
-| Reseñas habilitadas solo para usuarios con el QR validado | Enunciado de Cine Paradiso | Medio. Con S22 queda casi resuelto. |
-| Dockerizar el proyecto | Enunciado de Cine Paradiso | Medio. |
-| Hostear la app y la base de datos en servicios gratuitos | Enunciado y requisitos generales | Medio o alto: el MySQL gratuito es lo más difícil de conseguir. |
+### Desarrollador
 
-### 3.1 Fuera de alcance
+- Podra entrar al backoffice para programar las peliculas
+- Podra dar de baja servicios o peliculas
+
+### Fuera de alcance
 
 Lo siguiente **no** se va a desarrollar. Surge de los supuestos anteriores:
 
-- Pagos reales (S1, confirmado por el profesor).
-- Factura fiscal (S2).
+- Pagos reales 
+- Factura fiscal 
 - Recuperación de contraseña.
 - Verificación de email al registrarse.
-- Reserva temporal de butacas (S23).
-- Promociones y descuentos.
-- Butacas especiales, como accesibles o dobles (S7).
-- ABM de locales y salas (S6).
-
----
-
-## 4. Preguntas para el tutor
-
-### 4.1 Pendientes
-
-| # | Pregunta | Supuesto o requisito relacionado | Respuesta |
-|---|---|---|---|
-| T1 | ¿Cómo es el proceso de escaneo del QR?
+- Reserva temporal de butacas 
+- Promociones y descuentos
+- Butacas especiales, como accesibles o dobles
