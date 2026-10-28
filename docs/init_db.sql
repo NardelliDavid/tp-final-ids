@@ -40,23 +40,16 @@ CREATE TABLE pelicula_genero (
     FOREIGN KEY (genero_id)   REFERENCES generos(id)
 );
 
-CREATE TABLE cartelera (
-    id            INT AUTO_INCREMENT PRIMARY KEY,
-    pelicula_id   INT  NOT NULL,
-    sala_id       INT  NOT NULL,
-    vigente_desde DATE NOT NULL,
-    vigente_hasta DATE NOT NULL,
-    CHECK (vigente_hasta >= vigente_desde),
-    FOREIGN KEY (pelicula_id) REFERENCES peliculas(id),
-    FOREIGN KEY (sala_id)     REFERENCES salas(id)
-);
-
 CREATE TABLE funciones (
     id           INT AUTO_INCREMENT PRIMARY KEY,
-    cartelera_id INT NOT NULL,
+    pelicula_id  INT NOT NULL,
+    sala_id      INT NOT NULL,
     inicio       DATETIME NOT NULL,
+    fin          DATETIME NOT NULL,
     precio       DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (cartelera_id) REFERENCES cartelera(id)
+    CHECK (fin > inicio),
+    FOREIGN KEY (pelicula_id) REFERENCES peliculas(id),
+    FOREIGN KEY (sala_id)     REFERENCES salas(id)
 );
 
 CREATE TABLE servicios (
@@ -85,11 +78,6 @@ CREATE TABLE entradas (
     columna    SMALLINT NOT NULL,
     precio     DECIMAL(10,2) NOT NULL,
     estado     ENUM('activa','utilizada','cancelada') NOT NULL DEFAULT 'activa',
-
-    asiento_ocupado VARCHAR(10) GENERATED ALWAYS AS
-        (CASE WHEN estado = 'cancelada' THEN NULL ELSE CONCAT(fila, '-', columna) END) STORED,
-    UNIQUE KEY uq_funcion_asiento (funcion_id, asiento_ocupado),
-
     FOREIGN KEY (compra_id)  REFERENCES compras(id),
     FOREIGN KEY (funcion_id) REFERENCES funciones(id)
 );
@@ -124,3 +112,23 @@ INSERT INTO generos (nombre) VALUES
 ('Documental'), ('Drama'), ('Familia'), ('Fantasía'), ('Historia'),
 ('Terror'), ('Música'), ('Misterio'), ('Romance'), ('Ciencia ficción'),
 ('Suspenso'), ('Bélica'), ('Western');
+
+
+INSERT INTO peliculas (tmdb_id, titulo, sinopsis, poster_url, duracion_min, clasificacion) VALUES
+(238,   'El Padrino', 'La saga de la familia Corleone, una de las más poderosas del crimen organizado de Nueva York, y el ascenso de su hijo menor al mando.', NULL, 175, '+16'),
+(680,   'Tiempos violentos', 'Historias cruzadas de dos sicarios, un boxeador y la esposa de un mafioso en Los Ángeles.', NULL, 154, '+18'),
+(105,   'Volver al futuro', 'Un adolescente viaja accidentalmente al pasado en una máquina del tiempo y debe asegurarse de que sus padres se enamoren.', NULL, 116, 'ATP'),
+(289,   'Casablanca', 'En plena Segunda Guerra Mundial, un dueño de bar en Marruecos se reencuentra con un amor del pasado.', NULL, 102, 'ATP'),
+(11216, 'Cinema Paradiso', 'Un director recuerda su infancia en un pequeño pueblo de Sicilia y su amistad con el proyeccionista del cine local.', NULL, 124, '+13'),
+(78,    'Blade Runner', 'En un Los Ángeles futurista, un cazador de androides persigue a un grupo de replicantes fugitivos.', NULL, 117, '+16');
+
+INSERT INTO pelicula_genero (pelicula_id, genero_id)
+SELECT p.id, g.id
+FROM peliculas p
+JOIN generos g ON
+    (p.titulo = 'El Padrino'         AND g.nombre IN ('Drama', 'Crimen'))
+ OR (p.titulo = 'Tiempos violentos'  AND g.nombre IN ('Crimen', 'Suspenso'))
+ OR (p.titulo = 'Volver al futuro'   AND g.nombre IN ('Aventura', 'Comedia', 'Ciencia ficción'))
+ OR (p.titulo = 'Casablanca'         AND g.nombre IN ('Drama', 'Romance'))
+ OR (p.titulo = 'Cinema Paradiso'    AND g.nombre IN ('Drama', 'Romance'))
+ OR (p.titulo = 'Blade Runner'       AND g.nombre IN ('Ciencia ficción', 'Suspenso'));
