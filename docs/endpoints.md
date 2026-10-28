@@ -43,6 +43,7 @@
 | 36 | QR | `POST` | `/qr/validaciones` | Admin |
 
 
+
 ---
 
 ## 3. Autenticación
