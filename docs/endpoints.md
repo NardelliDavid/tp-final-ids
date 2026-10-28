@@ -1,98 +1,7 @@
 # Cine Paradiso: listado de endpoints
 
-| | |
-|---|---|
-| **Materia** | Introducción al Desarrollo de Software, FIUBA (Cátedra Lanzillotta, 2.º cuatrimestre 2026) |
-| **Entrega** | Hito 1 (26/10/2026) |
-| **Fuentes** | [Enunciado oficial](Proyecto%20integrador%20IDS%202026.pdf), [`alcance-y-supuestos.md`](alcance-y-supuestos.md) y esquema [`init_db.sql`](init_db.sql) |
-| **Documentos relacionados** | [`product-backlog.md`](product-backlog.md) · [`Mockups.pdf`](Mockups.pdf) |
 
-Los códigos S1 a S25 remiten a los supuestos de `alcance-y-supuestos.md`, y los códigos PB-XX, a las historias de `product-backlog.md`.
-
-## Índice
-
-1. [Convenciones generales](#1-convenciones-generales)
-2. [Resumen de endpoints](#2-resumen-de-endpoints)
-3. [Autenticación](#3-autenticación)
-4. [Películas](#4-películas)
-5. [Cartelera](#5-cartelera)
-6. [Funciones](#6-funciones)
-7. [Compras](#7-compras)
-8. [Servicios](#8-servicios)
-9. [Perfil](#9-perfil)
-10. [Administración](#10-administración)
-11. [QR](#11-qr)
-12. [Funcionalidades deseables](#12-funcionalidades-deseables)
-13. [Relación con las pantallas](#13-relación-con-las-pantallas-mockupspdf)
-
----
-
-## 1. Convenciones generales
-
-### 1.1 Arquitectura
-
-- El **backend** es una API REST en Flask que se conecta a MySQL mediante sentencias SQL explícitas (sin ORM).
-- El **frontend** y el **backoffice** son aplicaciones Flask (HTML, CSS, Jinja2 y Bootstrap, S25) que consumen esta API desde Python con la librería `requests`. El navegador nunca llama a la API directamente.
-- Todos los cuerpos de pedido y de respuesta usan **JSON** (`Content-Type: application/json`). La única excepción es el reporte en PDF (deseable, sección 12).
-- Las rutas de este documento son relativas a la URL base de la API (por ejemplo, `http://localhost:5000`; la URL definitiva depende del despliegue).
-
-### 1.2 Rutas y verbos
-
-| Verbo | Uso |
-|---|---|
-| `GET` | Consultar. Nunca modifica datos. |
-| `POST` | Crear un recurso o registrar una acción (cancelación, validación de QR). |
-| `PATCH` | Modificar parcialmente un recurso. Solo se envían los campos que cambian. |
-| `DELETE` | Dar de baja. Todas las bajas son **lógicas** (campo `activo`), para conservar el historial de compras y las estadísticas. |
-
-- Las rutas usan sustantivos en plural, en minúsculas y en *kebab-case* (`/ventas-por-genero`). No llevan verbos.
-- Las acciones que cambian el estado de un recurso se modelan como un subrecurso con `POST` (por ejemplo, `POST /compras/{id}/cancelacion`).
-- Los campos JSON y los parámetros de consulta usan *snake_case*.
-- `{id}` es siempre un identificador numérico interno.
-
-### 1.3 Datos
-
-- **Fecha y hora:** un único campo con formato ISO 8601 (`"2026-11-05T20:30:00"`), en hora de Argentina (S24). Corresponde a un único campo `DATETIME` en MySQL.
-- **Importes:** número decimal en pesos argentinos (ARS), por ejemplo `4500.00` (S24).
-- **Butacas:** fila con letra y columna con número, por ejemplo `"C7"` (S7).
-
-### 1.4 Seguridad y roles
-
-El usuario (cliente o administrador) obtiene un *token* con `POST /auth/login`. El frontend lo guarda en la sesión de Flask y lo envía en cada pedido al backend con el encabezado:
-
-```http
-Authorization: Bearer <token>
-```
-
-Todo endpoint que no sea **Público** exige ese token. El backend verifica el token y el rol en cada pedido; el frontend no decide los permisos.
-
-> [!NOTE]
-> El mecanismo exacto de seguridad y si los endpoints marcados como **Público** son aceptables están pendientes de la respuesta del tutor.
-
-| Rol | Quién puede usar el endpoint |
-|---|---|
-| **Público** | Cualquier persona, sin sesión iniciada. No requiere token. |
-| **Autenticado** | Cualquier usuario con sesión iniciada (cliente o administrador). |
-| **Cliente** | Usuario con rol cliente. |
-| **Dueño** | El cliente que hizo la compra. Ningún otro usuario, tampoco un administrador, puede ver el detalle, el QR ni cancelar una compra ajena. La única operación administrativa sobre una compra es la validación del QR (`POST /qr/validaciones`). |
-| **Admin** | Usuario con rol administrador. |
-
-Respuestas comunes de seguridad: `401` falta el token o es inválido · `403` el rol no alcanza o la compra no es del usuario.
-
-### 1.5 Formato de error
-
-```json
-{
-  "error": {
-    "codigo": "BUTACA_OCUPADA",
-    "mensaje": "La butaca C7 ya fue vendida para esta función."
-  }
-}
-```
-
----
-
-## 2. Resumen de endpoints
+##  Resumen de endpoints
 
 | # | Módulo | Método | Ruta | Rol |
 |---|---|---|---|---|
@@ -133,7 +42,7 @@ Respuestas comunes de seguridad: `401` falta el token o es inválido · `403` el
 | 35 | QR | `GET` | `/compras/{id}/qr` | Dueño |
 | 36 | QR | `POST` | `/qr/validaciones` | Admin |
 
-Los endpoints de funcionalidades deseables están en la sección 12.
+
 
 ---
 
@@ -851,44 +760,3 @@ Si todo es correcto, marca la compra como `utilizada` y registra la fecha y hora
 ```
 
 **Errores:** `404` token inexistente (`QR_INEXISTENTE`) · `409` compra cancelada (`QR_CANCELADO`) o ya utilizada (`QR_UTILIZADO`) · `422` corresponde a otra función (`FUNCION_INCORRECTA`) o está fuera de la ventana horaria (`FUERA_DE_VENTANA`).
-
----
-
-## 12. Funcionalidades deseables
-
-Estos endpoints solo se implementan si el tiempo lo permite (ver sección 3 de `alcance-y-supuestos.md`).
-
-| Método | Ruta | Descripción | Rol |
-|---|---|---|---|
-| `GET` | `/reportes/ventas` | PDF con ventas por función y películas más vistas. Responde `application/pdf`. Filtros: `desde`, `hasta`, `local_id`. | Admin |
-| `GET` | `/peliculas/{id}/resenas` | Reseñas y puntuación promedio de una película. | Público |
-| `POST` | `/peliculas/{id}/resenas` | Publica una reseña (`puntuacion` de 1 a 5 y `comentario`). Solo para clientes con un QR validado para esa película (criterio de S22). | Cliente |
-
-La documentación de los endpoints con Swagger también es deseable; este documento cumple ese rol mientras tanto.
-
----
-
-## 13. Relación con las pantallas (`Mockups.pdf`)
-
-| # | Pantalla del mockup | Endpoints que usa |
-|---|---|---|
-| 1 | Front · Iniciar sesión y registrarse | `POST /auth/login`, `POST /auth/registro` |
-| 2 | Front · Cartelera | `GET /cartelera`, `GET /locales` |
-| 3 | Front · Detalle de película | `GET /peliculas/{id}`, `GET /funciones?pelicula_id={id}` |
-| 4 | Front · Selección de butacas y servicios | `GET /funciones/{id}`, `GET /funciones/{id}/butacas`, `GET /servicios`, `POST /compras` |
-| 5 | Front · Compra confirmada | `GET /compras/{id}`, `GET /compras/{id}/qr` |
-| 6 | Email · Comprobante de compra | Lo envía el backend al ejecutar `POST /compras` |
-| 7 | Front · Mi perfil | `GET /usuarios/me`, `PATCH /usuarios/me`, `GET /usuarios/me/historial`, `GET /compras/{id}/qr` |
-| 8 | Front · Confirmar cancelación | `GET /compras/{id}`, `POST /compras/{id}/cancelacion` |
-| 9 | Front · Vista mobile (responsive) | Los mismos que las pantallas 2, 4 y 5 |
-| 10 | Backoffice · Resumen general | `GET /estadisticas/resumen`, `GET /estadisticas/ventas-por-genero`, `GET /estadisticas/ocupacion` |
-| 11 | Backoffice · Gestión de películas | `GET /peliculas`, `PATCH /peliculas/{id}`, `DELETE /peliculas/{id}` |
-| 12 | Backoffice · Importar película desde TMDB | `GET /tmdb/peliculas`, `POST /peliculas` |
-| 13 | Backoffice · Gestión de funciones | `GET /funciones`, `PATCH /funciones/{id}`, `DELETE /funciones/{id}`, `GET /locales` |
-| 14 | Backoffice · Nueva función | `GET /peliculas`, `GET /locales`, `POST /funciones` |
-| 15 | Backoffice · Horarios y programación | `GET /funciones?desde=...&hasta=...`, `GET /locales` |
-| 16 | Backoffice · Ventas y estadísticas | `GET /estadisticas/resumen`, `GET /estadisticas/franjas-horarias`, `GET /estadisticas/ocupacion`, `GET /estadisticas/cancelaciones` |
-| 17 | Backoffice · Servicios adicionales | `GET /servicios`, `POST /servicios`, `PATCH /servicios/{id}`, `DELETE /servicios/{id}` |
-| 18 | Backoffice · Usuarios | `GET /usuarios`, `GET /usuarios/{id}`, `PATCH /usuarios/{id}` |
-| 19 | Backoffice · Control de ingreso | `GET /funciones`, `POST /qr/validaciones` |
-
