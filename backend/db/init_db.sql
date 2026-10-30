@@ -136,3 +136,73 @@ JOIN generos g ON
  OR (p.titulo = 'Casablanca'         AND g.nombre IN ('Drama', 'Romance'))
  OR (p.titulo = 'Cinema Paradiso'    AND g.nombre IN ('Drama', 'Romance'))
  OR (p.titulo = 'Blade Runner'       AND g.nombre IN ('Ciencia ficción', 'Suspenso'));
+
+
+
+-- ==========================================
+-- SERVICIOS INICIALES DE CINE PARADISO
+-- ==========================================
+
+INSERT INTO servicios (nombre, descripcion, precio, activo)
+VALUES
+
+-- POCHOCLOS
+('Pochoclos chicos', 'Balde chico de pochoclos salados', 3000, 1),
+('Pochoclos medianos', 'Balde mediano de pochoclos salados', 4500, 1),
+('Pochoclos grandes', 'Balde grande de pochoclos salados', 6000, 1),
+('Pochoclos dulces', 'Balde de pochoclos acaramelados', 5500, 1),
+('Pochoclos mixtos', 'Pochoclos dulces y salados', 5500, 1),
+
+-- BEBIDAS
+('Coca Cola 500ml', 'Gaseosa Coca Cola', 3000, 1),
+('Coca Cola 1L', 'Gaseosa Coca Cola de un litro', 4500, 1),
+('Sprite 500ml', 'Gaseosa lima limon', 3000, 1),
+('Fanta 500ml', 'Gaseosa de naranja', 3000, 1),
+('Agua mineral', 'Botella de agua de 500ml', 2000, 1),
+('Agua saborizada', 'Agua saborizada de 500ml', 2500, 1),
+('Jugo de naranja', 'Jugo de naranja de 500ml', 2800, 1),
+('Speed', 'Bebida energizante en lata', 3500, 1),
+('Cafe', 'Cafe caliente', 2500, 1),
+('Cafe con leche', 'Cafe con leche caliente', 3000, 1),
+
+-- GOLOSINAS
+('Alfajor triple', 'Alfajor triple de chocolate', 2500, 1),
+('Chocolate Block', 'Tableta de chocolate', 3500, 1),
+('Chocolate Milka', 'Chocolate con leche', 4000, 1),
+('Gomitas', 'Bolsa de gomitas surtidas', 2500, 1),
+('Caramelos', 'Paquete de caramelos surtidos', 1500, 1),
+('Rocklets', 'Chocolate confitado', 3000, 1),
+('Obleas', 'Obleas rellenas de chocolate', 2000, 1),
+
+-- SNACKS SALADOS
+('Papas Lays', 'Bolsa de papas fritas', 3500, 1),
+('Doritos', 'Nachos sabor queso', 3800, 1),
+('Nachos con cheddar', 'Nachos con salsa cheddar', 5500, 1),
+('Papas con cheddar', 'Papas fritas con cheddar', 6000, 1),
+('Mani salado', 'Paquete de mani salado', 2000, 1),
+
+-- HAMBURGUESAS
+('Hamburguesa simple', 'Medallon de carne con queso', 7500, 1),
+('Hamburguesa completa', 'Carne, queso, lechuga y tomate', 9000, 1),
+('Hamburguesa doble', 'Doble carne y doble queso', 11000, 1),
+('Hamburguesa bacon', 'Carne, cheddar y panceta', 10500, 1),
+('Hamburguesa veggie', 'Medallon vegetal con vegetales', 8500, 1),
+
+-- PANCHOS
+('Pancho clasico', 'Salchicha con pan y aderezos', 4000, 1),
+('Pancho con cheddar', 'Pancho con salsa cheddar', 5000, 1),
+('Pancho completo', 'Pancho con cheddar y papas pay', 6000, 1),
+
+-- OTROS
+('Pizza individual', 'Pizza individual de muzzarella', 7500, 1),
+('Nuggets de pollo', 'Porcion de nuggets de pollo', 6500, 1),
+('Papas fritas', 'Porcion de papas fritas', 4500, 1),
+
+-- COMBOS
+('Combo individual', 'Pochoclos medianos y gaseosa 500ml', 6500, 1),
+('Combo pareja', 'Pochoclos grandes y dos gaseosas', 10500, 1),
+('Combo familiar', 'Dos pochoclos grandes y cuatro gaseosas', 19500, 1),
+('Combo hamburguesa', 'Hamburguesa completa, papas y gaseosa', 14000, 1),
+('Combo pancho', 'Pancho con cheddar, papas y gaseosa', 10500, 1),
+('Combo dulce', 'Pochoclos dulces, chocolate y gaseosa', 10000, 1),
+('Combo infantil', 'Nuggets, papas chicas y jugo', 9500, 1);

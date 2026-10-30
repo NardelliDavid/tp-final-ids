@@ -1,7 +1,9 @@
 from flask import Flask, jsonify
 from db.conexion_db import conexion
+from src.routes.servicios import servicios_bp
 
 app = Flask(__name__)
+app.register_blueprint(servicios_bp)
 
 @app.route("/")
 def index():
