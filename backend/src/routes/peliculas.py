@@ -78,17 +78,22 @@ def agregar_pelicula_tmdb():
                 timeout=5,
             )
             respuesta_api.raise_for_status() # revisa el código de estado HTTP de la respuesta
-            datos = respuesta_api.json() # el .json() convierte el JSON recibido de TMDB en un diccionario
+            datos = respuesta_api.json()
+
+            nombres_generos = []
+            for genero in datos["genres"]:
+                nombres_generos.append(genero["name"])
 
             pelicula = {
-                "tmdb_id":  datos["id"],
+                "tmdb_id": datos["id"],
                 "titulo": datos["title"],
                 "sinopsis": datos["overview"],
                 "duracion": datos["runtime"],
                 "poster": f"https://image.tmdb.org/t/p/w500{datos['poster_path']}",
+                "generos": nombres_generos,
             }
-
-            resultado = agregar_pelicla_db(pelicula)
+            print(pelicula)
+            resultado = agregar_pelicula_db(pelicula)
 
             respuesta = jsonify(resultado)
         except Exception as e:
