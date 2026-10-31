@@ -1,5 +1,52 @@
 from backend.db.conexion_db import conexion
 
+
+ #GET/funciones/{id}
+def obtener_detalle_funcion(funcion_id):
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
+
+    consulta = """
+        SELECT
+            funciones.id,
+            peliculas.id AS pelicula_id,
+            peliculas.titulo AS pelicula_titulo,
+            salas.local,
+            salas.id AS sala_id,
+            salas.nombre AS sala_nombre,
+            funciones.inicio,
+            funciones.precio,
+            (salas.filas * salas.columnas) AS capacidad,
+            (
+                (salas.filas * salas.columnas) -
+                (
+                    SELECT COUNT(*)
+                    FROM entradas
+                    INNER JOIN compras
+                        ON entradas.compra_id = compras.id
+                    WHERE entradas.funcion_id = funciones.id
+                    AND entradas.estado != 'cancelada'
+                    AND compras.estado != 'cancelada'
+                )
+            ) AS butacas_libres
+        FROM funciones
+        INNER JOIN peliculas
+            ON funciones.pelicula_id = peliculas.id
+        INNER JOIN salas
+            ON funciones.sala_id = salas.id
+        WHERE funciones.id = %s
+        AND funciones.estado = 'activa'
+    """
+
+    cursor.execute(consulta, (funcion_id,))
+    funcion = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return funcion
+
+
 # GET /funciones/{id}/butacas
 def obtener_datos_butacas(funcion_id):
     respuesta = None
@@ -44,7 +91,7 @@ def obtener_datos_butacas(funcion_id):
 
     return respuesta
 
-
+ 
 # POST/funciones 
 def obtener_duracion_pelicula(pelicula_id):
     conn = conexion()

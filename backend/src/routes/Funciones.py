@@ -3,8 +3,20 @@ from backend.src.services.Funciones import obtener_butacas_funcion
 from backend.src.services.Funciones import dar_de_baja_funcion
 from backend.src.services.Funciones import actualizar_funcion
 from backend.src.services.Funciones import crear_funcion
+from backend.src.services.Funciones import obtener_detalle_funcion_servicio
 
 funciones_bp = Blueprint("funciones", __name__)
+
+#GET/funciones/{id}
+@funciones_bp.route("/funciones/<int:funcion_id>", methods=["GET"])
+def detalle_funcion(funcion_id):
+    respuesta = obtener_detalle_funcion_servicio(funcion_id)
+
+    if respuesta is None:
+        return jsonify({"error": "La función no existe"}), 404
+
+    return jsonify(respuesta), 200
+
 
 # GET /funciones/{id}/butacas
 @funciones_bp.route("/funciones/<int:funcion_id>/butacas", methods=["GET"])

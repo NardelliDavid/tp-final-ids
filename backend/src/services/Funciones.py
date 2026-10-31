@@ -8,6 +8,19 @@ from backend.src.repositories.Funciones import obtener_duracion_pelicula
 from backend.src.repositories.Funciones import existe_sala
 from backend.src.repositories.Funciones import existe_superposicion
 from backend.src.repositories.Funciones import crear_funcion as crear_funcion_db
+from backend.src.repositories.Funciones import obtener_detalle_funcion
+
+
+#GET/funciones/{id}
+def obtener_detalle_funcion_servicio(funcion_id):
+    respuesta = obtener_detalle_funcion(funcion_id)
+
+    if respuesta is not None:
+        respuesta["precio"] = float(respuesta["precio"])
+        respuesta["inicio"] = respuesta["inicio"].isoformat()
+
+    return respuesta
+
 
 # GET /funciones/{id}/butacas
 def obtener_butacas_funcion(funcion_id):
