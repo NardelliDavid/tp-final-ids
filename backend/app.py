@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from db.conexion_db import conexion
 from src.routes.peliculas import peliculas_bp
+from src.routes.dashboard import dashboard_bp
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ def index():
 
 
 app.register_blueprint(peliculas_bp)
+app.register_blueprint(dashboard_bp)
 
 
 
