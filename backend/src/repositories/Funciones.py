@@ -44,6 +44,49 @@ def obtener_datos_butacas(funcion_id):
 
     return respuesta
 
+# PATCH	/funciones/{id}
+def obtener_funcion_por_id(funcion_id):
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
+
+    consulta = """
+        SELECT id, pelicula_id, sala_id, inicio, fin, precio, estado
+        FROM funciones
+        WHERE id = %s
+    """
+
+    cursor.execute(consulta, (funcion_id,))
+    funcion = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return funcion
+
+
+def actualizar_funcion(funcion_id, sala_id, inicio, fin, precio):
+    conn = conexion()
+    cursor = conn.cursor()
+
+    consulta = """
+        UPDATE funciones
+        SET sala_id = %s,
+            inicio = %s,
+            fin = %s,
+            precio = %s
+        WHERE id = %s
+    """
+
+    cursor.execute(consulta, (sala_id, inicio, fin, precio, funcion_id))
+    conn.commit()
+
+    filas_modificadas = cursor.rowcount
+
+    cursor.close()
+    conn.close()
+
+    return filas_modificadas
+
 # DELETE/funciones/{id} 
 def existe_funcion(funcion_id):
     conn = conexion()
