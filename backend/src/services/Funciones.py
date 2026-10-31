@@ -1,4 +1,6 @@
 from backend.src.repositories.Funciones import obtener_datos_butacas
+from backend.src.repositories.Funciones import dar_de_baja_funcion as dar_de_baja_funcion_db
+from backend.src.repositories.Funciones import tiene_compras_activas
 
 # GET /funciones/{id}/butacas
 def obtener_butacas_funcion(funcion_id):
@@ -40,5 +42,23 @@ def obtener_butacas_funcion(funcion_id):
             "columnas": columnas,
             "butacas": butacas
         }
+
+    return respuesta
+
+# DELETE/funciones/{id} 
+def dar_de_baja_funcion(funcion_id):
+    respuesta = 204
+
+    datos = obtener_datos_butacas(funcion_id)
+
+    if datos is None:
+        respuesta = 404
+
+    else:
+        if tiene_compras_activas(funcion_id):
+            respuesta = 409
+
+        else:
+            dar_de_baja_funcion_db(funcion_id)
 
     return respuesta
