@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from backend.src.services.Funciones import obtener_butacas_funcion
 from backend.src.services.Funciones import dar_de_baja_funcion
 from backend.src.services.Funciones import actualizar_funcion
+from backend.src.services.Funciones import crear_funcion
 
 funciones_bp = Blueprint("funciones", __name__)
 
@@ -16,6 +17,22 @@ def obtener_butacas(funcion_id):
         return jsonify({"error": "La función no existe"}), 404
 
     return jsonify(respuesta), 200
+
+# POST/funciones 
+@funciones_bp.route("/funciones", methods=["POST"])
+def registrar_funcion():
+    datos = request.get_json(silent=True)
+
+    respuesta, codigo = crear_funcion(datos)
+
+    if codigo == 404:
+        return jsonify(respuesta), 404
+
+    if codigo == 422:
+        return jsonify(respuesta), 422
+
+    return jsonify(respuesta), 201
+
 
 # PATCH	/funciones/{id}
 @funciones_bp.route("/funciones/<int:funcion_id>", methods=["PATCH"])

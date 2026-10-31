@@ -44,6 +44,88 @@ def obtener_datos_butacas(funcion_id):
 
     return respuesta
 
+
+# POST/funciones 
+def obtener_duracion_pelicula(pelicula_id):
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
+
+    consulta = """
+        SELECT duracion_min
+        FROM peliculas
+        WHERE id = %s
+    """
+
+    cursor.execute(consulta, (pelicula_id,))
+    pelicula = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return pelicula
+
+
+def existe_sala(sala_id):
+    conn = conexion()
+    cursor = conn.cursor()
+
+    consulta = """
+        SELECT id
+        FROM salas
+        WHERE id = %s
+    """
+
+    cursor.execute(consulta, (sala_id,))
+    sala = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return sala is not None
+
+
+def existe_superposicion(sala_id, inicio, fin):
+    conn = conexion()
+    cursor = conn.cursor()
+
+    consulta = """
+        SELECT id
+        FROM funciones
+        WHERE sala_id = %s
+        AND estado = 'activa'
+        AND inicio < DATE_ADD(%s, INTERVAL 20 MINUTE)
+        AND DATE_ADD(fin, INTERVAL 20 MINUTE) > %s
+    """
+
+    cursor.execute(consulta, (sala_id, fin, inicio))
+    funcion = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return funcion is not None
+
+
+def crear_funcion(pelicula_id, sala_id, inicio, fin, precio):
+    conn = conexion()
+    cursor = conn.cursor()
+
+    consulta = """
+        INSERT INTO funciones (pelicula_id, sala_id, inicio, fin, precio)
+        VALUES (%s, %s, %s, %s, %s)
+    """
+
+    cursor.execute(consulta, (pelicula_id, sala_id, inicio, fin, precio))
+    conn.commit()
+
+    funcion_id = cursor.lastrowid
+
+    cursor.close()
+    conn.close()
+
+    return funcion_id
+
+
 # PATCH	/funciones/{id}
 def obtener_funcion_por_id(funcion_id):
     conn = conexion()

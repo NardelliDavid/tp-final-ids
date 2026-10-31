@@ -1,9 +1,13 @@
+from datetime import datetime, timedelta
 from backend.src.repositories.Funciones import obtener_datos_butacas
 from backend.src.repositories.Funciones import dar_de_baja_funcion as dar_de_baja_funcion_db
 from backend.src.repositories.Funciones import tiene_compras_activas
-from datetime import datetime, timedelta
 from backend.src.repositories.Funciones import obtener_funcion_por_id
 from backend.src.repositories.Funciones import actualizar_funcion as actualizar_funcion_db
+from backend.src.repositories.Funciones import obtener_duracion_pelicula
+from backend.src.repositories.Funciones import existe_sala
+from backend.src.repositories.Funciones import existe_superposicion
+from backend.src.repositories.Funciones import crear_funcion as crear_funcion_db
 
 # GET /funciones/{id}/butacas
 def obtener_butacas_funcion(funcion_id):
@@ -47,6 +51,103 @@ def obtener_butacas_funcion(funcion_id):
         }
 
     return respuesta
+
+# POST/funciones 
+def crear_funcion(datos):
+    respuesta = {}
+    codigo = 201
+
+    if not isinstance(datos, dict):
+        respuesta = {"error": "Los datos enviados no son válidos"}
+        codigo = 422
+
+    elif (
+        "pelicula_id" not in datos
+        or "sala_id" not in datos
+        or "inicio" not in datos
+        or "precio" not in datos
+    ):
+        respuesta = {"error": "Faltan datos obligatorios"}
+        codigo = 422
+
+    else:
+        pelicula_id = datos["pelicula_id"]
+        sala_id = datos["sala_id"]
+        inicio_texto = datos["inicio"]
+        precio = datos["precio"]
+
+        if (
+            not isinstance(pelicula_id, int)
+            or isinstance(pelicula_id, bool)
+            or pelicula_id <= 0
+            or not isinstance(sala_id, int)
+            or isinstance(sala_id, bool)
+            or sala_id <= 0
+            or not isinstance(inicio_texto, str)
+            or not isinstance(precio, (int, float))
+            or isinstance(precio, bool)
+            or precio <= 0
+        ):
+            respuesta = {"error": "Los datos enviados no son válidos"}
+            codigo = 422
+
+        else:
+            try:
+                inicio = datetime.fromisoformat(inicio_texto)
+            except ValueError:
+                inicio = None
+
+            if inicio is None:
+                respuesta = {"error": "El formato de fecha es incorrecto"}
+                codigo = 422
+
+            elif inicio <= datetime.now():
+                respuesta = {"error": "La función no puede programarse en el pasado"}
+                codigo = 422
+
+            else:
+                pelicula = obtener_duracion_pelicula(pelicula_id)
+
+                if pelicula is None:
+                    respuesta = {"error": "La película no existe"}
+                    codigo = 404
+
+                elif not existe_sala(sala_id):
+                    respuesta = {"error": "La sala no existe"}
+                    codigo = 404
+
+                else:
+                    duracion = pelicula["duracion_min"]
+                    fin = inicio + timedelta(minutes=duracion)
+
+                    if existe_superposicion(sala_id, inicio, fin):
+                        respuesta = {
+                            "error": "La sala tiene otra función en ese horario o no cumple los 20 minutos de limpieza"
+                        }
+                        codigo = 422
+
+                    else:
+                        funcion_id = crear_funcion_db(
+                            pelicula_id,
+                            sala_id,
+                            inicio,
+                            fin,
+                            precio
+                        )
+
+                        respuesta = {
+                            "mensaje": "Función creada correctamente",
+                            "funcion_id": funcion_id,
+                            "pelicula_id": pelicula_id,
+                            "sala_id": sala_id,
+                            "inicio": inicio.isoformat(),
+                            "fin": fin.isoformat(),
+                            "precio": precio
+                        }
+
+    return respuesta, codigo
+
+
 
 # PATCH	/funciones/{id}
 def actualizar_funcion(funcion_id, datos):
