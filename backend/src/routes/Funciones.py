@@ -4,8 +4,40 @@ from backend.src.services.Funciones import dar_de_baja_funcion
 from backend.src.services.Funciones import actualizar_funcion
 from backend.src.services.Funciones import crear_funcion
 from backend.src.services.Funciones import obtener_detalle_funcion_servicio
+from backend.src.services.Funciones import listar_funciones
+from backend.src.validators.Funciones import validar_filtros_funciones
 
 funciones_bp = Blueprint("funciones", __name__)
+
+# GET /funciones
+@funciones_bp.route("/funciones", methods=["GET"])
+def obtener_funciones():
+    filtros = {}
+
+    parametros = [
+        "pelicula_id",
+        "sala_id",
+        "fecha",
+        "desde",
+        "hasta"
+    ]
+
+    for parametro in parametros:
+        valor = request.args.get(parametro)
+
+        if valor is not None:
+            filtros[parametro] = valor
+
+    if not validar_filtros_funciones(filtros):
+        return jsonify({"error": "Los filtros enviados no son válidos"}), 422
+
+    incluir_pasadas = request.args.get(
+        "incluir_pasadas", "false"
+    ).lower() == "true"
+
+    respuesta = listar_funciones(filtros, incluir_pasadas)
+
+    return jsonify(respuesta), 200
 
 #GET/funciones/{id}
 @funciones_bp.route("/funciones/<int:funcion_id>", methods=["GET"])

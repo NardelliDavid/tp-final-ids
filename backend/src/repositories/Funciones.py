@@ -1,7 +1,80 @@
 from backend.db.conexion_db import conexion
 
+#GET/funciones/
+def obtener_funciones(filtros, incluir_pasadas):
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
 
- #GET/funciones/{id}
+    consulta = """
+        SELECT
+            funciones.id,
+            peliculas.id AS pelicula_id,
+            peliculas.titulo AS pelicula_titulo,
+            salas.local AS local_nombre,
+            salas.id AS sala_id,
+            salas.nombre AS sala_nombre,
+            funciones.inicio,
+            funciones.precio,
+            (
+                (salas.filas * salas.columnas) -
+                (
+                    SELECT COUNT(*)
+                    FROM entradas
+                    INNER JOIN compras
+                        ON entradas.compra_id = compras.id
+                    WHERE entradas.funcion_id = funciones.id
+                    AND entradas.estado != 'cancelada'
+                    AND compras.estado != 'cancelada'
+                )
+            ) AS butacas_libres
+        FROM funciones
+        INNER JOIN peliculas
+            ON funciones.pelicula_id = peliculas.id
+        INNER JOIN salas
+            ON funciones.sala_id = salas.id
+        WHERE 1 = 1
+    """
+
+    parametros = []
+
+    if not incluir_pasadas:
+        consulta += """
+            AND funciones.inicio > NOW()
+            AND funciones.estado = 'activa'
+        """
+
+    if "pelicula_id" in filtros:
+        consulta += " AND funciones.pelicula_id = %s"
+        parametros.append(filtros["pelicula_id"])
+
+    if "sala_id" in filtros:
+        consulta += " AND funciones.sala_id = %s"
+        parametros.append(filtros["sala_id"])
+
+    if "fecha" in filtros:
+        consulta += " AND DATE(funciones.inicio) = %s"
+        parametros.append(filtros["fecha"])
+
+    if "desde" in filtros:
+        consulta += " AND DATE(funciones.inicio) >= %s"
+        parametros.append(filtros["desde"])
+
+    if "hasta" in filtros:
+        consulta += " AND DATE(funciones.inicio) <= %s"
+        parametros.append(filtros["hasta"])
+
+    consulta += " ORDER BY funciones.inicio ASC"
+
+    cursor.execute(consulta, parametros)
+    funciones = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return funciones
+
+
+#GET/funciones/{id}
 def obtener_detalle_funcion(funcion_id):
     conn = conexion()
     cursor = conn.cursor(dictionary=True)

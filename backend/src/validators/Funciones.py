@@ -1,5 +1,68 @@
 from datetime import datetime
 
+#GET/funciones/
+def validar_filtros_funciones(filtros):
+    respuesta = True
+
+    campos_permitidos = [
+        "pelicula_id",
+        "sala_id",
+        "fecha",
+        "desde",
+        "hasta"
+    ]
+
+    for campo in filtros:
+        if campo not in campos_permitidos:
+            respuesta = False
+
+    if "pelicula_id" in filtros:
+        if not filtros["pelicula_id"].isdecimal():
+            respuesta = False
+        elif int(filtros["pelicula_id"]) <= 0:
+            respuesta = False
+
+    if "sala_id" in filtros:
+        if not filtros["sala_id"].isdecimal():
+            respuesta = False
+        elif int(filtros["sala_id"]) <= 0:
+            respuesta = False
+
+    if "fecha" in filtros:
+        try:
+            datetime.strptime(filtros["fecha"], "%Y-%m-%d")
+        except ValueError:
+            respuesta = False
+
+    if "desde" in filtros:
+        try:
+            datetime.strptime(filtros["desde"], "%Y-%m-%d")
+        except ValueError:
+            respuesta = False
+
+    if "hasta" in filtros:
+        try:
+            datetime.strptime(filtros["hasta"], "%Y-%m-%d")
+        except ValueError:
+            respuesta = False
+
+    if "desde" in filtros and "hasta" not in filtros:
+        respuesta = False
+
+    if "hasta" in filtros and "desde" not in filtros:
+        respuesta = False
+
+    if "fecha" in filtros and (
+        "desde" in filtros or "hasta" in filtros
+    ):
+        respuesta = False
+
+    if "desde" in filtros and "hasta" in filtros:
+        if filtros["desde"] > filtros["hasta"]:
+            respuesta = False
+
+    return respuesta
+
 # POST /funciones
 def validar_datos_funcion(datos):
     respuesta = True

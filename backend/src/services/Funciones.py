@@ -9,6 +9,38 @@ from backend.src.repositories.Funciones import existe_sala
 from backend.src.repositories.Funciones import existe_superposicion
 from backend.src.repositories.Funciones import crear_funcion as crear_funcion_db
 from backend.src.repositories.Funciones import obtener_detalle_funcion
+from backend.src.repositories.Funciones import obtener_funciones
+
+
+#GET/funciones/
+def listar_funciones(filtros, incluir_pasadas):
+    funciones = obtener_funciones(filtros, incluir_pasadas)
+
+    respuesta = []
+
+    for funcion in funciones:
+        elemento = {
+            "id": funcion["id"],
+            "pelicula": {
+                "id": funcion["pelicula_id"],
+                "titulo": funcion["pelicula_titulo"]
+            },
+            "local": {
+                "nombre": funcion["local_nombre"]
+            },
+            "sala": {
+                "id": funcion["sala_id"],
+                "nombre": funcion["sala_nombre"]
+            },
+            "inicio": funcion["inicio"].isoformat(),
+            "precio": float(funcion["precio"]),
+            "butacas_libres": funcion["butacas_libres"]
+        }
+
+        respuesta.append(elemento)
+
+    return respuesta
+
 
 
 #GET/funciones/{id}
