@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+from backend.db.conexion_db import conexion
+from backend.src.routes.perfil import obtener_usuario_autenticado
 from backend.src.services.Funciones import obtener_butacas_funcion
 from backend.src.services.Funciones import dar_de_baja_funcion
 from backend.src.services.Funciones import actualizar_funcion
@@ -8,6 +10,43 @@ from backend.src.services.Funciones import listar_funciones
 from backend.src.validators.Funciones import validar_filtros_funciones
 
 funciones_bp = Blueprint("funciones", __name__)
+
+# Verificar que el usuario sea administrador
+def verificar_administrador():
+    email_usuario = obtener_usuario_autenticado()
+
+    respuesta = None
+    codigo = 200
+
+    if email_usuario is None:
+        respuesta = "Debes iniciar sesión"
+        codigo = 401
+
+    else:
+        conn = conexion()
+        cursor = conn.cursor()
+
+        consulta = """
+            SELECT rol
+            FROM usuarios
+            WHERE email = %s
+        """
+
+        cursor.execute(consulta, (email_usuario,))
+        usuario = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if usuario is None:
+            respuesta = "Usuario no encontrado"
+            codigo = 401
+
+        elif usuario[0] != "administrador":
+            respuesta = "No tienes permisos para realizar esta operación"
+            codigo = 403
+
+    return respuesta, codigo
 
 # GET /funciones
 @funciones_bp.route("/funciones", methods=["GET"])
@@ -65,6 +104,11 @@ def obtener_butacas(funcion_id):
 # POST/funciones 
 @funciones_bp.route("/funciones", methods=["POST"])
 def registrar_funcion():
+    mensaje, codigo = verificar_administrador()
+
+    if codigo != 200:
+        return jsonify({"error": mensaje}), codigo
+
     datos = request.get_json(silent=True)
 
     respuesta, codigo = crear_funcion(datos)
@@ -81,6 +125,11 @@ def registrar_funcion():
 # PATCH	/funciones/{id}
 @funciones_bp.route("/funciones/<int:funcion_id>", methods=["PATCH"])
 def modificar_funcion(funcion_id):
+    
+    mensaje, codigo = verificar_administrador()
+
+    if codigo != 200:
+        return jsonify({"error": mensaje}), codigo
     datos = request.get_json(silent=True)
 
     respuesta, codigo = actualizar_funcion(funcion_id, datos)
@@ -100,6 +149,10 @@ def modificar_funcion(funcion_id):
 # DELETE/funciones/{id} 
 @funciones_bp.route("/funciones/<int:funcion_id>", methods=["DELETE"])
 def eliminar_funcion(funcion_id):
+    mensaje, codigo = verificar_administrador()
+
+    if codigo != 200:
+        return jsonify({"error": mensaje}), codigo
 
     respuesta = dar_de_baja_funcion(funcion_id)
 
