@@ -1,13 +1,17 @@
 from flask import Flask, jsonify
 from db.conexion_db import conexion
+
 from src.routes.validar import auth_bp
 from src.routes.perfil import perfil_bp
-
+from src.routes.peliculas import peliculas_bp
+from src.routes.dashboard import dashboard_bp
 
 app = Flask(__name__)
+
 app.register_blueprint(auth_bp)
 app.register_blueprint(perfil_bp)
-
+app.register_blueprint(peliculas_bp)
+app.register_blueprint(dashboard_bp)
 
 @app.route("/")
 def index():
