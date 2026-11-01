@@ -1,4 +1,4 @@
-from backend.db.conexion_db import conexion
+from db.conexion_db import conexion
 
 #GET/funciones/
 def obtener_funciones(filtros, incluir_pasadas):

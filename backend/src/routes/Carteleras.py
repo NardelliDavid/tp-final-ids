@@ -1,9 +1,9 @@
 
 from flask import Blueprint, jsonify, request
-from backend.src.services.Carteleras import listar_cartelera
-from backend.src.services.Carteleras import listar_locales
-from backend.src.validators.Carteleras import validar_filtros_cartelera
-from backend.src.validators.Carteleras import validar_consulta_locales
+from src.services.Cartelera import listar_cartelera
+from src.services.Cartelera import listar_locales
+from src.validators.Carteleras import validar_filtros_cartelera
+from src.validators.Carteleras import validar_consulta_locales
 
 carteleras_bp = Blueprint("carteleras", __name__)
 

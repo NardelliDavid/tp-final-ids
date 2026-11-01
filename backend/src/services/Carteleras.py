@@ -1,9 +1,8 @@
 
 from datetime import date
-from backend.src.repositories.Carteleras import obtener_cartelera
-from backend.src.repositories.Carteleras import obtener_generos_pelicula
-from backend.src.repositories.Carteleras import obtener_locales
-
+from src.repositories.Carteleras import obtener_cartelera
+from src.repositories.Carteleras import obtener_generos_pelicula
+from src.repositories.Carteleras import obtener_locales
 
 # GET /cartelera
 def listar_cartelera(fecha, local, genero):
