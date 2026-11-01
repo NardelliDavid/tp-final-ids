@@ -5,8 +5,8 @@ from src.routes.validar import auth_bp
 from src.routes.perfil import perfil_bp
 from src.routes.peliculas import peliculas_bp
 from src.routes.dashboard import dashboard_bp
-from backend.src.routes.Funciones import funciones_bp
-from backend.src.routes.Carteleras import carteleras_bp
+from src.routes.Funciones import funciones_bp
+from src.routes.Carteleras import carteleras_bp
 
 app = Flask(__name__)
 
