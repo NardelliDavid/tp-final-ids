@@ -1,16 +1,15 @@
 from datetime import datetime, timedelta
-from backend.src.repositories.Funciones import obtener_datos_butacas
-from backend.src.repositories.Funciones import dar_de_baja_funcion as dar_de_baja_funcion_db
-from backend.src.repositories.Funciones import tiene_compras_activas
-from backend.src.repositories.Funciones import obtener_funcion_por_id
-from backend.src.repositories.Funciones import actualizar_funcion as actualizar_funcion_db
-from backend.src.repositories.Funciones import obtener_duracion_pelicula
-from backend.src.repositories.Funciones import existe_sala
-from backend.src.repositories.Funciones import existe_superposicion
-from backend.src.repositories.Funciones import crear_funcion as crear_funcion_db
-from backend.src.repositories.Funciones import obtener_detalle_funcion
-from backend.src.repositories.Funciones import obtener_funciones
-
+from src.repositories.Funciones import obtener_datos_butacas
+from src.repositories.Funciones import dar_de_baja_funcion as dar_de_baja_funcion_db
+from src.repositories.Funciones import tiene_compras_activas
+from src.repositories.Funciones import obtener_funcion_por_id
+from src.repositories.Funciones import actualizar_funcion as actualizar_funcion_db
+from src.repositories.Funciones import obtener_duracion_pelicula
+from src.repositories.Funciones import existe_sala
+from src.repositories.Funciones import existe_superposicion
+from src.repositories.Funciones import crear_funcion as crear_funcion_db
+from src.repositories.Funciones import obtener_detalle_funcion
+from src.repositories.Funciones import obtener_funciones
 
 #GET/funciones/
 def listar_funciones(filtros, incluir_pasadas):
