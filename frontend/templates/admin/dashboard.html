@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CINE PARADISO BACKOFFICE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/dashboard.css') }}">
+</head>
+<body>
+    <!--Menú izquierdo de busqueda-->
+    <aside class="sidebar">
+        <h1>CINE PARADISO</h1> 
+        <h5>BACKOFFICE</h5>
+
+        {% include 'components/sidebar.html' %}
+    </aside>
+    <!--Contenido principal-->
+    <main class="main-content">
+        <header class="main-header">
+            <h2>Resumen general</h2>
+            {% include 'components/header.html' %}
+        </header>
+        <!--Filtros de fechas-->
+        <section>
+            <article class="filters-card">
+                <form>
+                    <div class= "filter-group">
+                        <label for="fecha_desde">Desde:</label>
+                        <input type="date" id="fecha_desde" name="desde" value="">
+                    </div> 
+
+
+                    <div class= "filter-group">
+                    <label for="fecha_hasta">Hasta:</label>
+                    <input type="date" id="fecha_hasta" name="hasta" value="">
+                    </div>
+
+                    <div class= "filter-group">
+                    <label for="local">Local:</label>
+                    <select id="local" name="local">
+                        <option value="todos">Todos</option>
+                        <option value="1">Local 1</option>
+                        <option value="2">Local 2</option>
+                        <option value="3">Local3</option>
+                    </select>
+                    </div>
+
+                    <div>
+                    {% include 'components/buttons.html' %}
+                    </div>
+                </form>
+            </article>
+        </section>
+        
+        
+        <section class="sales-row">
+            <article class="sales-card">
+                <h3>VENTAS TOTALES</h3>
+                <p class="sales-value">$10.295.000</p>
+                <h4>Entradas y servicios</h4>
+            </article>
+
+        
+            <article class="sales-card">         
+                <h3>ENTRADAS VENDIDAS</h3>
+                <p class="sales-value">1240</p>
+                <h4>Sin contar cancelaciones</h4>
+            </article>
+        
+
+        
+            <article class="sales-card">
+                <h3>OCUPACIÓN PROMEDIO</h3>
+                <p class="sales-value">64%</p>
+                <h4>Vendidas/capacidad</h4>
+            </article>
+        </section>
+    </div>
+        <!--Sección de graficos-->
+        <section>
+            <article>
+                <h3>Ventas por género</h3>
+                <h4>Entradas vendidas</h4>
+            </article>
+        </section>
+
+        <section>
+            <article>
+                <h3>Ocupación por función</h3>
+            </article>
+        </section>
+    </main>
+
+</body>
+</html>

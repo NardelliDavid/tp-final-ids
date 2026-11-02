@@ -1,0 +1,31 @@
+@import 'sidebar.css';
+@import 'header.css';
+@import 'buttons.css';
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+
+/*Estilos base, body, titulos y main-content*/
+
+h1 {
+    color: #f2bb2ef5;
+    font-size: 22px;
+    margin-bottom: 0;
+}
+
+h1, h2, h3 {
+    font-family: 'Archivo Black', sans-serif;
+}
+
+/*Define estilos de estructura: barra lateral por un lado y contenido principal por otro*/
+body {
+    display: flex;
+    margin: 0;
+    background-color: #121824;
+}
+
+.main-content {
+    flex: 1;
+    background-color: #0f141d;
+    padding: 24px 48px;
+    min-height: 100vh;
+    box-sizing: border-box;
+} 

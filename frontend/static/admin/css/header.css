@@ -1,0 +1,30 @@
+/*Estilos del encabezado */
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.main-header h2 {
+    color: #ffffff;
+}
+
+.header {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.header a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.header a:hover {
+    color: #f8fafc
+}
+
+

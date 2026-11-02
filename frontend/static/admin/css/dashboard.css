@@ -1,0 +1,90 @@
+/*Estilos de los filtros de fechas y locales*/
+
+
+.filters-card {
+    background-color: #182232;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+
+.filters-card form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    background-color: #2d3748;
+    border: 1px solid #2d3748;
+    border-radius: 6px;
+    padding: 2px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+}
+
+.filters-card label {
+    color: #a0aec0;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.filters-card input[type="date"],
+.filters-card select {
+    background-color: transparent;
+    color: #a0aec0;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+}
+
+/*Estilos de las tarjetas de ventas*/
+
+.sales-row { 
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.sales-card {
+    background-color: #182232;
+    border-radius: 8px;
+    padding: 20px 24px;
+    flex: 1;
+    min-width: 220px;
+    box-sizing: border-box;
+}
+
+.sales-card h3 {
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.sales-card .sales-value {
+    color: #f2bb2ef5;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.8rem;
+    margin: 0 0 8px 0;
+}
+
+.sales-card h4 {
+    color: #a0aec0;
+    font-size: 0.75rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+

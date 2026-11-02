@@ -6,6 +6,9 @@ app.secret_key = "clave-local-desarrollo"
 
 BACKEND_URL = "http://127.0.0.1:5000"
 
+@app.route('/admin/dashboard')
+def dashboard():
+    return render_template('admin/dashboard.html')
 
 @app.route("/")
 def index():
