@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from db.conexion_db import conexion
+from src.routes.servicios import servicios_bp
 
 from src.routes.validar import auth_bp
 from src.routes.perfil import perfil_bp
@@ -9,6 +10,7 @@ from src.routes.Funciones import funciones_bp
 from src.routes.Carteleras import carteleras_bp
 
 app = Flask(__name__)
+app.register_blueprint(servicios_bp)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(perfil_bp)
