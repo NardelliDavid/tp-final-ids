@@ -3,7 +3,6 @@ from flask import Blueprint, jsonify, request
 from mysql.connector import Error
 from src.routes.perfil import obtener_usuario_autenticado
 from src.repositories.compras_repository import (obtener_funcion,butaca_esta_ocupada,registrar_compra,)
-from flask import current_app
 from src.repositories.compras_repository import obtener_detalle_compra, cancelar_compra
 
 compras_bp = Blueprint("compras", __name__)
@@ -164,7 +163,6 @@ def obtener_compra_endpoint(id_compra):
         return jsonify(respuesta), codigo
 
     except Exception:
-        current_app.logger.exception("Error al obtener la compra")
         return jsonify({"mensaje": "Error interno del servidor"}), 500
 
 @compras_bp.route("/compras/<int:id_compra>/cancelacion", methods=["POST"])
@@ -183,5 +181,5 @@ def cancelar_compra_endpoint(id_compra):
         return jsonify(respuesta), codigo
 
     except Exception:
-        current_app.logger.exception("Error al cancelar la compra")
+
         return jsonify({"mensaje": "Error interno del servidor"}), 500
