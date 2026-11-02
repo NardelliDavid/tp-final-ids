@@ -15,10 +15,25 @@ INSERT INTO salas (local, nombre, filas, columnas) VALUES
 ('Cine Paradiso Sur',    'Sala 2', 7, 10);
 
 INSERT INTO generos (nombre) VALUES
-('Acción'), ('Aventura'), ('Animación'), ('Comedia'), ('Crimen'),
-('Documental'), ('Drama'), ('Familia'), ('Fantasía'), ('Historia'),
-('Terror'), ('Música'), ('Misterio'), ('Romance'), ('Ciencia ficción'),
-('Suspenso'), ('Bélica'), ('Western');
+('Acción'),
+('Aventura'),
+('Animación'),
+('Comedia'),
+('Crimen'),
+('Documental'),
+('Drama'),
+('Familia'),
+('Fantasía'),
+('Historia'),
+('Terror'),
+('Música'),
+('Misterio'),
+('Romance'),
+('Ciencia ficción'),
+('Película de TV'),
+('Suspenso'),
+('Bélica'),
+('Western');
 
 
 INSERT INTO peliculas (tmdb_id, titulo, sinopsis, poster_url, duracion_min, clasificacion) VALUES

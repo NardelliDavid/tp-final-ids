@@ -80,9 +80,33 @@ def agregar_pelicula_tmdb():
             respuesta_api.raise_for_status() # revisa el código de estado HTTP de la respuesta
             datos = respuesta_api.json()
 
+            # Diccionario con equivalencias de generos en ingles, se agrega esto porque
+            # la api a veces retorna algunos generos en ingles en vez de en español
+            equivalencias_generos = {
+                "Action": "Acción",
+                "Adventure": "Aventura",
+                "Animation": "Animación",
+                "Comedy": "Comedia",
+                "Crime": "Crimen",
+                "Documentary": "Documental",
+                "Family": "Familia",
+                "Fantasy": "Fantasía",
+                "History": "Historia",
+                "Horror": "Terror",
+                "Music": "Música",
+                "Mystery": "Misterio",
+                "Science Fiction": "Ciencia ficción",
+                "TV Movie": "Película de TV",
+                "Thriller": "Suspenso",
+                "War": "Bélica",
+                "Suspense": "Suspenso",
+            }
+
+            # Agrega los generos de la pelicula al arreglo
             nombres_generos = []
             for genero in datos["genres"]:
-                nombres_generos.append(genero["name"])
+                nombre = equivalencias_generos.get(genero["name"], genero["name"])
+                nombres_generos.append(nombre)
 
             pelicula = {
                 "tmdb_id": datos["id"],
@@ -92,7 +116,7 @@ def agregar_pelicula_tmdb():
                 "poster": f"https://image.tmdb.org/t/p/w500{datos['poster_path']}",
                 "generos": nombres_generos,
             }
-            print(pelicula)
+            
             resultado = agregar_pelicula_db(pelicula)
 
             respuesta = jsonify(resultado)
