@@ -2,8 +2,22 @@ from flask import Flask, jsonify
 from db.conexion_db import conexion
 from src.routes.servicios import servicios_bp
 
+from src.routes.validar import auth_bp
+from src.routes.perfil import perfil_bp
+from src.routes.peliculas import peliculas_bp
+from src.routes.dashboard import dashboard_bp
+from src.routes.Funciones import funciones_bp
+from src.routes.Carteleras import carteleras_bp
+
 app = Flask(__name__)
 app.register_blueprint(servicios_bp)
+
+app.register_blueprint(auth_bp)
+app.register_blueprint(perfil_bp)
+app.register_blueprint(peliculas_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(funciones_bp)
+app.register_blueprint(carteleras_bp)
 
 @app.route("/")
 def index():
@@ -24,4 +38,4 @@ def index():
     return resultado
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(debug=True)
