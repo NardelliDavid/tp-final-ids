@@ -1,0 +1,42 @@
+/*Estilos de la barra lateral */
+
+.sidebar {
+    width: 260px;
+    background-color: #182232;
+    height: 100vh;
+    padding: 16px 16px;
+    box-sizing: border-box;
+}
+
+.sidebar h5{
+    color: #a0aec0;
+    font-size: 11px;
+    margin-top: 4px;
+    margin-bottom: 25px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-menu .opcion-menu {
+    display: block;
+    padding: 12px 16px;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 9999px;
+    font-size: 12px;
+}
+
+.sidebar-menu .opcion-menu:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-menu .opcion-menu.active {
+    background-color: #2d3748;
+    color: #f2bb2ef5;
+    font-weight: 600;
+}
+
+

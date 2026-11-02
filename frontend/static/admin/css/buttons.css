@@ -1,0 +1,20 @@
+/*Estilos de botones generales*/
+
+
+.date-filters-form button,
+.btn-aplicar {
+    background-color: #f2bb2ef5;
+    color: #0f141d;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+
+.date-filters-form button:hover,
+.btn-aplicar:hover {
+    background-color: #d9a526;
+
+}
