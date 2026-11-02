@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
 from db.conexion_db import conexion
 from src.routes.perfil import obtener_usuario_autenticado
-from src.services.funciones import obtener_butacas_funcion
-from src.services.funciones import dar_de_baja_funcion
-from src.services.funciones import actualizar_funcion
-from src.services.funciones import crear_funcion
-from src.services.funciones import obtener_detalle_funcion_servicio
-from src.services.funciones import listar_funciones
+from src.services.Funciones import obtener_butacas_funcion
+from src.services.Funciones import dar_de_baja_funcion
+from src.services.Funciones import actualizar_funcion
+from src.services.Funciones import crear_funcion
+from src.services.Funciones import obtener_detalle_funcion_servicio
+from src.services.Funciones import listar_funciones
 from src.validators.Funciones import validar_filtros_funciones
 
 funciones_bp = Blueprint("funciones", __name__)

@@ -1,7 +1,6 @@
-
 from flask import Blueprint, jsonify, request
-from src.services.Cartelera import listar_cartelera
-from src.services.Cartelera import listar_locales
+from src.services.Carteleras import listar_cartelera
+from src.services.Carteleras import listar_locales
 from src.validators.Carteleras import validar_filtros_cartelera
 from src.validators.Carteleras import validar_consulta_locales
 
