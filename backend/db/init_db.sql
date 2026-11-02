@@ -14,11 +14,11 @@ CREATE TABLE salas (
     id        INT AUTO_INCREMENT PRIMARY KEY,
     local     VARCHAR(100) NOT NULL,
     nombre    VARCHAR(50) NOT NULL,
-    filas     SMALLINT UNSIGNED NOT NULL,
-    columnas  SMALLINT UNSIGNED NOT NULL,
-    CHECK (filas > 0),
-    CHECK (columnas > 0),
-    UNIQUE KEY uq_sala_local (local, nombre)
+    filas     INT NOT NULL,
+    columnas  INT NOT NULL,
+    UNIQUE KEY uq_sala_local (local, nombre),
+    CHECK (filas BETWEEN 1 AND 26),
+    CHECK (columnas > 0)
 );
 
 CREATE TABLE generos (
