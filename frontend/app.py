@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 
-
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
+app.secret_key = "clave-local-desarrollo"
 
 @app.route('/')
 def dashboard():

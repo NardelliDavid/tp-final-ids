@@ -21,39 +21,7 @@
             <h2>Resumen general</h2>
             {% include 'components/header.html' %}
         </header>
-        <!--Filtros de fechas-->
-        <section>
-            <article class="filters-card">
-                <form>
-                    <div class= "filter-group">
-                        <label for="fecha_desde">Desde:</label>
-                        <input type="date" id="fecha_desde" name="desde" value="">
-                    </div> 
-
-
-                    <div class= "filter-group">
-                    <label for="fecha_hasta">Hasta:</label>
-                    <input type="date" id="fecha_hasta" name="hasta" value="">
-                    </div>
-
-                    <div class= "filter-group">
-                    <label for="local">Local:</label>
-                    <select id="local" name="local">
-                        <option value="todos">Todos</option>
-                        <option value="1">Local 1</option>
-                        <option value="2">Local 2</option>
-                        <option value="3">Local3</option>
-                    </select>
-                    </div>
-
-                    <div>
-                    {% include 'components/buttons.html' %}
-                    </div>
-                </form>
-            </article>
-        </section>
-        
-        
+ 
         <section class="sales-row">
             <article class="sales-card">
                 <h3>VENTAS TOTALES</h3>
@@ -76,20 +44,71 @@
                 <h4>Vendidas/capacidad</h4>
             </article>
         </section>
-    </div>
+    
         <!--Sección de graficos-->
-        <section>
-            <article>
+        <section class="charts-row">
+            <article class="chart-card">
                 <h3>Ventas por género</h3>
                 <h4>Entradas vendidas</h4>
+
+                <div class="genre-list">
+                    <div class="genre-item">
+                        <span class="genre-name">Drama</span>
+                        <div class="genre-bar-container"><div class="genre-bar" style="width: 100%;"></div></div>
+                        <span class="genre-value">520</span>
+                    </div>
+                    <div class="genre-item">
+                        <span class="genre-name">Ciencia ficción</span>
+                        <div class="genre-bar-container"><div class="genre-bar" style="width: 82%;"></div></div>
+                        <span class="genre-value">430</span>
+                    </div>
+                    <div class="genre-item">
+                        <span class="genre-name">Aventura</span>
+                        <div class="genre-bar-container"><div class="genre-bar" style="width: 73%;"></div></div>
+                        <span class="genre-value">380</span>
+                    </div>
+                    <div class="genre-item">
+                        <span class="genre-name">Romance</span>
+                        <div class="genre-bar-container"><div class="genre-bar" style="width: 58%;"></div></div>
+                        <span class="genre-value">300</span>
+                    </div>
+                    <div class="genre-item">
+                        <span class="genre-name">Comedia</span>
+                        <div class="genre-bar-container"><div class="genre-bar" style="width: 27%;"></div></div>
+                        <span class="genre-value">140</span>
+                    </div>
+                </div>
+        </article>
+
+        <article class="chart-card">
+            <h3>Ocupación por función</h3>
+            
+            <div class="occupancy-list">
+                <div class="occupancy-item">
+                    <div class="occupancy-info">
+                        <span class="movie-title">Interstellar</span>
+                        <span class="movie-details">Norte - Sala 1 - 28/10 21:00</span>
+                        </div>
+                        <span class="occupancy-percentage">91 %</span>
+                    </div>
+                    <div class="occupancy-item">
+                        <div class="occupancy-info">
+                            <span class="movie-title">Avatar</span>
+                            <span class="movie-details">Sur - Sala 1 - 29/10 19:00</span>
+                        </div>
+                        <span class="occupancy-percentage">82 %</span>
+                    </div>
+                    <div class="occupancy-item">
+                        <div class="occupancy-info">
+                            <span class="movie-title">Titanic</span>
+                            <span class="movie-details">Sur - Sala 1 - 30/10 18:00</span>
+                        </div>
+                        <span class="occupancy-percentage">68 %</span>
+                    </div>
+                </div>
             </article>
         </section>
 
-        <section>
-            <article>
-                <h3>Ocupación por función</h3>
-            </article>
-        </section>
     </main>
 
 </body>
