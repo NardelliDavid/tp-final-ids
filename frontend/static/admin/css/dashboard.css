@@ -9,8 +9,8 @@
 
 .sales-card {
     background-color: #182232;
-    border-radius: 8px;
-    padding: 20px 24px;
+    border-radius: 12px;
+    padding: 32px 24px;
     flex: 1;
     min-width: 220px;
     box-sizing: border-box;
@@ -18,26 +18,20 @@
 
 .sales-card h3 {
     color: #ffffff;
-    font-size: 0.75rem;
+    font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.5px;
     margin-top: 0;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .sales-card .sales-value {
     color: #f2bb2ef5;
     font-family: 'Archivo Black', sans-serif;
-    font-size: 1.8rem;
-    margin: 0 0 8px 0;
-}
-
-.sales-card h4 {
-    color: #a0aec0;
-    font-size: 0.75rem;
-    font-weight: 400;
+    font-size: 27px;
     margin: 0;
 }
+
 
 /*Estilos de tarjeta de grafico y ocupación*/
 .charts-row {
@@ -52,7 +46,7 @@
     background-color: #16202c; 
     border: 1px solid #1f2c3d;
     border-radius: 10px;
-    padding: 20px;
+    padding: 28px 24px;
     color: #ffffff;
     box-sizing: border-box;
     width: 100%;
@@ -61,53 +55,46 @@
 }
 
 .chart-card h3 {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     color: #ffffff;
-    margin-bottom: 2px; /* Más cerca del subtítulo */
+    margin-top: 0;
+    margin-bottom: 4px; /* Más cerca del subtítulo */
 }
 
 .chart-card h4 {
-    font-size: 12px;
+    font-size: 15px;
     color: #8c9bae;
-    margin-bottom: 14px; /* Espacio más corto antes de arrancar con las barras */
+    margin-top: 5px;
+    margin-bottom: 20px; /* Espacio más corto antes de arrancar con las barras */
     font-weight: normal;
 }
 
+.genre-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 5px;
+}
 
 .genre-item {
     display: grid;
-    grid-template-columns: 110px 1fr 35px; /* Distribuye horizontalmente los elementos */
+    grid-template-columns: 85px 1fr;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 9px;
+    gap: 16px;
 }
 
-.genre-name {
+.genre-item p {
     font-size: 13px;
-    color: #d1d5db;
-}
-
-.genre-bar-container {
-    width: 100%;
-    background-color: #1f2c3d;
-    height: 16px;
-    border-radius: 8px;
-    overflow: hidden;
+    margin: 0;
 }
 
 .genre-bar {
     height: 100%;
     background-color: #f59e0b;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
-.genre-value {
-    font-size: 12px;
-    color: #9ca3af;
-    text-align:right;
-    font-weight: 500;
-}
 
 /*Estilos para los items de ocupación por funcion*/
 
@@ -116,36 +103,20 @@
     flex-direction: column;
     justify-content: space-between;
     flex-grow: 1;
+    padding: 6px 0;
 }
 
 .occupancy-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #1f2c3d; 
-    padding-bottom: 12px;
+    padding: 8px 0;
 }
 
-.occupancy-item:last-child {
-    border-bottom: none; 
-    padding-bottom: 0;
-}
-
-.occupancy-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.movie-title {
+.occupancy-item p {
     font-size: 13px;
     font-weight: 600;
-    color: #ffffff;
-}
-
-.movie-details {
-    font-size: 11px;
-    color: #8c9bae;
+    margin: 0;
 }
 
 .occupancy-percentage {

@@ -5,11 +5,7 @@
 
 /*Estilos base, body, titulos y main-content*/
 
-h1 {
-    color: #f2bb2ef5;
-    font-size: 22px;
-    margin-bottom: 0;
-}
+
 
 h1, h2, h3 {
     font-family: 'Archivo Black', sans-serif;
