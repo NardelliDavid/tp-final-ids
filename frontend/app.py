@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import requests
 
-app = Flask(__name__, template_folder=".")
+app = Flask(__name__)
 app.secret_key = "clave-local-desarrollo"
 
 BACKEND_URL = "http://127.0.0.1:5000"
@@ -49,7 +49,7 @@ def login():
         except requests.RequestException:
             mensaje = "No se pudo conectar con el backend."
 
-    return render_template("index.html", mensaje=mensaje)
+    return render_template("admin/validar_qr.html", mensaje=mensaje)
 
 
 @app.route("/admin/qr", methods=["GET", "POST"])
@@ -102,7 +102,7 @@ def admin_qr():
             error = "No se pudo conectar con el backend."
 
     return render_template(
-        "index.html",
+        "admin/validar_qr.html",
         resultado=resultado,
         error=error
     )
