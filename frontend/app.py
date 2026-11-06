@@ -66,14 +66,20 @@ def admin_qr():
     error = None
 
     if request.method == "POST":
+        try:
+            funcion_id = int(request.form.get("funcion_id", ""))
+        except ValueError:
+            funcion_id = 0
+
         datos = {
-            "codigo_qr": request.form.get("qr_token", "").strip(),
+            "token": request.form.get("qr_token", "").strip(),
+            "funcion_id": funcion_id,
         }
 
         try:
 
             respuesta = requests.post(
-                f"{BACKEND_URL}/qr/validar",
+                f"{BACKEND_URL}/qr/validaciones",
                 json=datos,
                 headers={
                     "Authorization": f"Bearer {session['token']}"
