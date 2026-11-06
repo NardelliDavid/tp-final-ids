@@ -88,37 +88,12 @@
 <body>
 
     <div class="contenedor">
-
-        {% if not session.get("token") %}
-
-            <h1>Panel administrativo</h1>
-            <h2>Iniciar sesión</h2>
-
-            <form method="POST" action="{{ url_for('login') }}">
-
-                <label>Email:</label>
-                <input type="" name="email" required>
-
-                <label>Contraseña:</label>
-                <input type="password" name="password" required>
-
-                <button type="submit">Ingresar</button>
-
-            </form>
-
-            {% if mensaje %}
-                <div class="mensaje">
-                    {{ mensaje }}
-                </div>
-            {% endif %}
-
-        {% else %}
-
+        
             <h1>Administración de entradas</h1>
             <h2>Validación de QR</h2>
 
             <form method="POST" action="{{ url_for('admin_qr') }}">
-                
+
                 <label>Número de función:</label>
                 <input type="number" name="funcion_id" min="1" required>
 

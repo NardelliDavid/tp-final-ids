@@ -49,7 +49,7 @@ def login():
         except requests.RequestException:
             mensaje = "No se pudo conectar con el backend."
 
-    return render_template("admin/validar_qr.html", mensaje=mensaje)
+    return render_template("admin/login.html", mensaje=mensaje)
 
 
 @app.route("/admin/qr", methods=["GET", "POST"])
