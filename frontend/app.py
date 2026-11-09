@@ -1,26 +1,46 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import requests
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__)
 app.secret_key = "clave-local-desarrollo"
 
 BACKEND_URL = "http://127.0.0.1:5000"
 
+"Acá comienzan las rutas de las pantallas que heredan del base.html"
 @app.route('/admin/dashboard')
 def dashboard():
     return render_template('admin/dashboard.html')
 
-@app.route('/ventas_estadisticas')
+
+@app.route('/admin/peliculas')
+def peliculas():
+    return render_template('admin/peliculas.html')
+
+
+@app.route('/admin/funciones')
+def funciones():
+    return render_template('admin/funciones.html')
+
+
+@app.route('/admin/horarios')
+def horarios():
+    return render_template('admin/horarios.html')
+
+
+@app.route('/admin/ventas_estadisticas')
 def ventas_estadisticas():
     return render_template('admin/ventas_estadisticas.html')
 
-@app.route('/servicios')
+
+@app.route('/admin/servicios')
 def servicios():
     return render_template('admin/servicios.html')
 
-@app.route('/horarios')
-def horarios():
-    return render_template('admin/horarios.html')
+
+@app.route('/admin/validacion_qr')
+def validacion_qr():
+    return "Pantalla de validacion_qr en desarrollo"
+
 
 @app.route("/")
 def index():
@@ -61,7 +81,7 @@ def login():
         except requests.RequestException:
             mensaje = "No se pudo conectar con el backend."
 
-    return render_template("index.html", mensaje=mensaje)
+    return render_template("admin/login.html", mensaje=mensaje)
 
 
 @app.route("/admin/qr", methods=["GET", "POST"])
@@ -78,14 +98,20 @@ def admin_qr():
     error = None
 
     if request.method == "POST":
+        try:
+            funcion_id = int(request.form.get("funcion_id", ""))
+        except ValueError:
+            funcion_id = 0
+
         datos = {
-            "codigo_qr": request.form.get("qr_token", "").strip(),
+            "token": request.form.get("qr_token", "").strip(),
+            "funcion_id": funcion_id,
         }
 
         try:
 
             respuesta = requests.post(
-                f"{BACKEND_URL}/qr/validar",
+                f"{BACKEND_URL}/qr/validaciones",
                 json=datos,
                 headers={
                     "Authorization": f"Bearer {session['token']}"
@@ -114,7 +140,7 @@ def admin_qr():
             error = "No se pudo conectar con el backend."
 
     return render_template(
-        "index.html",
+        "admin/validar_qr.html",
         resultado=resultado,
         error=error
     )
@@ -128,3 +154,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
+

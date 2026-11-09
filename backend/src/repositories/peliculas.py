@@ -73,7 +73,7 @@ def agregar_pelicula_db(pelicula):
                     (id_pelicula, id_genero)
                 )
 
-                respuesta = {"OK": "Película y géneros insertados correctamente"}, 200
+                respuesta = {"OK": "Pelicula y generos insertados correctamente"}, 200
 
         conn.commit()
 
@@ -106,13 +106,40 @@ def eliminar_pelicula_db(id_pelicula):
         cursor.execute(consulta_sql, (id_pelicula,))
         conn.commit()
 
-        respuesta = {"OK": "Película eliminada correctamente"}, 200
+        respuesta = {"OK": "Pelicula eliminada correctamente"}, 200
 
     except Exception as e:
         if conn:
             conn.rollback()
 
         respuesta = {"Error": str(e)}, 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    return respuesta
+
+
+def es_admin(email):
+    try:
+        conn = conexion()
+        cursor = conn.cursor()
+        respuesta = False
+
+        consulta_sql = """
+            SELECT rol FROM usuarios WHERE email = %s AND rol = 'administrador';
+        """
+
+        cursor.execute(consulta_sql, (email,))
+
+        if cursor.fetchone():
+            respuesta = True
+
+    except Exception as e:
+        respuesta = False
 
     finally:
         if cursor:
