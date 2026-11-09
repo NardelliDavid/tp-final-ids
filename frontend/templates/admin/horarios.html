@@ -1,0 +1,131 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Horarios y programación - Cine Paradiso{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/horarios.css') }}">
+{% endblock %}
+
+{% block subtitle %}Horarios y programación{% endblock %}
+
+{% block page_content %}
+
+<!-- Información de la semana -->
+<section class="horarios-semana">
+    <h3>Semana del 26 de octubre de 2026 | Local: Todos</h3>
+</section>
+
+<!-- Calendario de programación -->
+<section class="horarios-calendario">
+
+    <!-- Lunes -->
+    <article class="horarios-dia">
+        <h3>Lunes</h3>
+
+        <div class="horarios-funciones">
+
+            <div class="horario-vacio"></div>
+
+            <div class="horario-tarjeta">
+                <h4>Titanic</h4>
+                <p>20:00 Sala 2</p>
+            </div>
+
+            <div class="horario-tarjeta">
+                <h4>Matrix</h4>
+                <p>22:00 Sala 3</p>
+            </div>
+
+        </div>
+    </article>
+
+    <!-- Martes -->
+    <article class="horarios-dia">
+        <h3>Martes</h3>
+
+        <div class="horarios-funciones">
+
+            <div class="horario-tarjeta">
+                <h4>Titanic</h4>
+                <p>18:00 Sala 1</p>
+            </div>
+
+            <div class="horario-tarjeta">
+                <h4>Matrix</h4>
+                <p>20:00 Sala 2</p>
+            </div>
+
+            <div class="horario-tarjeta">
+                <h4>Interstellar</h4>
+                <p>22:00 Sala 3</p>
+            </div>
+
+        </div>
+    </article>
+
+    <!-- Miércoles -->
+    <article class="horarios-dia">
+        <h3>Miércoles</h3>
+
+        <div class="horarios-funciones">
+
+            <div class="horario-tarjeta">
+                <h4>Matrix</h4>
+                <p>18:00 Sala 1</p>
+            </div>
+
+            <div class="horario-tarjeta">
+                <h4>Interstellar</h4>
+                <p>20:00 Sala 2</p>
+            </div>
+
+            <div class="horario-vacio"></div>
+
+        </div>
+    </article>
+
+    <!-- Jueves -->
+    <article class="horarios-dia">
+        <h3>Jueves</h3>
+
+        <div class="horarios-funciones">
+
+            <div class="horario-tarjeta">
+                <h4>Interstellar</h4>
+                <p>18:00 Sala 1</p>
+            </div>
+
+            <div class="horario-vacio"></div>
+
+            <div class="horario-tarjeta">
+                <h4>Matrix</h4>
+                <p>22:00 Sala 3</p>
+            </div>
+
+        </div>
+    </article>
+
+    <!-- Viernes -->
+    <article class="horarios-dia">
+        <h3>Viernes</h3>
+
+        <div class="horarios-funciones">
+
+            <div class="horario-vacio"></div>
+
+            <div class="horario-tarjeta">
+                <h4>Matrix</h4>
+                <p>20:00 Sala 2</p>
+            </div>
+
+            <div class="horario-tarjeta">
+                <h4>Interstellar</h4>
+                <p>22:00 Sala 3</p>
+            </div>
+
+        </div>
+    </article>
+
+</section>
+
+{% endblock %}

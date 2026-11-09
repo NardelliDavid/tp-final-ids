@@ -11,30 +11,35 @@ BACKEND_URL = "http://127.0.0.1:5000"
 def dashboard():
     return render_template('admin/dashboard.html')
 
+
 @app.route('/admin/peliculas')
 def peliculas():
     return render_template('admin/peliculas.html')
+
 
 @app.route('/admin/funciones')
 def funciones():
     return render_template('admin/funciones.html')
 
+
 @app.route('/admin/horarios')
 def horarios():
-    return "Pantalla de horarios en desarrollo"
+    return render_template('admin/horarios.html')
+
 
 @app.route('/admin/ventas_estadisticas')
 def ventas_estadisticas():
-    return "Pantalla de ventas_estadisticas en desarrollo"
+    return render_template('admin/ventas_estadisticas.html')
+
 
 @app.route('/admin/servicios')
 def servicios():
-    return "Pantalla de servicios en desarrollo"
+    return render_template('admin/servicios.html')
+
 
 @app.route('/admin/validacion_qr')
 def validacion_qr():
     return "Pantalla de validacion_qr en desarrollo"
-
 
 
 @app.route("/")
