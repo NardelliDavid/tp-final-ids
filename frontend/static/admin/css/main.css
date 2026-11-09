@@ -20,22 +20,15 @@ body {
     padding: 24px 48px;
     box-sizing: border-box;
 } 
-
+/*Responsive: Para pantallas menores a 1024px (Celulares y tablets) */
 @media (max-width: 1024px) {
     body {
-        flex-direction: column; /* Apila el sidebar arriba y el contenido abajo */
+        flex-direction: column; /* Apila el sidebar arriba(menú desplegable) y el contenido abajo */
         min-height: 100vh;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-        min-height: auto;
     }
 
     .main-content {
         width: 100%;
         padding: 16px;
-        flex: 1;
     }
 }

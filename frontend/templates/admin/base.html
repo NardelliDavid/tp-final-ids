@@ -10,11 +10,9 @@
     {% block extra_css %}{% endblock%}
 </head>
 <body>
+    <button class="menu-toggle" id="menuToggle">&#9776; Menú</button>
     <!--Menú izquierdo de busqueda-->
-    <aside class="sidebar">
-        <h1>CINE PARADISO</h1> 
-        <h5>BACKOFFICE</h5>
-
+    <aside class="sidebar" id="sidebarContainer">
         {% include 'components/sidebar.html' %}
     </aside>
         <!--Contenido principal-->
@@ -29,6 +27,18 @@
         </section>
 
     </main>
-   
+    <!--Scrip de js para hacer el menú desplegable-->
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+
+        if (menuToggle && sidebarContainer) {
+            menuToggle.addEventListener('click', () => {
+                sidebarContainer.classList.toggle('show');
+            });
+        }
+    </script>    
+    <!--Bloque opcional para añadir scripts de js en las demás pantallas-->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
