@@ -4,20 +4,33 @@
     width: 260px;
     background-color: #182232;
     height: 100vh;
-    padding: 16px 16px;
+    padding: 32px 16px;
     box-sizing: border-box;
+}
+
+.sidebar h1 {
+    font-size: 20px;
+    color: #f2bb2ef5;
+    margin: 0;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .sidebar h5{
     color: #a0aec0;
-    font-size: 11px;
+    font-size: 12px;
     margin-top: 4px;
-    margin-bottom: 25px;
+    margin-bottom: 40px;
+    padding-left: 16px;
+    padding-right:16px;
 }
 
 .sidebar-menu {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .sidebar-menu .opcion-menu {
@@ -26,7 +39,7 @@
     color: #ffffff;
     text-decoration: none;
     border-radius: 9999px;
-    font-size: 12px;
+    font-size: 15px;
 }
 
 .sidebar-menu .opcion-menu:hover {
@@ -38,5 +51,4 @@
     color: #f2bb2ef5;
     font-weight: 600;
 }
-
 
