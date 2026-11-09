@@ -1,9 +1,31 @@
-<nav class="sidebar-menu">    <!--Botones del menu-->
-    <a href="/dashboard" class="opcion-menu active">Dashboard</a><!--Luego para agregar el estado de activo <a href="/dashboard" class="opcion-menu {% if request.path == '/dashboard' %}active{% endif %}">Dashboard</a>-->
-    <a href="/peliculas" class="opcion-menu">Películas</a>
-    <a href="/funciones" class="opcion-menu">Funciones</a>
-    <a href="/horarios" class="opcion-menu">Horarios</a>
-    <a href="/ventas_estadisticas" class="opcion-menu">Ventas y estadísticas</a>
-    <a href="/servicios" class="opcion-menu">Servicios</a>
-    <a href="/validacion_qr" class="opcion-menu">Validación QR</a>
+<nav class="sidebar-menu">
+    <!-- Botones del menú -->
+
+    <a href="/dashboard" class="opcion-menu {% if request.path == '/dashboard' or request.path == '/admin/dashboard' %}active{% endif %}">
+        Dashboard
+    </a>
+
+    <a href="/peliculas" class="opcion-menu {% if request.path == '/peliculas' %}active{% endif %}">
+        Películas
+    </a>
+
+    <a href="/funciones" class="opcion-menu {% if request.path == '/funciones' %}active{% endif %}">
+        Funciones
+    </a>
+
+    <a href="/horarios" class="opcion-menu {% if request.path == '/horarios' %}active{% endif %}">
+        Horarios
+    </a>
+
+    <a href="/ventas_estadisticas" class="opcion-menu {% if request.path == '/ventas_estadisticas' %}active{% endif %}">
+        Ventas y estadísticas
+    </a>
+
+    <a href="/servicios" class="opcion-menu {% if request.path == '/servicios' %}active{% endif %}">
+        Servicios
+    </a>
+
+    <a href="/validacion_qr" class="opcion-menu {% if request.path == '/validacion_qr' %}active{% endif %}">
+        Validación QR
+    </a>
 </nav>

@@ -10,6 +10,18 @@ BACKEND_URL = "http://127.0.0.1:5000"
 def dashboard():
     return render_template('admin/dashboard.html')
 
+@app.route('/ventas_estadisticas')
+def ventas_estadisticas():
+    return render_template('admin/ventas_estadisticas.html')
+
+@app.route('/servicios')
+def servicios():
+    return render_template('admin/servicios.html')
+
+@app.route('/horarios')
+def horarios():
+    return render_template('admin/horarios.html')
+
 @app.route("/")
 def index():
     return redirect(url_for("login"))
