@@ -1,0 +1,120 @@
+/* Contenedor para alinear el botón de importación a la derecha*/
+.import {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end; 
+}
+
+.button-import {
+    background-color: #f2bb2ef5; 
+    color: #000000;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 6px;
+
+    display: inline-block;
+    text-decoration: none;
+}
+
+.button-import:hover {
+    background-color: #f59e0b;
+}
+
+/* --- fe busqueda y filtros--- */
+.filter-container {
+    background-color: #182232; 
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 15px;
+}
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.search-card, .genre-card, .restriction-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+} 
+
+.search-card label, .genre-card label, .restriction-card label {
+    color: #a0aec0;
+    font-size: 15px;
+    font-weight: 500; 
+}
+
+.search-card input, .genre-card select, .restriction-card select {
+    background-color: #0f172a; 
+    color: #ffffff;
+    font-size: 13px;
+    padding: 8px 12px;
+    border: 1px solid #0c1625;
+    border-radius: 6px;
+    width: 100%;
+}
+
+/*Estilos de las tarjetas de peliculas*/
+.movies-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; 
+}
+/*Estilos para cada tarjeta*/
+.movie-card {
+    background-color: #182232; 
+    border-radius: 8px;        
+    padding: 14px 20px;             
+    display: flex;             
+    align-items: center;    
+    gap: 20px;            
+}
+
+.movie-card img {
+    width: 55px;
+    height: 70px;
+    background-color: #3a4b64; 
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.movie-card, .search-card, .genre-card, .restriction-card {
+    box-sizing: border-box;
+}
+/* Columna de información de la pelicula (Título arriba, subtítulo abajo) */
+.movie-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+.movie-info h3 {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* El botón Editar hacia el extremo derecho */
+.btn-delete {
+    margin-left: auto;
+
+    background-color: #f2bb2ef5;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+}
+
+.btn-delete:hover {
+    background-color: #f59e0b;
+}

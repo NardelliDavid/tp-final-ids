@@ -1,95 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CINE PARADISO BACKOFFICE</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/dashboard.css') }}">
-</head>
-<body>
-    <!--Menú izquierdo de busqueda-->
-    <aside class="sidebar">
-        <h1>CINE PARADISO</h1> 
-        <h5>BACKOFFICE</h5>
+{% extends "admin/base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/dashboard.css') }}">{% endblock %}
+{% block subtitle %}Resumen general{% endblock %}
 
-        {% include 'components/sidebar.html' %}
-    </aside>
-    <!--Contenido principal-->
-    <main class="main-content">
-        <header class="main-header">
-            <h2>Resumen general</h2>
-            {% include 'components/header.html' %}
-        </header>
- 
-        <section class="sales-row">
-            <article class="sales-card">
-                <h3>VENTAS TOTALES</h3>
-                <p class="sales-value">$10.295.000</p>
-            </article>
+{% block page_content %}
+    <section class="sales-row">
+        <article class="sales-card">
+            <h3>VENTAS TOTALES</h3>
+            <p class="sales-value">$10.295.000</p>
+        </article>
 
         
-            <article class="sales-card">         
-                <h3>ENTRADAS VENDIDAS</h3>
-                <p class="sales-value">1240</p>
-            </article>
+        <article class="sales-card">         
+            <h3>ENTRADAS VENDIDAS</h3>
+            <p class="sales-value">1240</p>
+        </article>
         
-
-        
-            <article class="sales-card">
-                <h3>OCUPACIÓN PROMEDIO</h3>
-                <p class="sales-value">64%</p>
-            </article>
-        </section>
+        <article class="sales-card">
+            <h3>OCUPACIÓN PROMEDIO</h3>
+            <p class="sales-value">64%</p>
+        </article>
+    </section>
     
-        <!--Sección de graficos-->
-        <section class="charts-row">
-            <article class="chart-card">
-                <h3>Ventas por género</h3>
-                <h4>Comparación de entradas vendidas</h4>
+    <!--Sección de graficos-->
+    <section class="charts-row">
+        <article class="chart-card">
+            <h3>Ventas por género</h3>
+            <h4>Comparación de entradas vendidas</h4>
 
-                <div class="genre-list">
-                    <div class="genre-item">
-                        <p>Acción</p>
-                        <div class="genre-bar" style="width: 90%;"></div>
-                    </div>
-                    <div class="genre-item">
-                        <p>Drama</p>
-                        <div class="genre-bar" style="width: 70%;"></div>
-                    </div>
-                    <div class="genre-item">
-                        <p>Romance</p>
-                        <div class="genre-bar" style="width: 50%;"></div>
-                    </div>
-                    <div class="genre-item">
-                        <p>Terror</p>
-                        <div class="genre-bar" style="width: 30%;"></div>
-                    </div>
+            <div class="genre-list">
+                <div class="genre-item">
+                    <p>Acción</p>
+                    <div class="genre-bar" style="width: 90%;"></div>
                 </div>
-            </article>
-
-            <article class="chart-card">
-                <h3>Ocupación por función</h3>
-                <div class="occupancy-list">
-                    <div class="occupancy-item">
-                        <p>Interstellar</p>
-                        <span class="occupancy-percentage">91 %</span>
-                    </div>
-
-                    <div class="occupancy-item">
-                        <p>Avatar</p>
-                        <span class="occupancy-percentage">82 %</span>
-                    </div>
-
-                    <div class="occupancy-item">
-                        <p>Titanic</p>   
-                        <span class="occupancy-percentage">68 %</span>
-                    </div>
+                <div class="genre-item">
+                    <p>Drama</p>
+                    <div class="genre-bar" style="width: 70%;"></div>
                 </div>
-            </article>
-        </section>
+                <div class="genre-item">
+                    <p>Romance</p>
+                    <div class="genre-bar" style="width: 50%;"></div>
+                </div>
+                <div class="genre-item">
+                    <p>Terror</p>
+                    <div class="genre-bar" style="width: 30%;"></div>
+                </div>
+            </div>
+        </article>
 
-    </main>
+        <article class="chart-card">
+            <h3>Ocupación por función</h3>
+            <div class="occupancy-list">
+                <div class="occupancy-item">
+                    <p>Interstellar</p>
+                    <span class="occupancy-percentage">91 %</span>
+                </div>
 
-</body>
-</html>
+                <div class="occupancy-item">
+                    <p>Avatar</p>
+                    <span class="occupancy-percentage">82 %</span>
+                </div>
+
+                <div class="occupancy-item">
+                    <p>Titanic</p>   
+                    <span class="occupancy-percentage">68 %</span>
+                </div>
+            </div>
+        </article>
+    </section>
+{% endblock %}

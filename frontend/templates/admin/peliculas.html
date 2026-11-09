@@ -1,0 +1,70 @@
+{% extends "admin/base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/peliculas.css') }}">{% endblock %}
+{% block title %}CINE PARADISO PELICULAS{% endblock %}
+{% block subtitle%}Gestión de películas{% endblock %}
+
+{% block page_content %}
+    <div class="import">
+        <a href="" class="button-import">+ Importar TMDB</a>
+    </div>
+    <!--Contenedor de busqueda y filtros-->
+    <section class="filter-container">
+        <div class="filter-row">
+            <!--Búsqueda por pelicula(Título)-->
+            <div class="search-card">
+                <label for="search-input">Buscar película</label>
+                <input type="text" id="search-input" placeholder="Escribir título">
+            </div>
+
+            <!--Filtrar por género-->
+            <div class="genre-card">
+                <label for="genre-select">Género</label>
+                <select id="genre-select">
+                    <option value="">Todos los géneros</option>
+                    <option value="accion">Acción</option>
+                    <option value="drama">Drama</option>
+                    <option value="romance">Romance</option>
+                    <option value="terror">Terror</option>
+                </select>
+            </div>
+
+            <!--Filtrar por restricción-->
+            <div class="restriction-card">
+                <label for="restriction-select">Restricción</label>
+                <select id="restriction-select">
+                    <option value="">Todas</option>
+                    <option value="atp">ATP</option>
+                    <option value="+10">+10</option>
+                    <option value="+15">+15</option>
+                    <option value="+18">+18</option>
+                </select>
+            </div>
+
+        </div>
+    </section>
+
+<!--Definimos las tarjetas de peliculas-->
+    <section class="movies-row">
+        <article class="movie-card">
+            <img src="" alt=""> 
+            <div class="movie-info">
+                <h3>Interstellar</h3>
+            </div>  
+            <button class="btn-delete">Eliminar</button>
+        </article>
+        <article class="movie-card">
+            <img src="" alt="">
+            <div class="movie-info">
+                <h3>Titanic</h3>
+            </div>
+            <button class="btn-delete">Eliminar</button>
+        </article>
+        <article class="movie-card">
+            <img src="" alt="">
+            <div class="movie-info">
+                <h3>Matrix</h3>
+            </div>
+            <button class="btn-delete">Eliminar</button>
+        </article>
+    </section>
+{% endblock %}

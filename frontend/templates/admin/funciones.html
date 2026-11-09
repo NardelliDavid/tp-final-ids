@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/funciones.css') }}">{% endblock %}
+{% block title %}CINE PARADISO FUNCIONES{% endblock %}
+{% block subtitle %}Gestión de funciones{% endblock %}
+
+{% block page_content %}
+    <div class="button">
+        <a href="" class="btn-function">+ Nueva función</a>
+    </div>
+    <!-- Sección de tarjetas de funciones -->
+    <section class="function-list">
+        <div class="function-card">
+            <div class="function">
+                <h3>Interstellar</h3>
+            </div>
+            <div class="actions">
+                <a href="" class="btn-delete">Eliminar</a>
+                <a href="" class="btn-edit">Editar</a>
+            </div>
+        </div>
+        <div class="function-card">
+            <div class="function">
+                <h3>Titanic</h3>
+            </div>
+            <div class="actions">
+                <a href="" class="btn-delete">Eliminar</a>
+                <a href="" class="btn-edit">Editar</a>
+            </div> 
+        </div>
+        <div class="function-card">
+            <div class="function">
+                <h3>Matrix</h3>
+            </div>
+            <div class="actions">
+                <a href="" class="btn-delete">Eliminar</a>
+                <a href="" class="btn-edit">Editar</a>
+            </div>    
+        </div>
+    </section>
+
+
+
+{% endblock%}
