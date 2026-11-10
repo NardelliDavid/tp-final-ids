@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Servicios adicionales - Cine Paradiso{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/servicios.css') }}">
+{% endblock %}
+
+{% block subtitle %}Servicios adicionales{% endblock %}
+
+{% block page_content %}
+
+<!-- Botón para agregar un servicio -->
+<section class="servicios-acciones">
+    <button class="boton-nuevo-servicio" type="button">
+        + Nuevo servicio
+    </button>
+</section>
+
+<!-- Lista de servicios -->
+<section class="servicios-lista">
+
+    <!-- Pochoclos -->
+    <article class="servicio-tarjeta">
+
+        <div class="servicio-informacion">
+            <h3>Pochoclos</h3>
+            <p>Precio: $ 5.000 | Disponible para todas las salas</p>
+        </div>
+
+        <div class="servicio-botones">
+            <button class="boton-editar" type="button">
+                Editar
+            </button>
+
+            <button class="boton-eliminar" type="button">
+                Eliminar
+            </button>
+        </div>
+
+    </article>
+
+    <!-- Bebida -->
+    <article class="servicio-tarjeta">
+
+        <div class="servicio-informacion">
+            <h3>Bebida</h3>
+            <p>Precio: $ 3.000 | Disponible para todas las salas</p>
+        </div>
+
+        <div class="servicio-botones">
+            <button class="boton-editar" type="button">
+                Editar
+            </button>
+
+            <button class="boton-eliminar" type="button">
+                Eliminar
+            </button>
+        </div>
+
+    </article>
+
+    <!-- Estacionamiento -->
+    <article class="servicio-tarjeta">
+
+        <div class="servicio-informacion">
+            <h3>Estacionamiento</h3>
+            <p>Precio: $ 4.000 | Disponible para todas las salas</p>
+        </div>
+
+        <div class="servicio-botones">
+            <button class="boton-editar" type="button">
+                Editar
+            </button>
+
+            <button class="boton-eliminar" type="button">
+                Eliminar
+            </button>
+        </div>
+
+    </article>
+
+</section>
+
+{% endblock %}

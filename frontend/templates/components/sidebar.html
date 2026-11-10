@@ -1,10 +1,36 @@
-<nav class="sidebar-menu">    <!--Botones del menu-->
-    <a href="/dashboard" class="opcion-menu active">Dashboard</a><!--Luego para agregar el estado de activo <a href="/dashboard" class="opcion-menu {% if request.path == '/dashboard' %}active{% endif %}">Dashboard</a>-->
-    <a href="/peliculas" class="opcion-menu">Películas</a>
-    <a href="/funciones" class="opcion-menu">Funciones</a>
-    <a href="/horarios" class="opcion-menu">Horarios</a>
-    <a href="/ventas_estadisticas" class="opcion-menu">Ventas y estadísticas</a>
-    <a href="/servicios" class="opcion-menu">Servicios</a>
-    <a href="/usuarios" class="opcion-menu">Usuarios</a>
-    <a href="/validacion_qr" class="opcion-menu">Validación QR</a>
+<div>
+    <h1>CINE PARADISO</h1>
+    <h5>BACKOFFICE</h5>
+</div>
+
+<nav class="sidebar-menu">
+    <!-- Botones del menú -->
+
+    <a href="{{ url_for('dashboard') }}" class="opcion-menu {% if request.path == url_for('dashboard') %}active{% endif %}">
+        Dashboard
+    </a>
+
+    <a href="{{ url_for('peliculas') }}" class="opcion-menu {% if request.path == url_for('peliculas') %}active{% endif %}">
+        Películas
+    </a>
+
+    <a href="{{ url_for('funciones') }}" class="opcion-menu {% if request.path == url_for('funciones') %}active{% endif %}">
+        Funciones
+    </a>
+
+    <a href="{{ url_for('horarios') }}" class="opcion-menu {% if request.path == url_for('horarios') %}active{% endif %}">
+        Horarios
+    </a>
+
+    <a href="{{ url_for('ventas_estadisticas') }}" class="opcion-menu {% if request.path == url_for('ventas_estadisticas') %}active{% endif %}">
+        Ventas y estadísticas
+    </a>
+
+    <a href="{{ url_for('servicios') }}" class="opcion-menu {% if request.path == url_for('servicios') %}active{% endif %}">
+        Servicios
+    </a>
+
+    <a href="{{ url_for('admin_qr') }}" class="opcion-menu {% if request.path == url_for('admin_qr') %}active{% endif %}">
+        Validación QR
+    </a>
 </nav>

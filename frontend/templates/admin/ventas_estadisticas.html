@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Ventas y Estadísticas - Cine Paradiso{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/ventas_estadisticas.css') }}">
+{% endblock %}
+
+{% block subtitle %}Ventas y estadísticas{% endblock %}
+
+{% block page_content %}
+
+<!-- Tarjetas superiores -->
+<section class="ventas-resumen">
+
+    <article class="ventas-tarjeta">
+        <h3>Ventas acumuladas</h3>
+        <p class="ventas-valor">$ 1.500.900</p>
+    </article>
+
+    <article class="ventas-tarjeta">
+        <h3>Cancelaciones</h3>
+        <p class="ventas-valor">38 compras</p>
+    </article>
+
+    <article class="ventas-tarjeta">
+        <h3>Servicios vendidos</h3>
+        <p class="ventas-valor">6.905 unidades</p>
+    </article>
+
+</section>
+
+<!-- Gráfico e indicadores -->
+<section class="ventas-contenido">
+
+    <!-- Gráfico de ventas -->
+    <article class="ventas-grafico">
+
+        <h3>Ventas por franja horaria</h3>
+
+        <div class="franjas">
+
+            <div class="franja">
+                <span>14-17</span>
+                <div class="barra barra-1"></div>
+            </div>
+
+            <div class="franja">
+                <span>17-20</span>
+                <div class="barra barra-2"></div>
+            </div>
+
+            <div class="franja">
+                <span>20-23</span>
+                <div class="barra barra-3"></div>
+            </div>
+
+        </div>
+
+    </article>
+
+    <!-- Indicadores -->
+    <article class="ventas-indicadores">
+
+        <h3>Indicadores</h3>
+
+        <div class="indicadores-lista">
+            <p>Ocupación por película</p>
+            <p>Ventas por género</p>
+            <p>Cancelaciones</p>
+        </div>
+
+        <button class="boton-reportes" type="button">
+            Ver reportes
+        </button>
+
+    </article>
+
+</section>
+
+{% endblock %}
