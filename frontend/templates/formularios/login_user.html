@@ -91,7 +91,6 @@
 
         {% if not session.get("token") %}
 
-            <h1>Panel administrativo</h1>
             <h2>Iniciar sesión</h2>
 
             <form method="POST" action="{{ url_for('login') }}">
@@ -114,35 +113,12 @@
 
         {% else %}
 
-            <h1>Administración de entradas</h1>
-            <h2>Validación de QR</h2>
-
-            <form method="POST" action="{{ url_for('admin_qr') }}">
-
-                <label>Token del QR:</label>
-                <input type="text" name="qr_token" required>
-                
-                <button type="submit">Validar entrada</button>
-
-            </form>
-
-            {% if resultado %}
-                <div class="resultado">
-                    <strong>Respuesta:</strong>
-                    <pre>{{ resultado | tojson(indent=2) }}</pre>
-                </div>
-            {% endif %}
-
-            {% if error %}
-                <div class="mensaje">
-                    {{ error }}
-                </div>
-            {% endif %}
+            <h2>Usted ya ha iniciado sesion.</h2>
 
             <a class="logout" href="{{ url_for('logout') }}">
                 Cerrar sesión
             </a>
-
+           
         {% endif %}
 
     </div>
