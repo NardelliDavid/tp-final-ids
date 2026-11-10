@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import requests
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 app.secret_key = "clave-local-desarrollo"
 
 BACKEND_URL = "http://127.0.0.1:5000"
@@ -9,6 +9,10 @@ BACKEND_URL = "http://127.0.0.1:5000"
 "Acá comienzan las rutas de las pantallas que heredan del base.html"
 @app.route('/admin/dashboard')
 def dashboard():
+    if not session.get("token"):
+        return redirect(url_for("login_admin"))
+    if session.get("usuario", {}).get("rol") != "administrador":
+        return redirect(url_for("login_admin"))
     return render_template('admin/dashboard.html')
 
 
@@ -44,11 +48,51 @@ def validacion_qr():
 
 @app.route("/")
 def index():
-    return redirect(url_for("login"))
+    return redirect(url_for("login_admin"))
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    mensaje = None
+
+    if request.method == "POST":
+        datos = {
+            "email": request.form.get("email", "").strip(),
+            "password": request.form.get("password", "")
+        }
+
+        try:
+            respuesta = requests.post(
+                f"{BACKEND_URL}/auth/login",
+                json=datos,
+                timeout=5
+            )
+
+            if respuesta.ok:
+                resultado = respuesta.json()
+                usuario = resultado.get("usuario", {})
+
+                if usuario.get("rol") != "cliente":
+                    mensaje = "Acceso restringido a clientes."
+                else:
+                    session["token"] = resultado["token"]
+                    session["usuario"] = usuario
+                    return redirect(url_for("login"))
+
+            else:
+                mensaje = "No se pudo iniciar sesión. Revisá tus datos."
+
+        except requests.RequestException:
+            mensaje = "No se pudo conectar con el backend."
+
+    return render_template("formularios/login_user.html", mensaje=mensaje)
+
+
+
+@app.route("/login_admin", methods=["GET", "POST"])
+def login_admin():
+    if session.get("token"):
+        return redirect(url_for("login"))
     mensaje = None
 
     if request.method == "POST":
@@ -73,16 +117,25 @@ def login():
                 else:
                     session["token"] = resultado["token"]
                     session["usuario"] = usuario
-                    return redirect(url_for("admin_qr"))
+                    session["rol"] = usuario.get("rol")
+                    return redirect(url_for("dashboard"))
 
             else:
                 mensaje = "No se pudo iniciar sesión. Revisá tus datos."
 
         except requests.RequestException:
             mensaje = "No se pudo conectar con el backend."
+    return render_template("formularios/login_admin.html", mensaje=mensaje)
 
-    return render_template("admin/login.html", mensaje=mensaje)
 
+@app.route("/admin/formulario_validar_qr", methods=["GET", "POST"])
+def formulario_validar_qr():
+    if not session.get("token"):
+        return redirect(url_for("login_admin"))
+    if session.get("usuario", {}).get("rol") != "administrador":
+        return redirect(url_for("login"))
+    return render_template("formularios/validar_qr.html")
+    
 
 @app.route("/admin/qr", methods=["GET", "POST"])
 def admin_qr():

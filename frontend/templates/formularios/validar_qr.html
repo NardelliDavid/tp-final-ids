@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login administrador</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f3f5;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .contenedor {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #222;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #2457d6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1742ad;
+        }
+
+        .mensaje {
+            background: #ffe5e5;
+            color: #a00000;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .resultado {
+            background: #e5f5e9;
+            color: #176b32;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .logout {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2457d6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        {% if session.get("token") %}
+
+            <h1>Administración de entradas</h1>
+            <h2>Validación de QR</h2>
+
+            <form method="POST" action="{{ url_for('admin_qr') }}">
+
+                <label>Token del QR:</label>
+                <input type="text" name="qr_token" required>
+                
+                <button type="submit">Validar entrada</button>
+
+            </form>
+
+            {% if resultado %}
+                <div class="resultado">
+                    <strong>Respuesta:</strong>
+                    <pre>{{ resultado | tojson(indent=2) }}</pre>
+                </div>
+            {% endif %}
+
+            {% if error %}
+                <div class="mensaje">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <a class="logout" href="{{ url_for('logout') }}">
+                Cerrar sesión
+            </a>
+
+            {% if mensaje %}
+                <div class="mensaje">
+                    {{ mensaje }}
+                </div>
+            {% endif %}
+        
+        {% else %}
+                <h2>Debe iniciar sesion como admistrador.</h2>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
