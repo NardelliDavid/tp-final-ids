@@ -110,7 +110,11 @@
 }
 
 
-/* Adaptación a pantallas pequeñas */
+/* ========================================
+   ADAPTACIÓN RESPONSIVE
+   ======================================== */
+
+/* Tablets */
 
 @media (max-width: 1100px) {
 
@@ -119,12 +123,61 @@
         gap: 16px;
     }
 
+    .horarios-dia {
+        min-height: 350px;
+    }
+
 }
+
+/* Celulares */
 
 @media (max-width: 650px) {
 
+    .horarios-semana {
+        padding: 20px;
+        min-height: auto;
+    }
+
+    .horarios-semana h3 {
+        font-size: 14px;
+    }
+
     .horarios-calendario {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .horarios-dia {
+        padding: 20px;
+        min-height: auto;
+    }
+
+    .horarios-dia > h3 {
+        font-size: 15px;
+        margin-bottom: 16px;
+    }
+
+    .horarios-funciones {
+        grid-template-rows: none;
+        grid-auto-rows: minmax(76px, auto);
+        gap: 12px;
+    }
+
+    .horario-tarjeta {
+        padding: 16px;
+        min-height: 76px;
+    }
+
+    .horario-tarjeta h4 {
+        font-size: 13px;
+    }
+
+    .horario-tarjeta p {
+        font-size: 12px;
+    }
+
+    .horario-vacio {
+        min-height: 76px;
     }
 
 }
