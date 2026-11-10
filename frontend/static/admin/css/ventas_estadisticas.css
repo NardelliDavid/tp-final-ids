@@ -153,14 +153,86 @@
     margin-top: 100px;
 }
 
-/* Adaptación a pantallas más pequeñas */
+/* ========================================
+   ADAPTACIÓN RESPONSIVE
+   ======================================== */
+
+/* Tablets */
 
 @media (max-width: 900px) {
+
     .ventas-resumen {
         grid-template-columns: 1fr;
     }
 
     .ventas-contenido {
         grid-template-columns: 1fr;
+    }
+
+    .ventas-grafico,
+    .ventas-indicadores {
+        height: auto;
+        min-height: 275px;
+    }
+}
+
+/* Celulares */
+
+@media (max-width: 600px) {
+
+    .ventas-resumen {
+        gap: 16px;
+    }
+
+    .ventas-tarjeta {
+        padding: 20px;
+        min-height: auto;
+    }
+
+    .ventas-contenido {
+        gap: 16px;
+    }
+
+    .ventas-grafico,
+    .ventas-indicadores {
+        padding: 20px;
+        height: auto;
+        min-height: 0;
+    }
+
+    .ventas-grafico h3,
+    .ventas-indicadores h3 {
+        font-size: 18px;
+    }
+
+    .franjas {
+        gap: 24px;
+        margin-top: 24px;
+    }
+
+    .franja {
+        gap: 12px;
+    }
+
+    .franja span {
+        width: 65px;
+        font-size: 12px;
+    }
+
+    .barra {
+        max-width: 100%;
+    }
+
+    .indicadores-lista {
+        gap: 24px;
+    }
+
+    .boton-reportes {
+        width: 100%;
+        text-align: center;
+    }
+
+    .ventas-footer {
+        margin-top: 40px;
     }
 }
