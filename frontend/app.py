@@ -6,9 +6,41 @@ app.secret_key = "clave-local-desarrollo"
 
 BACKEND_URL = "http://127.0.0.1:5000"
 
+"Acá comienzan las rutas de las pantallas que heredan del base.html"
 @app.route('/admin/dashboard')
 def dashboard():
     return render_template('admin/dashboard.html')
+
+
+@app.route('/admin/peliculas')
+def peliculas():
+    return render_template('admin/peliculas.html')
+
+
+@app.route('/admin/funciones')
+def funciones():
+    return render_template('admin/funciones.html')
+
+
+@app.route('/admin/horarios')
+def horarios():
+    return render_template('admin/horarios.html')
+
+
+@app.route('/admin/ventas_estadisticas')
+def ventas_estadisticas():
+    return render_template('admin/ventas_estadisticas.html')
+
+
+@app.route('/admin/servicios')
+def servicios():
+    return render_template('admin/servicios.html')
+
+
+@app.route('/admin/validacion_qr')
+def validacion_qr():
+    return "Pantalla de validacion_qr en desarrollo"
+
 
 @app.route("/")
 def index():
@@ -122,3 +154,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
+

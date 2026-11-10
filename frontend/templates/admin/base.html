@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CINE PARADISO BACKOFFICE{% endblock %}</title>
+    <!--Estilo general que se repite en todo el backoffice-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/main.css') }}">
+    <!--Bloque para estilos propios de cada pantalla-->
+    {% block extra_css %}{% endblock%}
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">&#9776; Menú</button>
+    <!--Menú izquierdo de busqueda-->
+    <aside class="sidebar" id="sidebarContainer">
+        {% include 'components/sidebar.html' %}
+    </aside>
+        <!--Contenido principal-->
+    <main class="main-content">
+        <header class="main-header">
+            <h2>{% block subtitle %}Resumen general{% endblock %}</h2>
+            {% include 'components/header.html' %}
+        </header>
+
+        <section>
+            {% block page_content %}{% endblock %}
+        </section>
+
+    </main>
+    <!--Scrip de js para hacer el menú desplegable-->
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+
+        if (menuToggle && sidebarContainer) {
+            menuToggle.addEventListener('click', () => {
+                sidebarContainer.classList.toggle('show');
+            });
+        }
+    </script>    
+    <!--Bloque opcional para añadir scripts de js en las demás pantallas-->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
