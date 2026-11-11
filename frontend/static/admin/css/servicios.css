@@ -193,4 +193,78 @@
         min-width: 0;
         text-align: center;
     }
+}/* ========================================
+   FORMULARIO DE NUEVO SERVICIO
+   ======================================== */
+
+.formulario-servicio {
+    background-color: #1d293b;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+
+.formulario-servicio[hidden] {
+    display: none;
+}
+
+.formulario-servicio h2 {
+    color: #ffffff;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 20px;
+    margin: 0 0 24px 0;
+}
+
+#form-nuevo-servicio {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#form-nuevo-servicio label {
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#form-nuevo-servicio input {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 7px;
+    padding: 12px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#form-nuevo-servicio button {
+    border: none;
+    border-radius: 7px;
+    padding: 12px 18px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#form-nuevo-servicio button[type="submit"] {
+    background-color: #efb443;
+    color: #000000;
+}
+
+#form-nuevo-servicio button[type="submit"]:hover {
+    background-color: #f2c45b;
+}
+
+#cancelar-servicio {
+    background-color: #394b63;
+    color: #ffffff;
+}
+
+#cancelar-servicio:hover {
+    background-color: #465a73;
 }

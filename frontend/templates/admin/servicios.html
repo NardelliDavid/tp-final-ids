@@ -17,69 +17,94 @@
     </button>
 </section>
 
+<!-- Formulario para crear o editar servicios -->
+<section class="formulario-servicio" id="formulario-servicio" hidden>
+
+    <h2 id="titulo-formulario">Nuevo servicio</h2>
+
+    <form id="form-nuevo-servicio"
+          method="POST"
+          action="{{ url_for('crear_servicio') }}"
+          data-url-crear="{{ url_for('crear_servicio') }}">
+
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="descripcion">Descripción</label>
+        <input type="text" id="descripcion" name="descripcion">
+
+        <label for="precio">Precio</label>
+        <input type="number" id="precio" name="precio"
+               min="0.01" step="0.01" required>
+
+        <button type="submit" id="guardar-servicio">Guardar</button>
+        <button type="button" id="cancelar-servicio">Cancelar</button>
+
+    </form>
+
+</section>
+
 <!-- Lista de servicios -->
 <section class="servicios-lista">
 
-    <!-- Pochoclos -->
-    <article class="servicio-tarjeta">
+    {% if error %}
 
-        <div class="servicio-informacion">
-            <h3>Pochoclos</h3>
-            <p>Precio: $ 5.000 | Disponible para todas las salas</p>
-        </div>
+        <p>{{ error }}</p>
 
-        <div class="servicio-botones">
-            <button class="boton-editar" type="button">
-                Editar
-            </button>
+    {% elif servicios %}
 
-            <button class="boton-eliminar" type="button">
-                Eliminar
-            </button>
-        </div>
+        {% for servicio in servicios %}
 
-    </article>
+        <article class="servicio-tarjeta">
 
-    <!-- Bebida -->
-    <article class="servicio-tarjeta">
+            <div class="servicio-informacion">
+                <h3>{{ servicio.nombre }}</h3>
 
-        <div class="servicio-informacion">
-            <h3>Bebida</h3>
-            <p>Precio: $ 3.000 | Disponible para todas las salas</p>
-        </div>
+                <p>
+                    Precio: $ {{ "%.0f"|format(servicio.precio) }}
 
-        <div class="servicio-botones">
-            <button class="boton-editar" type="button">
-                Editar
-            </button>
+                    {% if servicio.descripcion %}
+                        | {{ servicio.descripcion }}
+                    {% endif %}
+                </p>
+            </div>
 
-            <button class="boton-eliminar" type="button">
-                Eliminar
-            </button>
-        </div>
+            <div class="servicio-botones">
 
-    </article>
+                <button
+                    class="boton-editar"
+                    type="button"
+                    data-id="{{ servicio.id }}"
+                    data-nombre="{{ servicio.nombre }}"
+                    data-descripcion="{{ servicio.descripcion or '' }}"
+                    data-precio="{{ servicio.precio }}">
+                    Editar
+                </button>
 
-    <!-- Estacionamiento -->
-    <article class="servicio-tarjeta">
+                <form method="POST"
+                      action="{{ url_for('eliminar_servicio_frontend', id_servicio=servicio.id) }}"
+                      class="form-eliminar-servicio">
 
-        <div class="servicio-informacion">
-            <h3>Estacionamiento</h3>
-            <p>Precio: $ 4.000 | Disponible para todas las salas</p>
-        </div>
+                    <button class="boton-eliminar" type="submit">
+                        Eliminar
+                    </button>
 
-        <div class="servicio-botones">
-            <button class="boton-editar" type="button">
-                Editar
-            </button>
+                </form>
 
-            <button class="boton-eliminar" type="button">
-                Eliminar
-            </button>
-        </div>
+            </div>
 
-    </article>
+        </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>No hay servicios disponibles.</p>
+
+    {% endif %}
 
 </section>
+
+<script src="{{ url_for('static', filename='admin/js/servicios.js') }}"></script>
 
 {% endblock %}

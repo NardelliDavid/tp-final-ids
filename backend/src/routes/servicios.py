@@ -1,9 +1,61 @@
 from flask import Blueprint, jsonify, request
 from mysql.connector import Error
-from src.repositories.servicios_repository import obtener_servicios_activos, crear_servicio,modificar_servicio,eliminar_servicio
+from db.conexion_db import conexion
+from src.routes.perfil import obtener_usuario_autenticado
+from src.repositories.servicios_repository import (
+    obtener_servicios_activos,
+    crear_servicio,
+    modificar_servicio,
+    eliminar_servicio
+)
 
 servicios_bp = Blueprint("servicios", __name__)
 
+
+# Verificar que el usuario sea administrador
+def verificar_administrador():
+    email = obtener_usuario_autenticado()
+
+    if not email:
+        return jsonify({
+            "mensaje": "No autorizado. Token inválido o inexistente"
+        }), 401
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = conexion()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT rol FROM usuarios WHERE email = %s",
+            (email,)
+        )
+
+        usuario = cursor.fetchone()
+
+        if not usuario or usuario[0] != "administrador":
+            return jsonify({
+                "mensaje": "Acceso permitido solo a administradores"
+            }), 403
+
+    except Error:
+        return jsonify({
+            "mensaje": "Error al verificar los permisos"
+        }), 500
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if conn is not None:
+            conn.close()
+
+    return None
+
+
+# Obtener los servicios activos
 @servicios_bp.route("/servicios", methods=["GET"])
 def listar_servicios():
     try:
@@ -16,14 +68,21 @@ def listar_servicios():
         return jsonify(servicios), 200
 
     except Error:
-        return jsonify({"mensaje": "Error al obtener los servicios"}), 500
-    
+        return jsonify({
+            "mensaje": "Error al obtener los servicios"
+        }), 500
 
-#se encarga de gestionar la creación de un nuevo servicio en Cine
+
+# Crear un nuevo servicio
 @servicios_bp.route("/servicios", methods=["POST"])
 def agregar_servicio():
 
-    datos = request.get_json(silent=True) #si el JSON está mal formado o no se puede interpretar como JSON, el método devuelva None en lugar de generar un error HTTP automáticamente.
+    # Comprobar permisos
+    error = verificar_administrador()
+    if error is not None:
+        return error
+
+    datos = request.get_json(silent=True)
 
     if type(datos) != dict:
         return jsonify({"mensaje": "JSON inválido"}), 400
@@ -32,7 +91,7 @@ def agregar_servicio():
     descripcion = datos.get("descripcion")
     precio = datos.get("precio")
 
-    # Validamos que estén los datos obligatorios
+    # Validar datos obligatorios
     if nombre is None or precio is None:
         return jsonify({"mensaje": "Faltan datos obligatorios"}), 400
 
@@ -43,19 +102,31 @@ def agregar_servicio():
     # Validar precio
     if type(precio) not in (int, float) or precio <= 0:
         return jsonify({"mensaje": "Precio inválido"}), 400
-    
+
     nombre = nombre.strip()
-    
+
     try:
         id_servicio = crear_servicio(nombre, descripcion, precio)
-        return jsonify({ "mensaje": "Servicio creado correctamente", "id": id_servicio}), 201
-    
+
+        return jsonify({
+            "mensaje": "Servicio creado correctamente",
+            "id": id_servicio
+        }), 201
+
     except Error:
-        return jsonify({"mensaje": "Error al crear el servicio"}), 500
+        return jsonify({
+            "mensaje": "Error al crear el servicio"
+        }), 500
 
 
+# Modificar un servicio
 @servicios_bp.route("/servicios/<int:id_servicio>", methods=["PATCH"])
 def modificar_servicio_endpoint(id_servicio):
+
+    # Comprobar permisos
+    error = verificar_administrador()
+    if error is not None:
+        return error
 
     datos = request.get_json(silent=True)
 
@@ -115,9 +186,14 @@ def modificar_servicio_endpoint(id_servicio):
     return jsonify({"mensaje": mensaje}), codigo
 
 
-
+# Eliminar un servicio (baja lógica)
 @servicios_bp.route("/servicios/<int:id_servicio>", methods=["DELETE"])
 def eliminar_servicio_endpoint(id_servicio):
+
+    # Comprobar permisos
+    error = verificar_administrador()
+    if error is not None:
+        return error
 
     mensaje = None
     codigo = 500
@@ -136,4 +212,3 @@ def eliminar_servicio_endpoint(id_servicio):
         mensaje = "Error al eliminar el servicio"
 
     return jsonify({"mensaje": mensaje}), codigo
-
