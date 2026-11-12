@@ -36,7 +36,7 @@
 /*Estilos de tarjeta de grafico y ocupación*/
 .charts-row {
     display: grid;
-    grid-template-columns: 2fr 1fr; 
+    grid-template-columns: 1fr 1fr; 
     gap: 24px; 
     margin-top: 24px;
     align-items: stretch;
@@ -129,4 +129,51 @@
     .charts-row {
         grid-template-columns: 1fr; 
     }
+}
+.servicios-vendidos {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+}
+.servicios-vendidos th {
+    width: 100px;
+    font-size: 18px;
+    color: #17c700;
+    text-align: center;
+}
+.servicios-vendidos td {
+    font-size: 15px;
+    text-align: center;
+}
+.peliculas-vendidas {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+}
+.peliculas-vendidas th {
+    width: 100px;
+    font-size: 18px;
+    color: #0b90f5;
+    text-align: center;
+    /*border: 1px solid #f5c20b;*/
+}
+.peliculas-vendidas td {
+    font-size: 15px;
+    text-align: center;
+    /*border: 1px solid #f5c20b;*/
+}
+
+.generos-vendidos {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+}
+.generos-vendidos th {
+    width: 100px;
+    font-size: 18px;
+    color: #f5f10b;
+    text-align: center;
+    /*border: 1px solid #f5c20b;*/
+}
+.generos-vendidos td {
+    font-size: 15px;
+    text-align: center;
+    /*border: 1px solid #f5c20b;*/
 }

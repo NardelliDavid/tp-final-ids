@@ -154,7 +154,7 @@ def agregar_pelicula_tmdb():
     return respuesta
 
 # Endpoint para eliminar peliculas de la base de datos por id
-@peliculas_bp.route("/backoffice/eliminar_pelicula_tmdb", methods=["POST"])
+@peliculas_bp.route("/backoffice/eliminar_pelicula_tmdb", methods=["DELETE"])
 def eliminar_pelicula_tmdb():
 
     email_usuario = obtener_usuario_autenticado()
@@ -170,7 +170,7 @@ def eliminar_pelicula_tmdb():
             if not id_pelicula:
                 respuesta = jsonify({"Error": "No se envio el campo 'id'"}), 400
             else:
-                resultado = eliminar_pelicula_db(id_pelicula)
-                respuesta = jsonify(resultado)
+                contenido, codigo = eliminar_pelicula_db(id_pelicula)
+                respuesta = jsonify(contenido), codigo
 
     return respuesta

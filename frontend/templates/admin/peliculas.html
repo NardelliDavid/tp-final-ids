@@ -5,18 +5,19 @@
 
 {% block page_content %}
     <div class="import">
-        <a href="" class="button-import">+ Importar TMDB</a>
+        <a href="#" class="button-import">Importar pelicula de TMDB</a>
     </div>
     <!--Contenedor de busqueda y filtros-->
+    <!--
     <section class="filter-container">
         <div class="filter-row">
-            <!--Búsqueda por pelicula(Título)-->
+            
             <div class="search-card">
                 <label for="search-input">Buscar película</label>
                 <input type="text" id="search-input" placeholder="Escribir título">
             </div>
 
-            <!--Filtrar por género-->
+            
             <div class="genre-card">
                 <label for="genre-select">Género</label>
                 <select id="genre-select">
@@ -28,7 +29,7 @@
                 </select>
             </div>
 
-            <!--Filtrar por restricción-->
+           
             <div class="restriction-card">
                 <label for="restriction-select">Restricción</label>
                 <select id="restriction-select">
@@ -42,29 +43,38 @@
 
         </div>
     </section>
+    -->
 
 <!--Definimos las tarjetas de peliculas-->
     <section class="movies-row">
+        <!--Muestra el mensaje de exito o error al tratar de eliminar la pelicula-->
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <p class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        {% for pelicula in peliculas %}
         <article class="movie-card">
-            <img src="" alt=""> 
+            {% if pelicula['poster'] %}
+                <img src="{{ pelicula['poster'] }}" alt="poster de {{ pelicula['titulo'] }}"> 
+            {% else %}
+                <img src="{{ url_for('static', filename='images/sin_poster.png') }}" alt="sin_poster.png"> 
+            {% endif %}
+            
             <div class="movie-info">
-                <h3>Interstellar</h3>
+                <h3>{{ pelicula['titulo'] }}</h3>
+                <p>Clasificacion: {{ pelicula['clasificacion'] }}</p>
+                <p>Duracion: {{ pelicula['duracion'] }}m</p>
             </div>  
-            <button class="btn-delete">Eliminar</button>
+            {% if respuesta %}
+                <div>{{ respuesta }}</div>
+            {% endif %}
+            <form class="form-delete"
+             method="POST" action="{{ url_for('eliminar_pelicula', id_api=pelicula['id_api']) }}">
+                <button type="submit" class="btn-delete">Eliminar</button>
+            </form>
         </article>
-        <article class="movie-card">
-            <img src="" alt="">
-            <div class="movie-info">
-                <h3>Titanic</h3>
-            </div>
-            <button class="btn-delete">Eliminar</button>
-        </article>
-        <article class="movie-card">
-            <img src="" alt="">
-            <div class="movie-info">
-                <h3>Matrix</h3>
-            </div>
-            <button class="btn-delete">Eliminar</button>
-        </article>
+        {% endfor %}
     </section>
 {% endblock %}
