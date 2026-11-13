@@ -1,0 +1,238 @@
+/* ========================================
+   VENTAS Y ESTADÍSTICAS - CINE PARADISO
+   ======================================== */
+
+/* Tarjetas superiores */
+
+.ventas-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.ventas-tarjeta {
+    background-color: #182232;
+    border-radius: 12px;
+    padding: 24px;
+    min-height: 122px;
+    box-sizing: border-box;
+}
+
+.ventas-tarjeta h3 {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin: 8px 0 12px 0;
+}
+
+.ventas-valor {
+    color: #f2bb2ef5;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 27px;
+    margin: 0;
+}
+
+/* Gráfico e indicadores */
+
+.ventas-contenido {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.ventas-grafico,
+.ventas-indicadores {
+    background-color: #16202c;
+    border: 1px solid #1f2c3d;
+    border-radius: 10px;
+    padding: 24px;
+    height: 275px;
+    box-sizing: border-box;
+}
+
+.ventas-grafico h3,
+.ventas-indicadores h3 {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Barras del gráfico */
+
+.franjas {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 32px;
+}
+
+.franja {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.franja span {
+    color: #ffffff;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    width: 76px;
+    flex-shrink: 0;
+}
+
+.barra {
+    height: 19px;
+    background-color: #ffa500;
+    border-radius: 6px;
+}
+
+.barra-1 {
+    width: 28%;
+}
+
+.barra-2 {
+    width: 56%;
+}
+
+.barra-3 {
+    width: 77%;
+}
+
+/* Panel de indicadores */
+
+.ventas-indicadores {
+    display: flex;
+    flex-direction: column;
+}
+
+.indicadores-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.indicadores-lista p {
+    color: #ffffff;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    margin: 0;
+}
+
+.boton-reportes {
+    background-color: #efb443;
+    color: #111827;
+    border: none;
+    border-radius: 7px;
+    padding: 14px 16px;
+    width: 75%;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+    margin-top: auto;
+}
+
+.boton-reportes:hover {
+    background-color: #f2c45b;
+}
+
+/* Pie de página */
+
+.ventas-footer {
+    color: #8c9bae;
+    font-family: Georgia, serif;
+    font-size: 12px;
+    margin-top: 100px;
+}
+
+/* ========================================
+   ADAPTACIÓN RESPONSIVE
+   ======================================== */
+
+/* Tablets */
+
+@media (max-width: 900px) {
+
+    .ventas-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .ventas-contenido {
+        grid-template-columns: 1fr;
+    }
+
+    .ventas-grafico,
+    .ventas-indicadores {
+        height: auto;
+        min-height: 275px;
+    }
+}
+
+/* Celulares */
+
+@media (max-width: 600px) {
+
+    .ventas-resumen {
+        gap: 16px;
+    }
+
+    .ventas-tarjeta {
+        padding: 20px;
+        min-height: auto;
+    }
+
+    .ventas-contenido {
+        gap: 16px;
+    }
+
+    .ventas-grafico,
+    .ventas-indicadores {
+        padding: 20px;
+        height: auto;
+        min-height: 0;
+    }
+
+    .ventas-grafico h3,
+    .ventas-indicadores h3 {
+        font-size: 18px;
+    }
+
+    .franjas {
+        gap: 24px;
+        margin-top: 24px;
+    }
+
+    .franja {
+        gap: 12px;
+    }
+
+    .franja span {
+        width: 65px;
+        font-size: 12px;
+    }
+
+    .barra {
+        max-width: 100%;
+    }
+
+    .indicadores-lista {
+        gap: 24px;
+    }
+
+    .boton-reportes {
+        width: 100%;
+        text-align: center;
+    }
+
+    .ventas-footer {
+        margin-top: 40px;
+    }
+}

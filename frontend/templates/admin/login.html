@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de entradas</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/login.css') }}">
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+            <h1>Panel administrativo</h1>
+            <h2>Iniciar sesión</h2>
+
+            <form method="POST" action="{{ url_for('login') }}">
+
+                <label>Email:</label>
+                <input type="" name="email" required>
+
+                <label>Contraseña:</label>
+                <input type="password" name="password" required>
+
+                <button type="submit">Ingresar</button>
+
+            </form>
+
+            {% if mensaje %}
+                <div class="mensaje">
+                    {{ mensaje }}
+                </div>
+            {% endif %}
+
+    </div>
+
+</body>
+</html>

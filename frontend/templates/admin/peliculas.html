@@ -1,0 +1,83 @@
+{% extends "admin/base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/peliculas.css') }}">{% endblock %}
+{% block title %}CINE PARADISO PELICULAS{% endblock %}
+{% block subtitle%}Gestión de películas{% endblock %}
+
+{% block page_content %}
+    <div class="import">
+        <form action="{{ url_for('peliculas.buscar_pelicula_tmdb')}}" method="POST">
+            <input type="text" name="titulo" placeholder="Titulo de la pelicula...">
+            <button>Buscar en TMDB</button>
+        </form>
+    </div>
+    <!--Contenedor de busqueda y filtros-->
+    <!--
+    <section class="filter-container">
+        <div class="filter-row">
+            
+            <div class="search-card">
+                <label for="search-input">Buscar película</label>
+                <input type="text" id="search-input" placeholder="Escribir título">
+            </div>
+
+            
+            <div class="genre-card">
+                <label for="genre-select">Género</label>
+                <select id="genre-select">
+                    <option value="">Todos los géneros</option>
+                    <option value="accion">Acción</option>
+                    <option value="drama">Drama</option>
+                    <option value="romance">Romance</option>
+                    <option value="terror">Terror</option>
+                </select>
+            </div>
+
+           
+            <div class="restriction-card">
+                <label for="restriction-select">Restricción</label>
+                <select id="restriction-select">
+                    <option value="">Todas</option>
+                    <option value="atp">ATP</option>
+                    <option value="+10">+10</option>
+                    <option value="+15">+15</option>
+                    <option value="+18">+18</option>
+                </select>
+            </div>
+
+        </div>
+    </section>
+    -->
+
+<!--Definimos las tarjetas de peliculas-->
+    <section class="movies-row">
+        <!--Muestra el mensaje de exito o error al tratar de eliminar la pelicula-->
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <p class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        {% for pelicula in peliculas %}
+        <article class="movie-card">
+            {% if pelicula['poster'] %}
+                <img src="{{ pelicula['poster'] }}" alt="poster de {{ pelicula['titulo'] }}"> 
+            {% else %}
+                <img src="{{ url_for('static', filename='images/sin_poster.png') }}" alt="sin_poster.png"> 
+            {% endif %}
+            
+            <div class="movie-info">
+                <h3>{{ pelicula['titulo'] }}</h3>
+                <p>Clasificacion: {{ pelicula['clasificacion'] }}</p>
+                <p>Duracion: {{ pelicula['duracion'] }}m</p>
+            </div>  
+            {% if respuesta %}
+                <div>{{ respuesta }}</div>
+            {% endif %}
+            <form class="form-delete"
+             method="POST" action="{{ url_for('peliculas.eliminar_pelicula', id_api=pelicula['id_api']) }}">
+                <button type="submit" class="btn-delete">Eliminar</button>
+            </form>
+        </article>
+        {% endfor %}
+    </section>
+{% endblock %}
