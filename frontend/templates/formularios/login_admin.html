@@ -16,7 +16,7 @@
             <h1>Panel administrativo</h1>
             <h2>Iniciar sesión</h2>
 
-            <form method="POST" action="{{ url_for('login_admin') }}">
+            <form method="POST" action="{{ url_for('auth.login_admin') }}">
 
                 <label>Email:</label>
                 <input type="email" name="email" required>
@@ -61,7 +61,7 @@
                 </div>
             {% endif %}
 
-            <a class="logout" href="{{ url_for('logout') }}">
+            <a class="logout" href="{{ url_for('auth.logout') }}">
                 Cerrar sesión
             </a>
 

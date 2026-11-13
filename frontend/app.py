@@ -1,108 +1,26 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-import requests
+from flask import Flask, redirect, url_for, session
+from blueprints.peliculas import peliculas_bp
+from blueprints.dashboard import dashboard_bp
+from blueprints.funciones import funciones_bp
+from blueprints.servicios import servicios_bp
+from blueprints.auth import auth_bp
+from blueprints.qr import qr_bp
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = "clave-local-desarrollo"
 
+app.register_blueprint(peliculas_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(funciones_bp)
+app.register_blueprint(servicios_bp)
+app.register_blueprint(auth_bp)
+app.register_blueprint(qr_bp)
+
 BACKEND_URL = "http://127.0.0.1:5000"
 
-"Acá comienzan las rutas de las pantallas que heredan del base.html"
-@app.route('/admin/dashboard')
-def dashboard():
-    token = session.get("token")
-    if not token:
-        return redirect(url_for("login_admin"))
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login_admin"))
-
-    # Manda la solicitud de tipo get con el token para obtener los datos del dashboard
-    headers = {"Authorization": f"Bearer {token}"}
-    respuesta = requests.get(
-                    f"{BACKEND_URL}/backoffice/dashboard",
-                    headers=headers,
-                    timeout=5
-                )
-    if respuesta.ok:
-        resultado = respuesta.json().get("OK", [])
-        datos = {
-        "servicios": resultado[0],
-        "totales": resultado[1],
-        "generos": resultado[2],
-        "peliculas": resultado[3],
-        }
-        return render_template('admin/dashboard.html', datos = datos)
-    else:
-        print(respuesta.status_code, respuesta.text)
-        return render_template('admin/dashboard.html', error = respuesta.status_code)
-
-
-@app.route('/admin/peliculas')
-def peliculas():
-    token = session.get("token")
-    if not token:
-        return redirect(url_for("login_admin"))
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login_admin"))
-    
-    # Manda la solicitud de tipo get con el token para obtener los datos de las peliculas
-    headers = {"Authorization": f"Bearer {token}"}
-    respuesta = requests.get(
-                    f"{BACKEND_URL}/backoffice/peliculas",
-                    headers=headers,
-                    timeout=5
-                )
-    if respuesta.ok:
-        resultado = respuesta.json()[0]['OK']
-        peliculas = []
-        for fila in resultado:
-            peliculas.append({
-                "id": fila[0],
-                "id_api": fila[1],
-                "titulo": fila[2],
-                "sinopsis": fila[3],
-                "poster": fila[4],
-                "duracion": fila[5],
-                "clasificacion": fila[6],
-            })
-        return render_template('admin/peliculas.html', peliculas = peliculas)
-    else:
-        return render_template('admin/peliculas.html', error = respuesta.status_code)
-
-@app.route('/admin/eliminar_pelicula/<int:id_api>', methods=["POST"])
-def eliminar_pelicula(id_api):
-    token = session.get("token")
-    if not token:
-        return redirect(url_for("login_admin"))
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login_admin"))
-
-    headers = {"Authorization": f"Bearer {token}"}
-    respuesta = requests.delete(
-        f"{BACKEND_URL}/backoffice/eliminar_pelicula_tmdb",
-        json={"id": id_api},
-        headers=headers,
-        timeout=5
-    )
-
-    # Devuelve un mensaje temporal indicando si tuvo exito al eliminar la pelicula o no
-    if respuesta.ok:
-        flash("Película eliminada correctamente", "exito")
-    else:
-        try:
-            mensaje = respuesta.json().get("Error", "No se pudo eliminar la película")
-        except ValueError:
-            mensaje = "No se pudo eliminar la película"
-        flash(mensaje, "error")
-
-    return redirect(url_for("peliculas"))
-
-@app.route('/admin/funciones')
-def funciones():
-    if not session.get("token"):
-        return redirect(url_for("login_admin"))
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login_admin"))
-    return render_template('admin/funciones.html')
+@app.route("/")
+def index():
+    return redirect(url_for("auth.login_admin"))
 
 """
 @app.route('/admin/horarios')
@@ -114,182 +32,6 @@ def horarios():
 def ventas_estadisticas():
     return render_template('admin/ventas_estadisticas.html')
 """
-
-@app.route('/admin/servicios')
-def servicios():
-    if not session.get("token"):
-        return redirect(url_for("login_admin"))
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login_admin"))
-    return render_template('admin/servicios.html')
-
-
-@app.route('/admin/validacion_qr')
-def validacion_qr():
-    if not session.get("token"):
-        return redirect(url_for("login_admin"))
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login_admin"))
-    return "Pantalla de validacion_qr en desarrollo"
-
-
-@app.route("/")
-def index():
-    return redirect(url_for("login_admin"))
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    mensaje = None
-
-    if request.method == "POST":
-        datos = {
-            "email": request.form.get("email", "").strip(),
-            "password": request.form.get("password", "")
-        }
-
-        try:
-            respuesta = requests.post(
-                f"{BACKEND_URL}/auth/login",
-                json=datos,
-                timeout=5
-            )
-
-            if respuesta.ok:
-                resultado = respuesta.json()
-                usuario = resultado.get("usuario", {})
-
-                if usuario.get("rol") != "cliente":
-                    mensaje = "Acceso restringido a clientes."
-                else:
-                    session["token"] = resultado["token"]
-                    session["usuario"] = usuario
-                    return redirect(url_for("login"))
-
-            else:
-                mensaje = "No se pudo iniciar sesión. Revisá tus datos."
-
-        except requests.RequestException:
-            mensaje = "No se pudo conectar con el backend."
-
-    return render_template("formularios/login_user.html", mensaje=mensaje)
-
-
-
-@app.route("/login_admin", methods=["GET", "POST"])
-def login_admin():
-    if session.get("token"):
-        return redirect(url_for("login"))
-    mensaje = None
-
-    if request.method == "POST":
-        datos = {
-            "email": request.form.get("email", "").strip(),
-            "password": request.form.get("password", "")
-        }
-
-        try:
-            respuesta = requests.post(
-                f"{BACKEND_URL}/auth/login",
-                json=datos,
-                timeout=5
-            )
-
-            if respuesta.ok:
-                resultado = respuesta.json()
-                usuario = resultado.get("usuario", {})
-
-                if usuario.get("rol") != "administrador":
-                    mensaje = "Acceso restringido a administradores."
-                else:
-                    session["token"] = resultado["token"]
-                    session["usuario"] = usuario
-                    session["rol"] = usuario.get("rol")
-                    return redirect(url_for("dashboard"))
-
-            else:
-                mensaje = "No se pudo iniciar sesión. Revisá tus datos."
-
-        except requests.RequestException:
-            mensaje = "No se pudo conectar con el backend."
-    return render_template("formularios/login_admin.html", mensaje=mensaje)
-
-
-@app.route("/admin/formulario_validar_qr", methods=["GET", "POST"])
-def formulario_validar_qr():
-    if not session.get("token"):
-        return redirect(url_for("login_admin"))
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login"))
-    return render_template("formularios/validar_qr.html")
-    
-
-@app.route("/admin/qr", methods=["GET", "POST"])
-def admin_qr():
-
-    if not session.get("token"):
-        return redirect(url_for("login"))
-
-    if session.get("usuario", {}).get("rol") != "administrador":
-        session.clear()
-        return redirect(url_for("login"))
-
-    resultado = None
-    error = None
-
-    if request.method == "POST":
-        try:
-            funcion_id = int(request.form.get("funcion_id", ""))
-        except ValueError:
-            funcion_id = 0
-
-        datos = {
-            "token": request.form.get("qr_token", "").strip(),
-            "funcion_id": funcion_id,
-        }
-
-        try:
-
-            respuesta = requests.post(
-                f"{BACKEND_URL}/qr/validaciones",
-                json=datos,
-                headers={
-                    "Authorization": f"Bearer {session['token']}"
-                },
-                timeout=5
-            )
-
-            try:
-                resultado = respuesta.json()
-
-            except ValueError:
-                resultado = {
-                    "mensaje": "El backend devolvió una respuesta no válida."
-                }
-
-            if not respuesta.ok:
-                error = resultado.get(
-                    "mensaje",
-                    resultado.get(
-                        "error",
-                        "No se pudo validar el QR."
-                    )
-                )
-
-        except requests.RequestException:
-            error = "No se pudo conectar con el backend."
-
-    return render_template(
-        "admin/validar_qr.html",
-        resultado=resultado,
-        error=error
-    )
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login"))
 
 
 if __name__ == "__main__":

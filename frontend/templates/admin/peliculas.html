@@ -5,7 +5,10 @@
 
 {% block page_content %}
     <div class="import">
-        <a href="#" class="button-import">Importar pelicula de TMDB</a>
+        <form action="{{ url_for('peliculas.buscar_pelicula_tmdb')}}" method="POST">
+            <input type="text" name="titulo" placeholder="Titulo de la pelicula...">
+            <button>Buscar en TMDB</button>
+        </form>
     </div>
     <!--Contenedor de busqueda y filtros-->
     <!--
@@ -71,7 +74,7 @@
                 <div>{{ respuesta }}</div>
             {% endif %}
             <form class="form-delete"
-             method="POST" action="{{ url_for('eliminar_pelicula', id_api=pelicula['id_api']) }}">
+             method="POST" action="{{ url_for('peliculas.eliminar_pelicula', id_api=pelicula['id_api']) }}">
                 <button type="submit" class="btn-delete">Eliminar</button>
             </form>
         </article>

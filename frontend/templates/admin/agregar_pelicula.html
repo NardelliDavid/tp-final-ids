@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/agregar_pelicula.css') }}">{% endblock%}
+{% block subtitle %}Agregar pelicula desde TMDB{% endblock %}
+{% block page_content %}
+    
+    {% if respuesta[1] == 409 %}
+        <div class="respuesta-error">{{respuesta[0]['Error']}}. <br>Codigo de estado: {{respuesta[1]}}</div>
+    {% else %}
+        <div class="respuesta-exito">{{respuesta[0]['OK']}}. <br>Codigo de estado: {{respuesta[1]}}.</div>
+    {% endif %}
+        <a href="{{ url_for('peliculas.peliculas') }}">Volver a peliculas.</a>
+
+    
+{% endblock %}

@@ -15,7 +15,7 @@
 
             <h2>Iniciar sesión</h2>
 
-            <form method="POST" action="{{ url_for('login') }}">
+            <form method="POST" action="{{ url_for('auth.login') }}">
 
                 <label>Email:</label>
                 <input type="email" name="email" required>
@@ -37,7 +37,7 @@
 
             <h2>Usted ya ha iniciado sesion.</h2>
 
-            <a class="logout" href="{{ url_for('logout') }}">
+            <a class="logout" href="{{ url_for('auth.logout') }}">
                 Cerrar sesión
             </a>
            

@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/buscar_pelicula.css') }}">{% endblock%}
+{% block subtitle %}Peliculas encontradas en TMDB{% endblock %}
+{% block page_content %}
+    {% if peliculas %}
+    <div class="contenedor-peliculas">
+        {% for pelicula in peliculas %}
+        <div class="pelicula-tmdb">
+            {% if pelicula.poster %}
+                <img src="{{pelicula.poster}}" alt="poster.png">
+            {% else %}
+                <img src="{{ url_for('static', filename='images/sin_poster.png') }}" alt="sin_poster.png">
+            {% endif %}
+            <div>
+                <h3>{{pelicula.nombre}}</h3>
+                <p>{{pelicula.sinopsis}}</p>
+            </div>
+            <form action="{{ url_for('peliculas.agregar_pelicula_tmdb')}}" method="POST">
+                <input type="number" name="id_tmdb" value="{{pelicula.tmdb_id}}">
+                <button>Agregar pelicula</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>  
+    {% endif %}
+{% endblock %}

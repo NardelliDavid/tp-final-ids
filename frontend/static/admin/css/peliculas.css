@@ -4,6 +4,17 @@
     display: flex;
     justify-content: flex-end; 
 }
+.import form {
+    background-color: #f3b201;
+    padding: 10px;
+    border-radius: 5px;
+}
+.import form button {
+    padding: 3px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
 
 .button-import {
     background-color: #f2bb2ef5; 

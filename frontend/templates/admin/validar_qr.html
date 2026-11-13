@@ -15,7 +15,7 @@
             <h1>Administración de entradas</h1>
             <h2>Validación de QR</h2>
 
-            <form method="POST" action="{{ url_for('admin_qr') }}">
+            <form method="POST" action="{{ url_for('qr.admin_qr') }}">
 
                 <label>Número de función:</label>
                 <input type="number" name="funcion_id" min="1" required>
@@ -40,7 +40,7 @@
                 </div>
             {% endif %}
 
-            <a class="logout" href="{{ url_for('logout') }}">
+            <a class="logout" href="{{ url_for('auth.logout') }}">
                 Cerrar sesión
             </a>
 

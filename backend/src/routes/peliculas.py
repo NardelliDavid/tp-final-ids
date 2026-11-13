@@ -27,7 +27,7 @@ def ver_peliculas_disponibles_db():
         return resultado
 
 # Endpoint para buscar peliculas en TMDB por titulo
-@peliculas_bp.route("/backoffice/buscar_peliculas_tmdb", methods=["GET"])
+@peliculas_bp.route("/backoffice/buscar_peliculas_tmdb", methods=["POST"])
 def buscar_peliculas_tmdb():
     try:
         email_usuario = obtener_usuario_autenticado()
@@ -40,7 +40,7 @@ def buscar_peliculas_tmdb():
                 respuesta = jsonify({"Error":"Usted no es administrador"}), 403
             else:
                 # Obtiene el titulo de la pelicula como parametro, verifica si existe y si es valido
-                titulo = request.args.get("titulo")
+                titulo = request.json.get("titulo")
                 if not titulo:
                     respuesta = jsonify({"Error": "Falta el parametro 'titulo' en la URL"}), 400
                 else:
