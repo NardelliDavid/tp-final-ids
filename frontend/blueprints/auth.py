@@ -43,6 +43,44 @@ def login():
     return render_template("formularios/login_user.html", mensaje=mensaje)
 
 
+# Ruta para registrar un cliente nuevo (GET muestra el formulario, POST envía los datos al backend)
+@auth_bp.route("/registro", methods=["GET", "POST"])
+def registro():
+    mensaje = None
+    exito = None
+
+    # Toma los datos que el usuario escribió si envió el formulario
+    if request.method == "POST":
+        datos = {
+            "nombre": request.form.get("nombre", "").strip(),
+            "email": request.form.get("email", "").strip(),
+            "password": request.form.get("password", "")
+        }
+
+        try:
+            # Envía los datos en formato JSON al endpoint de registro del backend
+            respuesta = requests.post(
+                f"{BACKEND_URL}/auth/registro",
+                json=datos,
+                timeout=5
+            )
+
+            # Muestra mensaje verde de éxito si el backend responde 201 (Creado)
+            if respuesta.status_code == 201:
+                exito = "Cuenta creada con éxito. Ya podés iniciar sesión."
+            else:
+                # Lee el mensaje de error que devuelve el backend si el email ya existe o falta algún dato
+                resultado = respuesta.json()
+                mensaje = resultado.get("mensaje", "No se pudo completar el registro.")
+
+        except requests.RequestException:
+            # Muestra aviso de error si el servidor backend está apagado
+            mensaje = "No se pudo conectar con el backend."
+
+    # Renderiza la pantalla HTML pasándole los mensajes de error o éxito si los hay
+    return render_template("formularios/registro_user.html", mensaje=mensaje, exito=exito)
+
+
 @auth_bp.route("/login_admin", methods=["GET", "POST"])
 def login_admin():
     if session.get("token"):
@@ -81,6 +119,7 @@ def login_admin():
             mensaje = "No se pudo conectar con el backend."
 
     return render_template("formularios/login_admin.html", mensaje=mensaje)
+
 
 @auth_bp.route("/logout")
 def logout():

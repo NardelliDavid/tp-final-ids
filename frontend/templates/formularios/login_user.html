@@ -3,44 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Carga la hoja de estilos del panel admin para mantener el diseño del grupo -->
     <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/formularios_login.css') }}">
-    <title>Administración de entradas</title>
+    <title>Iniciar sesión - Cine</title>
 </head>
 
 <body>
 
     <div class="contenedor">
 
+        <!-- Muestra el formulario de ingreso si no hay un token guardado en la sesión -->
         {% if not session.get("token") %}
 
+            <h1>Bienvenido al Cine</h1>
             <h2>Iniciar sesión</h2>
 
+            <!-- Envía los campos 'email' y 'password' por POST a la ruta auth.login -->
             <form method="POST" action="{{ url_for('auth.login') }}">
 
-                <label>Email:</label>
-                <input type="email" name="email" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="tu@email.com" required>
 
-                <label>Contraseña:</label>
-                <input type="password" name="password" required>
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
 
                 <button type="submit">Ingresar</button>
 
             </form>
 
+            <!-- Caja roja que aparece solo si ocurre un error (ej: contraseña incorrecta) -->
             {% if mensaje %}
                 <div class="mensaje">
                     {{ mensaje }}
                 </div>
             {% endif %}
 
+            <!-- Enlaces para ir a crear cuenta o al login de administradores -->
+            <a class="logout" href="{{ url_for('auth.registro') }}">
+                ¿No tenés cuenta? Registrate acá
+            </a>
+
+            <a class="logout" href="{{ url_for('auth.login_admin') }}">
+                ¿Sos administrador? Ingresá acá
+            </a>
+
+        <!-- Muestra los datos del usuario y el botón para salir si ya hay una sesión activa -->
         {% else %}
 
-            <h2>Usted ya ha iniciado sesion.</h2>
+            <h1>¡Hola, {{ session.get("usuario", {}).get("nombre", "Usuario") }}!</h1>
+            <h2>Ya iniciaste sesión</h2>
 
+            <div class="resultado">
+                <strong>Sesión activa:</strong> {{ session.get("usuario", {}).get("email") }}
+            </div>
+
+            <!-- Llama a auth.logout para cerrar y borrar la sesión del navegador -->
             <a class="logout" href="{{ url_for('auth.logout') }}">
                 Cerrar sesión
             </a>
-           
+
         {% endif %}
 
     </div>
