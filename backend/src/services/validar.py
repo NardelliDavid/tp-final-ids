@@ -12,8 +12,9 @@ def registrar_usuario(nombre, email, password):
     try:
         conn = conexion()
         cursor = conn.cursor()
-        query = "INSERT INTO usuarios (nombre, email, password_hash) VALUES (%s, %s, %s)"
-        cursor.execute(query, (nombre, email, password_encriptada))
+        query = "INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (nombre, email, password_encriptada, "cliente"))
+
         conn.commit()
         nuevo_id = cursor.lastrowid
         cursor.close()
@@ -22,6 +23,8 @@ def registrar_usuario(nombre, email, password):
         return {"id": nuevo_id, "nombre": nombre, "email": email}, 201
     except Exception:
         return {"mensaje": "El email ya se encuentra registrado o hubo un error en la BD"}, 400
+
+    
 
 
 # Lógica del Endpoint de Login (POST /auth/login)

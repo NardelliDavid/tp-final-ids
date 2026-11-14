@@ -5,6 +5,10 @@ from src.services.perfil import (
     actualizar_datos_perfil,
     consultar_historial_usuario
 )
+# Mantiene compatibilidad con QR.py que importa esta función desde acá
+def obtener_usuario_autenticado():
+    return verificar_token(request.headers.get('Authorization'))
+
 
 # Crea el Blueprint exclusivo para el módulo de Perfil
 perfil_bp = Blueprint('perfil', __name__)
