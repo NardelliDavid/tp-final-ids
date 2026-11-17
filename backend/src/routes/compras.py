@@ -82,13 +82,14 @@ def crear_compra_endpoint():
                                         butaca_invalida = True
 
                                     else:
-                                        posicion = (fila, columna)
+                                        numero_fila = letras.index(fila) + 1
+                                        posicion = (numero_fila, columna)
 
                                         if posicion in butacas_vistas:
                                             repetidas = True
                                         else:
                                             butacas_vistas.append(posicion)
-                                            if butaca_esta_ocupada(funcion_id, fila, columna):
+                                            if butaca_esta_ocupada(funcion_id, numero_fila, columna):
                                                 ocupada = True
 
                         if formato_invalido:

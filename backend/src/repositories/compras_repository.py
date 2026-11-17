@@ -63,7 +63,7 @@ def registrar_compra(email_usuario, funcion_id, butacas, servicios):
 
         # Bloquea esta función hasta confirmar o cancelar la compra.
         cursor.execute("""
-            SELECT id, precio, inicio
+            SELECT id, precio, inicio, estado
             FROM funciones
             WHERE id = %s
             FOR UPDATE
@@ -73,6 +73,10 @@ def registrar_compra(email_usuario, funcion_id, butacas, servicios):
         if funcion is None:
             mensaje = "Función no encontrada"
             codigo = 404
+
+        elif funcion["estado"] != "activa":
+            mensaje = "La función está cancelada"
+            codigo = 422
 
         elif funcion["inicio"] <= datetime.now():
             mensaje = "La función ya comenzó"
@@ -238,7 +242,7 @@ def obtener_detalle_compra(id_compra, email_usuario):
         for entrada in filas_entradas:
 
             entradas.append({
-                "butaca": f'{entrada["fila"]}{entrada["columna"]}',
+                "butaca": f'{chr(64 + entrada["fila"])}{entrada["columna"]}',
                 "precio": float(entrada["precio"]),
                 "estado": entrada["estado"]
             })

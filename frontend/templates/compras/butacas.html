@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elegir butacas - Cine Paradiso</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/servicios.css') }}">
+
+    <style>
+        .compra {
+            width: min(92%, 820px);
+            margin: 32px auto;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .grilla-butacas {
+            display: grid;
+            grid-template-columns: repeat(var(--columnas), minmax(44px, 1fr));
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 4px 12px;
+        }
+
+        .butaca {
+            position: relative;
+        }
+
+        .butaca input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .butaca span {
+            display: grid;
+            min-height: 44px;
+            place-items: center;
+            background: #35465d;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .butaca input:checked + span {
+            background: #efb443;
+            color: #111827;
+            font-weight: bold;
+        }
+
+        .butaca input:focus-visible + span {
+            outline: 2px solid #efb443;
+            outline-offset: 2px;
+        }
+
+        .butaca input:disabled + span {
+            background: #182232;
+            color: #8c9bae;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+
+        .cantidad-servicio {
+            display: block;
+            width: 64px;
+            margin-top: 6px;
+            padding: 6px;
+            border: 1px solid #8c9bae;
+            border-radius: 6px;
+            background: #121824;
+            color: #fff;
+        }
+
+        .confirmar-compra {
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <main class="compra">
+        <h1>Elegí tus butacas</h1>
+
+        {% for mensaje in get_flashed_messages() %}
+            <p role="status">{{ mensaje }}</p>
+        {% endfor %}
+
+        <form method="post"
+              action="{{ url_for('compras.confirmar_compra', funcion_id=grilla.funcion_id) }}">
+
+            <div class="grilla-butacas" style="--columnas: {{ grilla.columnas }};">
+                {% for butaca in grilla.butacas %}
+                    <label class="butaca">
+                        <input type="checkbox"
+                               name="butacas"
+                               value="{{ butaca.codigo }}"
+                               aria-label="{{ butaca.codigo }}: {{ butaca.estado }}"
+                               {% if butaca.estado != "libre" %}disabled{% endif %}>
+                        <span>{{ butaca.codigo }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <h2>Servicios opcionales</h2>
+
+            <div class="servicios-lista">
+                {% for servicio in servicios %}
+                    <article class="servicio-tarjeta">
+                        <div class="servicio-informacion">
+                            <h3>{{ servicio.nombre }}</h3>
+                            <p>${{ servicio.precio }}</p>
+                        </div>
+
+                        <label>
+                            Cantidad
+                            <input class="cantidad-servicio"
+                                   type="number"
+                                   name="servicio_{{ servicio.id }}"
+                                   min="0"
+                                   step="1"
+                                   value="0">
+                        </label>
+                    </article>
+                {% else %}
+                    <p>No hay servicios adicionales disponibles.</p>
+                {% endfor %}
+            </div>
+
+            <button class="boton-nuevo-servicio confirmar-compra" type="submit">
+                Confirmar compra
+            </button>
+        </form>
+    </main>
+</body>
+</html>
