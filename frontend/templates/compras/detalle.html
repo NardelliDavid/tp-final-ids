@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Compra {{ compra.id }} - Cine Paradiso</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/servicios.css') }}">
+
+    <style>
+        .comprobante {
+            width: min(92%, 820px);
+            margin: 32px auto;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .comprobante a {
+            display: inline-block;
+            margin-top: 24px;
+            color: #efb443;
+        }
+    </style>
+</head>
+<body>
+    <main class="comprobante">
+        <h1>Compra #{{ compra.id }}</h1>
+        <p>Estado: {{ compra.estado }}</p>
+                {% for mensaje in get_flashed_messages() %}
+            <p role="status">{{ mensaje }}</p>
+        {% endfor %}
+
+        {% if compra.estado == "activa" %}
+            <form method="post"
+                  action="{{ url_for('compras.cancelar_compra', id_compra=compra.id) }}"
+                  onsubmit="return confirm('¿Querés cancelar esta compra completa?')">
+                <button class="boton-nuevo-servicio" type="submit">
+                    Cancelar compra
+                </button>
+            </form>
+        {% endif %}
+
+        {% if compra.funcion %}
+            <h2>{{ compra.funcion.pelicula }}</h2>
+            <p>{{ compra.funcion.local }} — {{ compra.funcion.sala }}</p>
+            <p>Función: {{ compra.funcion.inicio | replace("T", " ") }}</p>
+        {% endif %}
+
+        <h2>Entradas</h2>
+
+        <div class="servicios-lista">
+            {% for entrada in compra.entradas %}
+                <article class="servicio-tarjeta">
+                    <div class="servicio-informacion">
+                        <h3>Butaca {{ entrada.butaca }}</h3>
+                        <p>${{ "%.2f" | format(entrada.precio) }}</p>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        <h2>Servicios</h2>
+
+        <div class="servicios-lista">
+            {% for servicio in compra.servicios %}
+                <article class="servicio-tarjeta">
+                    <div class="servicio-informacion">
+                        <h3>{{ servicio.nombre }}</h3>
+                        <p>Cantidad: {{ servicio.cantidad }}</p>
+                        <p>Subtotal: ${{ "%.2f" | format(servicio.subtotal) }}</p>
+                    </div>
+                </article>
+            {% else %}
+                <p>La compra no incluye servicios adicionales.</p>
+            {% endfor %}
+        </div>
+
+        <h2>Total: ${{ "%.2f" | format(compra.total) }}</h2>
+
+        {% if compra.funcion %}
+            <a href="{{ url_for('compras.nueva_compra', funcion_id=compra.funcion.id) }}">
+                Volver a elegir butacas
+            </a>
+        {% endif %}
+    </main>
+</body>
+</html>
