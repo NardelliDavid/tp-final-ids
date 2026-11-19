@@ -399,3 +399,22 @@ def eliminar_funcion(funcion_id):
     conn.close()
 
     return respuesta
+
+
+def obtener_salas():
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
+
+    consulta = """
+        SELECT id, local, nombre
+        FROM salas
+        ORDER BY local, id
+    """
+
+    cursor.execute(consulta)
+    salas = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return salas
