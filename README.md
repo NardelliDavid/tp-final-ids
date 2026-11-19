@@ -73,3 +73,4 @@ Los documentos están referenciados entre sí: los códigos **S1–S25** remiten
 7. En ambas terminales ejecutamos `python app.py` y se van a levantar el frontend y el backend.
 
 Nota: en el archivo **conexion_db.py** van a tener que modificar el usuario y contraseña si corresponde para que se pueda conectar a la base de datos. El archivo **init_db.sql** contiene las tablas y datos iniciales para la creacion de la base de datos.
+Crear un archivo .env local (ignorado por Git) con las variables de conexión a MySQL (DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE) para configurar la base de datos de cada entorno sin modificar conexion_db.py.
