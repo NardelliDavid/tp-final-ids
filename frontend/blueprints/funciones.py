@@ -1,3 +1,4 @@
+
 import requests
 from flask import Blueprint, render_template, session, redirect, url_for, request, jsonify
 from config import BACKEND_URL
@@ -11,6 +12,44 @@ def obtener_headers():
     }
 
 
+def normalizar_peliculas(datos):
+    """
+    Adapta la respuesta del backend para obtener
+    una lista de películas con id y titulo.
+    """
+
+    if isinstance(datos, dict):
+        datos = datos.get("OK", datos.get("peliculas", []))
+
+    elif (
+        isinstance(datos, list)
+        and len(datos) > 0
+        and isinstance(datos[0], dict)
+        and "OK" in datos[0]
+    ):
+        datos = datos[0]["OK"]
+
+    peliculas = []
+
+    for pelicula in datos:
+        if isinstance(pelicula, dict):
+            peliculas.append({
+                "id": pelicula.get("id"),
+                "titulo": pelicula.get("titulo")
+            })
+
+        elif isinstance(pelicula, (list, tuple)) and len(pelicula) >= 3:
+            peliculas.append({
+                "id": pelicula[0],
+                "titulo": pelicula[2]
+            })
+
+    return [
+        pelicula for pelicula in peliculas
+        if pelicula["id"] is not None and pelicula["titulo"]
+    ]
+
+
 @funciones_bp.route('/admin/funciones')
 def funciones():
     if not session.get("token"):
@@ -20,9 +59,12 @@ def funciones():
         return redirect(url_for("auth.login_admin"))
 
     funciones = []
+    peliculas = []
+    salas = []
     mensaje = None
 
     try:
+        # Obtener funciones registradas
         respuesta = requests.get(
             f"{BACKEND_URL}/funciones",
             params={"incluir_pasadas": "true"},
@@ -35,12 +77,36 @@ def funciones():
         else:
             mensaje = "No se pudieron cargar las funciones."
 
+        # Obtener películas desde MySQL
+        respuesta_peliculas = requests.get(
+            f"{BACKEND_URL}/backoffice/peliculas",
+            headers=obtener_headers(),
+            timeout=5
+        )
+
+        if respuesta_peliculas.ok:
+            peliculas = normalizar_peliculas(
+                respuesta_peliculas.json()
+            )
+
+        # Obtener salas desde MySQL
+        respuesta_salas = requests.get(
+            f"{BACKEND_URL}/salas",
+            headers=obtener_headers(),
+            timeout=5
+        )
+
+        if respuesta_salas.ok:
+            salas = respuesta_salas.json()
+
     except requests.RequestException:
         mensaje = "No se pudo conectar con el backend."
 
     return render_template(
         'admin/funciones.html',
         funciones=funciones,
+        peliculas=peliculas,
+        salas=salas,
         mensaje=mensaje
     )
 
