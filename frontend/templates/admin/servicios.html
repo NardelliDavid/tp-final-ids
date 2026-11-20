@@ -14,7 +14,7 @@
     <details>
         <summary class="boton-nuevo-servicio">+ Nuevo servicio</summary>
 
-        <form method="post" action="/admin/servicios/nuevo">
+        <form method="post" action="{{ url_for('servicios.nuevo_servicio') }}">
             <label>
                 Nombre
                 <input type="text" name="nombre" required>
@@ -36,10 +36,14 @@
 </section>
 
 <section class="servicios-lista">
+
     {% for servicio in servicios %}
+
         <article class="servicio-tarjeta">
+
             <div class="servicio-informacion">
                 <h3>{{ servicio.nombre }}</h3>
+
                 <p>Precio: $ {{ servicio.precio }}</p>
 
                 {% if servicio.descripcion %}
@@ -48,25 +52,29 @@
             </div>
 
             <div class="servicio-botones">
-            <div class="servicio-botones">
+
                 <details>
                     <summary class="boton-editar">Editar</summary>
 
                     <form method="post"
                           action="{{ url_for('servicios.editar_servicio', id_servicio=servicio.id) }}">
+
                         <label>
                             Nombre
-                            <input type="text" name="nombre" value="{{ servicio.nombre }}" required>
+                            <input type="text" name="nombre"
+                                   value="{{ servicio.nombre }}" required>
                         </label>
 
                         <label>
                             Descripción
-                            <input type="text" name="descripcion" value="{{ servicio.descripcion or '' }}">
+                            <input type="text" name="descripcion"
+                                   value="{{ servicio.descripcion or '' }}">
                         </label>
 
                         <label>
                             Precio
-                            <input type="number" name="precio" value="{{ servicio.precio }}"
+                            <input type="number" name="precio"
+                                   value="{{ servicio.precio }}"
                                    min="0.01" step="0.01" required>
                         </label>
 
@@ -74,17 +82,24 @@
                     </form>
                 </details>
 
-            </div>
                 <form method="post"
-                    action="{{ url_for('servicios.eliminar_servicio', id_servicio=servicio.id) }}"
-                    onsubmit="return confirm('Eliminar servicio')">
-                    <button class="boton-eliminar" type="submit">Eliminar</button>
+                      action="{{ url_for('servicios.eliminar_servicio', id_servicio=servicio.id) }}"
+                      onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?')">
+
+                    <button class="boton-eliminar" type="submit">
+                        Eliminar
+                    </button>
                 </form>
+
             </div>
         </article>
+
     {% else %}
+
         <p>No hay servicios activos.</p>
+
     {% endfor %}
+
 </section>
 
 {% endblock %}
