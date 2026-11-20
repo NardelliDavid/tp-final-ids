@@ -8,6 +8,8 @@ from src.services.Funciones import crear_funcion
 from src.services.Funciones import obtener_detalle_funcion_servicio
 from src.services.Funciones import listar_funciones
 from src.validators.Funciones import validar_filtros_funciones
+from src.repositories.Funciones import obtener_salas
+
 
 funciones_bp = Blueprint("funciones", __name__)
 
@@ -48,6 +50,18 @@ def verificar_administrador():
             codigo = 403
 
     return respuesta, codigo
+
+# GET /salas
+@funciones_bp.route("/salas", methods=["GET"])
+def listar_salas():
+    mensaje, codigo = verificar_administrador()
+
+    if codigo != 200:
+        return jsonify({"error": mensaje}), codigo
+
+    salas = obtener_salas()
+
+    return jsonify(salas), 200
 
 
 # GET /funciones
