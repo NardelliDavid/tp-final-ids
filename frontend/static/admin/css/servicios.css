@@ -1,7 +1,4 @@
-/* ========================================
-   SERVICIOS ADICIONALES - CINE PARADISO
-   ======================================== */
-
+/* SERVICIOS ADICIONALES - CINE PARADISO*/
 
 /* Botón nuevo servicio */
 
@@ -13,9 +10,9 @@
 }
 
 .boton-nuevo-servicio {
+    display: inline-block;
     background-color: #efb443;
     color: #111827;
-    border: none;
     border-radius: 7px;
     padding: 12px 18px;
     min-width: 145px;
@@ -23,12 +20,92 @@
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
+    text-align: center;
 }
 
-.boton-nuevo-servicio:hover {
+.boton-nuevo-servicio:hover,
+.boton-editar:hover {
     background-color: #f2c45b;
 }
 
+/* Formularios desplegables */
+
+.servicios-acciones details[open],
+.servicio-botones details[open] {
+    position: relative;
+}
+
+.servicios-acciones details form,
+.servicio-botones details form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background-color: #202e42;
+    border: 1px solid #35465d;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 12px;
+    min-width: 260px;
+}
+
+.servicios-acciones details form {
+    width: 320px;
+    margin-left: auto;
+}
+
+.servicio-botones details form {
+    position: absolute;
+    right: 0;
+    z-index: 10;
+    width: 280px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.servicios-acciones label,
+.servicio-botones details label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.servicios-acciones input,
+.servicio-botones details input {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #111c2c;
+    color: #ffffff;
+    border: 1px solid #465a73;
+    border-radius: 6px;
+    padding: 11px;
+    outline: none;
+}
+
+.servicios-acciones input:focus,
+.servicio-botones details input:focus {
+    border-color: #efb443;
+}
+
+/* Botones de formularios */
+
+.servicios-acciones form button,
+.servicio-botones details form button {
+    background-color: #efb443;
+    color: #111827;
+    border: none;
+    border-radius: 7px;
+    padding: 11px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.servicios-acciones form button:hover,
+.servicio-botones details form button:hover {
+    background-color: #f2c45b;
+}
 
 /* Lista de servicios */
 
@@ -38,8 +115,7 @@
     gap: 16px;
 }
 
-
-/* Tarjetas de servicios */
+/* Tarjetas */
 
 .servicio-tarjeta {
     display: flex;
@@ -52,8 +128,9 @@
     box-sizing: border-box;
 }
 
-
-/* Información de cada servicio */
+.servicio-informacion {
+    flex: 1;
+}
 
 .servicio-informacion h3 {
     color: #ffffff;
@@ -62,18 +139,17 @@
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    margin: 8px 0 12px 0;
+    margin: 8px 0 12px;
 }
 
 .servicio-informacion p {
     color: #8c9bae;
     font-family: Georgia, serif;
     font-size: 14px;
-    margin: 0;
+    margin: 5px 0;
 }
 
-
-/* Contenedor de los botones */
+/* Botones de acciones */
 
 .servicio-botones {
     display: flex;
@@ -81,57 +157,37 @@
     gap: 12px;
 }
 
-
-/* Botón editar */
+.boton-editar,
+.boton-eliminar {
+    display: inline-block;
+    border: none;
+    border-radius: 7px;
+    padding: 12px 16px;
+    width: 120px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
 
 .boton-editar {
     background-color: #efb443;
     color: #111827;
-    border: none;
-    border-radius: 7px;
-    padding: 12px 16px;
-    width: 120px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: left;
-    cursor: pointer;
 }
-
-.boton-editar:hover {
-    background-color: #f2c45b;
-}
-
-
-/* Botón eliminar */
 
 .boton-eliminar {
     background-color: #35465d;
     color: #ffffff;
-    border: none;
-    border-radius: 7px;
-    padding: 12px 16px;
-    width: 120px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: left;
-    cursor: pointer;
 }
 
 .boton-eliminar:hover {
-    background-color: #465a73;
+    background-color: #a83232;
 }
 
-
-/* ========================================
-   ADAPTACIÓN RESPONSIVE
-   ======================================== */
-
-/* Tablets */
+/* Responsive */
 
 @media (max-width: 900px) {
-
     .servicio-tarjeta {
         gap: 16px;
     }
@@ -147,22 +203,22 @@
     }
 }
 
-/* Celulares */
-
 @media (max-width: 650px) {
-
     .servicios-acciones {
         justify-content: stretch;
-        margin-bottom: 20px;
+    }
+
+    .servicios-acciones details {
+        width: 100%;
     }
 
     .boton-nuevo-servicio {
         width: 100%;
-        text-align: center;
+        box-sizing: border-box;
     }
 
-    .servicios-lista {
-        gap: 16px;
+    .servicios-acciones details form {
+        width: auto;
     }
 
     .servicio-tarjeta {
@@ -170,27 +226,25 @@
         align-items: flex-start;
         gap: 20px;
         padding: 20px;
-        min-height: auto;
-    }
-
-    .servicio-informacion h3 {
-        font-size: 15px;
-    }
-
-    .servicio-informacion p {
-        font-size: 14px;
     }
 
     .servicio-botones {
-        display: flex;
         width: 100%;
-        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .servicio-botones details {
+        flex: 1;
+    }
+
+    .servicio-botones details form {
+        width: 260px;
+        max-width: calc(100vw - 80px);
     }
 
     .boton-editar,
     .boton-eliminar {
-        flex: 1;
-        min-width: 0;
-        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
     }
 }
