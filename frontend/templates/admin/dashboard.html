@@ -1,127 +1,185 @@
 {% extends "admin/base.html" %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/dashboard.css') }}">{% endblock %}
-{% block subtitle %}Resumen general - Ultimo mes{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/dashboard.css') }}">
+{% endblock %}
+
+{% block subtitle %}Resumen general{% endblock %}
 
 {% block page_content %}
+
+<div class="dashboard-container">
+
+    <!-- FILTROS -->
+    <form class="dashboard-filters" method="GET" action="{{ url_for('dashboard.dashboard') }}">
+
+        <div class="filter-group">
+            <label for="desde">Desde</label>
+            <input type="date" id="desde" name="desde" value="{{ desde }}" required>
+        </div>
+
+        <div class="filter-group">
+            <label for="hasta">Hasta</label>
+            <input type="date" id="hasta" name="hasta" value="{{ hasta }}" required>
+        </div>
+
+        <button type="submit" class="filter-button">
+            Aplicar
+        </button>
+
+    </form>
+
     {% if datos %}
+
+    <!-- INDICADORES PRINCIPALES -->
     <section class="sales-row">
+
         <article class="sales-card">
-            <h3>CANTIDAD DE ENTRADAS VENDIDAS</h3>
-            <p class="sales-value">
-                {{ datos.totales['entradas_vendidas'] }}
-            </p>
+            <span class="sales-label">VENTAS TOTALES</span>
+            <h2 class="sales-value">
+                ${{ "%.2f"|format(datos.totales.ventas_totales) }}
+            </h2>
+            <p>Entradas y servicios</p>
         </article>
 
-        
-        <article class="sales-card">         
-            <h3>INGRESOS DE LAS ENTRADAS</h3>
-            <p class="sales-value">{{ datos.totales['ingresos'] }}$</p>
+        <article class="sales-card">
+            <span class="sales-label">ENTRADAS VENDIDAS</span>
+            <h2 class="sales-value">
+                {{ datos.totales.entradas_vendidas }}
+            </h2>
+            <p>Sin contar cancelaciones</p>
         </article>
-        
+
+        <article class="sales-card">
+            <span class="sales-label">OCUPACIÓN PROMEDIO</span>
+            <h2 class="sales-value">
+                {{ datos.totales.ocupacion_promedio }}%
+            </h2>
+            <p>Entradas vendidas / capacidad</p>
+        </article>
+
     </section>
-    
-    
-    <!--Sección de graficos-->
+
+    <!-- GRÁFICOS -->
     <section class="charts-row">
-        <!--
+
+        <!-- VENTAS POR GÉNERO -->
         <article class="chart-card">
+
             <h3>Ventas por género</h3>
-            <h4>Comparación de entradas vendidas</h4>
+            <p class="chart-subtitle">Entradas vendidas</p>
 
             <div class="genre-list">
+
+                {% for genero in datos.generos %}
+
                 <div class="genre-item">
-                    <p>Acción</p>
-                    <div class="genre-bar" style="width: 90%;"></div>
+
+                    <div class="genre-info">
+                        <span>{{ genero.genero }}</span>
+                        <strong>{{ genero.entradas_vendidas }}</strong>
+                    </div>
+
+                    <div class="genre-track">
+                        <progress
+                            class="genre-bar"
+                            value="{{ genero.porcentaje }}"
+                            max="100">
+                        </progress>
+                    </div>
+
                 </div>
-                <div class="genre-item">
-                    <p>Drama</p>
-                    <div class="genre-bar" style="width: 70%;"></div>
-                </div>
-                <div class="genre-item">
-                    <p>Romance</p>
-                    <div class="genre-bar" style="width: 50%;"></div>
-                </div>
-                <div class="genre-item">
-                    <p>Terror</p>
-                    <div class="genre-bar" style="width: 30%;"></div>
-                </div>
+
+                {% else %}
+
+                <p class="empty-message">
+                    No hay ventas por género para este período.
+                </p>
+
+                {% endfor %}
+
             </div>
-        </article>
-        -->
-        <article class="chart-card">
-            <h3>GENEROS DE PELICULAS CON MAS VENTAS</h3>
-            <table class="generos-vendidos">
-                <thead>
-                    <tr>
-                        <th>GENERO</th>
-                        <th>ENTRADAS VENDIDAS</th>
-                        <th>INGRESOS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p in datos.generos %}
-                        <tr>
-                            <td>{{ p['genero'] }}</td>
-                            <td>{{ p['entradas_vendidas'] }}</td>
-                            <td>{{ p['ingresos'] }}$</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
         </article>
 
+        <!-- OCUPACIÓN POR FUNCIÓN -->
         <article class="chart-card">
-            <h3>PELICULAS MAS VENDIDAS</h3>
+
+            <h3>Ocupación por función</h3>
+            <p class="chart-subtitle">
+                Funciones activas del período seleccionado
+            </p>
+
             <div class="occupancy-list">
-                <table class="peliculas-vendidas">
+
+                <table class="occupancy-table">
+
                     <thead>
                         <tr>
-                            <th>TITULO</th>
-                            <th>ENTRADAS VENDIDAS</th>
-                            <th>INGRESOS</th>
+                            <th>PELÍCULA</th>
+                            <th>LOCAL</th>
+                            <th>SALA</th>
+                            <th>FECHA</th>
+                            <th>OCUPACIÓN</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        {% for p in datos.peliculas %}
-                            <tr>
-                                <td>{{ p['titulo'] }}</td>
-                                <td>{{ p['entradas_vendidas'] }}</td>
-                                <td>{{ p['ingresos'] }}$</td>
-                            </tr>
-                                
+
+                        {% for funcion in datos.ocupacion %}
+
+                        <tr>
+                            <td>{{ funcion.titulo }}</td>
+                            <td>{{ funcion.local }}</td>
+                            <td>{{ funcion.sala }}</td>
+                            <td>{{ funcion.inicio }}</td>
+
+                            <td>
+                                <div class="occupancy-value">
+
+                                    <strong>
+                                        {{ funcion.ocupacion or 0 }}%
+                                    </strong>
+
+                                    <progress
+                                        class="occupancy-bar"
+                                        value="{{ funcion.ocupacion or 0 }}"
+                                        max="100">
+                                    </progress>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="5" class="empty-message">
+                                No hay funciones activas en este período.
+                            </td>
+                        </tr>
+
                         {% endfor %}
+
                     </tbody>
+
                 </table>
-                
+
             </div>
+
         </article>
 
-        <article class="chart-card">
-            <h3>SERVICIOS MAS VENDIDOS</h3>
-            <div class="occupancy-list">
-                <table class="servicios-vendidos">
-                    <thead>
-                        <tr>
-                            <th>SERVICIO</th>
-                            <th>UNIDADES</th>
-                            <th>INGRESOS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in datos.servicios %}
-                        <tr>
-                            <td>{{ p.nombre }}</td>
-                            <td>{{ p.cantidad_vendida }}</td>
-                            <td>{{ p.ingresos }}$</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                
-            </div>
-        </article>
     </section>
+
     {% elif error %}
-    <h1>Error: {{ error }}</h1>
+
+    <div class="dashboard-error">
+        <h3>No se pudieron cargar las estadísticas</h3>
+        <p>{{ error }}</p>
+    </div>
+
     {% endif %}
+
+</div>
+
 {% endblock %}
