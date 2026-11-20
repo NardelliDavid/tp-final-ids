@@ -1,102 +1,358 @@
-/* Contenedor del botón para alinearlo a la derecha */
-.button {
+
+/*BOTÓN NUEVA FUNCIÓN*/
+
+.create-function {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
 }
-/* Estilo del botón (+ Nueva función) */
+
 .btn-function {
-    background-color: #f2bb2ef5; 
-    color: #000000; 
-    font-size: 14px; 
-    font-weight: 600;        
-    padding: 10px 18px;
-    border-radius: 6px;
-    text-decoration: none;     
+    background: linear-gradient(135deg, #f2bb2e, #f59e0b);
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
     display: inline-block;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease,
+                background 0.25s ease;
 }
+
 .btn-function:hover {
-    background-color: #f59e0b;
+    background: linear-gradient(135deg, #ffc943, #f59e0b);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(242, 187, 46, 0.25);
 }
-/*Estilo de las tarjetas de funciones*/
+
+
+/*MODAL NUEVA FUNCIÓN*/
+
+.modal-function {
+    width: min(480px, calc(100% - 32px));
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 28px;
+    border: 1px solid rgba(242, 187, 46, 0.25);
+    border-radius: 16px;
+    background: linear-gradient(145deg, #202d40, #131d2b);
+    color: #fff;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+    margin: auto;
+}
+
+.modal-function[open] {
+    animation: aparecerModal 0.35s ease both;
+}
+
+.modal-function::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    animation: aparecerFondo 0.3s ease both;
+}
+
+@keyframes aparecerModal {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.94);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes aparecerFondo {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #f2bb2e;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-close:hover {
+    color: #f2bb2e;
+    transform: rotate(90deg);
+}
+
+
+/*FORMULARIOS DEL MODAL Y EDICIÓN*/
+
+.modal-function form,
+.function-card details form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-function label,
+.function-card details label {
+    color: #e5e7eb;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 7px;
+}
+
+.modal-function input,
+.modal-function select,
+.function-card details input,
+.function-card details select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 13px;
+    background-color: #111c2b;
+    color: #fff;
+    border: 1px solid #3a4a60;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.modal-function input:focus,
+.modal-function select:focus,
+.function-card details input:focus,
+.function-card details select:focus {
+    border-color: #f2bb2e;
+    box-shadow: 0 0 0 3px rgba(242, 187, 46, 0.15);
+}
+
+.modal-function select option,
+.function-card details select option {
+    background-color: #182232;
+    color: #fff;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel {
+    background-color: #39475a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #526176;
+}
+
+.modal-actions .btn-function {
+    flex: 1;
+}
+
+
+/*LISTADO DE FUNCIONES*/
+
 .function-list {
     display: flex;
     flex-direction: column;
-    gap: 12px; 
+    gap: 12px;
     margin-top: 20px;
 }
+
+.function-list > h2 {
+    color: #fff;
+    margin-bottom: 8px;
+}
+
 .function-card {
-    background-color: #182232; 
-    border-radius: 8px;
+    background: linear-gradient(135deg, #1d2a3d, #182232);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
     padding: 18px 24px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between; 
+    justify-content: space-between;
     align-items: center;
     gap: 12px;
     box-sizing: border-box;
+    transition: transform 0.25s ease, border-color 0.25s ease,
+                box-shadow 0.25s ease;
+}
+
+.function-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(242, 187, 46, 0.35);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
 .function-card .function {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
     margin-bottom: 0;
     justify-content: flex-start;
     min-width: 0;
     flex: 1;
 }
+
 .function-card h3 {
-    color: #ffffff;
+    color: #fff;
     font-size: 16px;
-    font-weight: 600;
-    margin: 0;
+    font-weight: 700;
+    margin: 0 0 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-/*Estilos de los botones "eliminar" y "editar"*/
+
+.function-card p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin: 0;
+}
+
+
+/*BOTONES DE ACCIONES*/
+
 .function-card .actions {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
-/* Estilos de botones de la tarjeta */
-.btn-edit, .btn-delete {
-    background-color: #f2bb2ef5; 
-    color: #000000;
+.btn-edit,
+.btn-delete {
+    background: linear-gradient(135deg, #f2bb2e, #f59e0b);
+    color: #000;
     font-size: 13px;
-    font-weight: 600;
-    padding: 8px 14px;
-    flex: 1;
-    min-width: 120px;
+    font-weight: 700;
+    padding: 9px 14px;
+    min-width: 100px;
     text-align: center;
-    border-radius: 6px;
+    border: none;
+    border-radius: 7px;
     text-decoration: none;
     display: inline-block;
     box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-edit:hover, .btn-delete:hover {
-    background-color: #f59e0b;
+.btn-edit:hover,
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(242, 187, 46, 0.2);
 }
 
-@media (max-width: 480px) {
+
+/* MENÚ DE EDICIÓN */
+
+.function-card details {
+    position: relative;
+}
+
+.function-card details summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.function-card details summary::-webkit-details-marker {
+    display: none;
+}
+
+.function-card details[open] {
+    width: 100%;
+}
+
+.function-card details form {
+    background-color: #111c2b;
+    border: 1px solid #39475a;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 10px;
+    min-width: 230px;
+    animation: aparecerModal 0.25s ease both;
+}
+
+
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+
+    .modal-function {
+        padding: 20px;
+    }
+
+    .modal-header h2 {
+        font-size: 19px;
+    }
+
     .function-card {
         flex-direction: column;
-        align-items: stretch; 
+        align-items: stretch;
         padding: 16px;
     }
 
     .function-card .actions {
         width: 100%;
-        flex-direction: row; 
-        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 9px;
     }
 
-    .btn-edit, .btn-delete {
-        flex: 1;
-        min-width: unset; 
+    .function-card .actions > * {
+        width: 100%;
+    }
+
+    .btn-edit,
+    .btn-delete {
+        width: 100%;
+    }
+
+    .function-card details form {
+        min-width: 0;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-actions button {
+        width: 100%;
     }
 }
