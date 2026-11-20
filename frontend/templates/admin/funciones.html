@@ -16,29 +16,80 @@
 
     <section class="create-function">
 
-        <h2>Nueva función</h2>
+        <button type="button" class="btn-function" onclick="document.getElementById('modalFuncion').showModal()">
+            + Nueva función
+        </button>
+
+    </section>
+
+    <dialog id="modalFuncion" class="modal-function">
+
+        <div class="modal-header">
+            <h2>Nueva función</h2>
+
+            <button type="button"
+                    class="btn-close"
+                    onclick="document.getElementById('modalFuncion').close()">
+                ×
+            </button>
+        </div>
 
         <form method="POST" action="{{ url_for('funciones.crear_funcion') }}">
 
-            <label for="pelicula_id">ID de película:</label>
-            <input type="number" name="pelicula_id" id="pelicula_id" required>
+            <label for="pelicula_id">Película:</label>
 
-            <label for="sala_id">ID de sala:</label>
-            <input type="number" name="sala_id" id="sala_id" required>
+            <select name="pelicula_id" id="pelicula_id" required>
+                <option value="">Seleccionar película</option>
+
+                {% for pelicula in peliculas %}
+                    <option value="{{ pelicula.id }}">
+                        {{ pelicula.titulo }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="sala_id">Sala:</label>
+
+            <select name="sala_id" id="sala_id" required>
+                <option value="">Seleccionar sala</option>
+
+                {% for sala in salas %}
+                    <option value="{{ sala.id }}">
+                        {{ sala.local }} - {{ sala.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
 
             <label for="inicio">Fecha y hora:</label>
-            <input type="datetime-local" name="inicio" id="inicio" required>
+            <input type="datetime-local"
+                   name="inicio"
+                   id="inicio"
+                   required>
 
             <label for="precio">Precio:</label>
-            <input type="number" name="precio" id="precio" step="0.01" min="0" required>
+            <input type="number"
+                   name="precio"
+                   id="precio"
+                   step="0.01"
+                   min="0"
+                   required>
 
-            <button type="submit" class="btn-function">
-                Crear función
-            </button>
+            <div class="modal-actions">
+                <button type="button"
+                        class="btn-cancel"
+                        onclick="document.getElementById('modalFuncion').close()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="btn-function">
+                    Crear función
+                </button>
+            </div>
 
         </form>
 
-    </section>
+    </dialog>
+
 
     <section class="function-list">
 
@@ -50,10 +101,10 @@
 
                 <div class="function">
 
-                    <h3>{{ funcion.pelicula.titulo }}</h3>
+                    <h3>{{ funcion.pelicula_titulo }}</h3>
 
-                    <p>Local: {{ funcion.local.nombre }}</p>
-                    <p>Sala: {{ funcion.sala.nombre }}</p>
+                    <p>Local: {{ funcion.local_nombre }}</p>
+                    <p>Sala: {{ funcion.sala_nombre }}</p>
                     <p>Fecha: {{ funcion.inicio }}</p>
                     <p>Precio: ${{ funcion.precio }}</p>
                     <p>Butacas libres: {{ funcion.butacas_libres }}</p>
@@ -73,28 +124,47 @@
                     </a>
 
                     <details>
+
                         <summary class="btn-edit">Editar</summary>
 
                         <form method="POST"
                               action="{{ url_for('funciones.editar_funcion', funcion_id=funcion.id) }}">
 
                             <label>Sala:</label>
-                            <input type="number" name="sala_id"
-                                   value="{{ funcion.sala.id }}" required>
+
+                            <select name="sala_id" required>
+
+                                {% for sala in salas %}
+                                    <option value="{{ sala.id }}"
+                                        {% if sala.id == funcion.sala_id %}selected{% endif %}>
+                                        {{ sala.local }} - {{ sala.nombre }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
 
                             <label>Fecha y hora:</label>
-                            <input type="datetime-local" name="inicio"
-                                   value="{{ funcion.inicio[:16] }}" required>
+
+                            <input type="datetime-local"
+                                   name="inicio"
+                                   value="{{ funcion.inicio[:16] }}"
+                                   required>
 
                             <label>Precio:</label>
-                            <input type="number" name="precio"
-                                   value="{{ funcion.precio }}" step="0.01" min="0" required>
+
+                            <input type="number"
+                                   name="precio"
+                                   value="{{ funcion.precio }}"
+                                   step="0.01"
+                                   min="0"
+                                   required>
 
                             <button type="submit" class="btn-function">
                                 Guardar cambios
                             </button>
 
                         </form>
+
                     </details>
 
                     <form method="POST"
