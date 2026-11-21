@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/formularios_login.css') }}">
-    <title>Login administrador</title>
-    
+
+    <title>Validación QR | Cine Paradiso</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/login_usuario.css') }}">
 </head>
 
 <body>
@@ -14,14 +15,20 @@
 
         {% if session.get("token") %}
 
-            <h1>Administración de entradas</h1>
+            <h1>Cine Paradiso</h1>
             <h2>Validación de QR</h2>
 
             <form method="POST" action="{{ url_for('admin_qr') }}">
 
-                <label>Token del QR:</label>
-                <input type="text" name="qr_token" required>
-                
+                <label for="qr_token">Token del QR:</label>
+                <input
+                    type="text"
+                    id="qr_token"
+                    name="qr_token"
+                    placeholder="Ingresá el token del QR"
+                    required
+                >
+
                 <button type="submit">Validar entrada</button>
 
             </form>
@@ -39,18 +46,20 @@
                 </div>
             {% endif %}
 
-            <a class="logout" href="{{ url_for('logout') }}">
-                Cerrar sesión
-            </a>
-
             {% if mensaje %}
                 <div class="mensaje">
                     {{ mensaje }}
                 </div>
             {% endif %}
-        
+
+            <a class="logout" href="{{ url_for('logout') }}">
+                Cerrar sesión
+            </a>
+
         {% else %}
-                <h2>Debe iniciar sesion como admistrador.</h2>
+
+            <h2>Debe iniciar sesión como administrador.</h2>
+
         {% endif %}
 
     </div>
