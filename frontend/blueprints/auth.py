@@ -125,3 +125,32 @@ def login_admin():
 def logout():
     session.clear()
     return redirect(url_for("auth.login"))
+
+@auth_bp.route("/perfil")
+def perfil():
+    token = session.get("token")
+    if not token:
+        return redirect(url_for("auth.login"))
+
+    try:
+        respuesta = requests.get(
+            f"{BACKEND_URL}/usuarios/me",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5
+        )
+
+        # Si el token expiró (401) o es inválido, limpiamos sesión y mandamos al login
+        if respuesta.status_code == 401:
+            session.clear()
+            return redirect(url_for("auth.login"))
+
+        if respuesta.ok:
+            datos_usuario = respuesta.json()
+            return render_template("formularios/perfil.html", usuario=datos_usuario)
+
+        mensaje = "No se pudieron cargar los datos del perfil."
+    except requests.RequestException:
+        mensaje = "No se pudo conectar con el backend."
+
+    return render_template("formularios/perfil.html", usuario=session.get("usuario", {}), mensaje=mensaje)
+
