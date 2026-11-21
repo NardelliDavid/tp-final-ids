@@ -1,7 +1,7 @@
 import requests
 from flask import (
     Blueprint, render_template, request, session,
-    redirect, url_for, flash
+    redirect, url_for, flash, abort
 )
 from config import BACKEND_URL
 
@@ -12,10 +12,10 @@ def verificar_administrador():
     token = session.get("token")
 
     if not token:
-        return None
+        abort(403)
 
     if session.get("usuario", {}).get("rol") != "administrador":
-        return None
+        abort(403)
 
     return token
 
@@ -23,9 +23,6 @@ def verificar_administrador():
 @peliculas_bp.route('/admin/peliculas')
 def peliculas():
     token = verificar_administrador()
-
-    if not token:
-        return redirect(url_for("auth.login_admin"))
 
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -72,9 +69,6 @@ def peliculas():
 def importar_peliculas():
     token = verificar_administrador()
 
-    if not token:
-        return redirect(url_for("auth.login_admin"))
-
     return render_template(
         "admin/buscar_pelicula.html",
         peliculas=[],
@@ -85,9 +79,6 @@ def importar_peliculas():
 @peliculas_bp.route('/admin/eliminar_pelicula/<int:id_api>', methods=["POST"])
 def eliminar_pelicula(id_api):
     token = verificar_administrador()
-
-    if not token:
-        return redirect(url_for("auth.login_admin"))
 
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -121,9 +112,6 @@ def eliminar_pelicula(id_api):
 @peliculas_bp.route('/admin/buscar_pelicula_tmdb', methods=["POST"])
 def buscar_pelicula_tmdb():
     token = verificar_administrador()
-
-    if not token:
-        return redirect(url_for("auth.login_admin"))
 
     titulo = request.form.get("titulo", "").strip()
 
@@ -177,9 +165,6 @@ def buscar_pelicula_tmdb():
 @peliculas_bp.route('/admin/agregar_pelicula_tmdb', methods=["POST"])
 def agregar_pelicula_tmdb():
     token = verificar_administrador()
-
-    if not token:
-        return redirect(url_for("auth.login_admin"))
 
     id_tmdb = request.form.get("id_tmdb", type=int)
 
