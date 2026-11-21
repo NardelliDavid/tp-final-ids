@@ -3,46 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administración de entradas</title>
+    <title>Validación QR | Cine Paradiso</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/validar_qr.css') }}">
 </head>
 
 <body>
 
     <div class="contenedor">
-        
-            <h1>Administración de entradas</h1>
-            <h2>Validación de QR</h2>
 
-            <form method="POST" action="{{ url_for('admin_qr') }}">
+        <h1>Cine Paradiso</h1>
+        <h2>Validación de QR</h2>
 
-                <label>Número de función:</label>
-                <input type="number" name="funcion_id" min="1" required>
+        <p class="descripcion">
+            Ingresá los datos de la entrada para verificar su validez.
+        </p>
 
-                <label>Token del QR:</label>
-                <input type="text" name="qr_token" required>
-                
-                <button type="submit">Validar entrada</button>
+        <form method="POST" action="{{ url_for('qr.admin_qr') }}">
 
-            </form>
+            <label for="funcion_id">Número de función:</label>
+            <input
+                type="number"
+                id="funcion_id"
+                name="funcion_id"
+                min="1"
+                placeholder="Ingresá el ID de la función"
+                required
+            >
 
-            {% if resultado %}
-                <div class="resultado">
-                    <strong>Respuesta:</strong>
-                    <pre>{{ resultado | tojson(indent=2) }}</pre>
+            <label for="qr_token">Token del QR:</label>
+            <input
+                type="text"
+                id="qr_token"
+                name="qr_token"
+                placeholder="Ingresá el código del QR"
+                required
+            >
+
+            <button type="submit">Validar entrada</button>
+
+        </form>
+
+        {% if error %}
+            <div class="mensaje">
+                {{ error }}
+            </div>
+
+        {% elif resultado and resultado.valido %}
+
+            <div class="resultado">
+
+                <h3>Entrada validada correctamente</h3>
+
+                <div class="datos-entrada">
+
+                    <p><strong>Cliente:</strong> {{ resultado.cliente }}</p>
+
+                    <p><strong>Película:</strong> {{ resultado.pelicula }}</p>
+
+                    <p><strong>Sala:</strong> {{ resultado.sala }}</p>
+
+                    <p><strong>Inicio:</strong> {{ resultado.inicio }}</p>
+
+                    <div class="butacas">
+                        <strong>Butacas:</strong>
+
+                        <ul>
+                            {% for butaca in resultado.butacas %}
+                                <li>
+                                    Fila {{ butaca.fila }},
+                                    columna {{ butaca.columna }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
                 </div>
-            {% endif %}
 
-            {% if error %}
-                <div class="mensaje">
-                    {{ error }}
-                </div>
-            {% endif %}
+            </div>
 
-            <a class="logout" href="{{ url_for('logout') }}">
-                Cerrar sesión
-            </a>
+        {% endif %}
+
+        <a class="logout" href="{{ url_for('auth.logout') }}">
+            Cerrar sesión
+        </a>
 
     </div>
 
