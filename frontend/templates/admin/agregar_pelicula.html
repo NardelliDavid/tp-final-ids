@@ -1,14 +1,53 @@
-{% extends "admin/base.html" %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/agregar_pelicula.css') }}">{% endblock%}
-{% block subtitle %}Agregar pelicula desde TMDB{% endblock %}
-{% block page_content %}
-    
-    {% if respuesta[1] == 409 %}
-        <div class="respuesta-error">{{respuesta[0]['Error']}}. <br>Codigo de estado: {{respuesta[1]}}</div>
-    {% else %}
-        <div class="respuesta-exito">{{respuesta[0]['OK']}}. <br>Codigo de estado: {{respuesta[1]}}.</div>
-    {% endif %}
-        <a href="{{ url_for('peliculas.peliculas') }}">Volver a peliculas.</a>
 
-    
+{% extends "admin/base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/agregar_pelicula.css') }}">
+{% endblock %}
+
+{% block title %}CINE PARADISO - IMPORTACIÓN{% endblock %}
+
+{% block subtitle %}Resultado de la importación{% endblock %}
+
+{% block page_content %}
+
+<div class="resultado-container">
+
+    {% if respuesta[1] == 409 %}
+
+        <div class="respuesta-error">
+            <h2>No se pudo importar</h2>
+            <p>{{ respuesta[0]['Error'] }}</p>
+        </div>
+
+    {% elif respuesta[1] == 200 %}
+
+        <div class="respuesta-exito">
+            <h2>¡Película importada correctamente!</h2>
+            <p>{{ respuesta[0]['OK'] }}</p>
+        </div>
+
+    {% else %}
+
+        <div class="respuesta-error">
+            <h2>No se pudo completar la importación</h2>
+            <p>
+                {{ respuesta[0].get('Error', 'Ocurrió un error inesperado.') }}
+            </p>
+        </div>
+
+    {% endif %}
+
+    <div class="acciones-resultado">
+        <a href="{{ url_for('peliculas.importar_peliculas') }}">
+            Buscar otra película
+        </a>
+
+        <a href="{{ url_for('peliculas.peliculas') }}">
+            Volver a películas
+        </a>
+    </div>
+
+</div>
+
 {% endblock %}
