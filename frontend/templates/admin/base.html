@@ -18,7 +18,7 @@
         <!--Contenido principal-->
     <main class="main-content">
         <header class="main-header">
-            <h2>{% block subtitle %}Resumen general{% endblock %}</h2>
+            <h2>{% block subtitle %}{% endblock %}</h2>
             {% include 'components/header.html' %}
         </header>
 
@@ -28,16 +28,7 @@
 
     </main>
     <!--Scrip de js para hacer el menú desplegable-->
-    <script>
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebarContainer = document.getElementById('sidebarContainer');
-
-        if (menuToggle && sidebarContainer) {
-            menuToggle.addEventListener('click', () => {
-                sidebarContainer.classList.toggle('show');
-            });
-        }
-    </script>    
+    <script src="{{ url_for('static', filename='admin/js/main.js') }}"></script>    
     <!--Bloque opcional para añadir scripts de js en las demás pantallas-->
     {% block extra_js %}{% endblock %}
 </body>

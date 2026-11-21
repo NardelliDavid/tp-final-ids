@@ -9,6 +9,7 @@ from src.routes.peliculas import peliculas_bp
 from src.routes.dashboard import dashboard_bp
 from src.routes.Funciones import funciones_bp
 from src.routes.Carteleras import carteleras_bp
+from src.routes.compras import compras_bp
 
 app = Flask(__name__)
 app.register_blueprint(servicios_bp)
@@ -20,6 +21,7 @@ app.register_blueprint(peliculas_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(funciones_bp)
 app.register_blueprint(carteleras_bp)
+app.register_blueprint(compras_bp)
 
 @app.route("/")
 def index():

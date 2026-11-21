@@ -51,6 +51,7 @@ CREATE TABLE funciones (
     inicio       DATETIME NOT NULL,
     fin          DATETIME NOT NULL,
     precio       DECIMAL(10,2) NOT NULL,
+    estado       ENUM('activa', 'cancelada') NOT NULL DEFAULT 'activa',
     CHECK (fin > inicio),
     FOREIGN KEY (pelicula_id) REFERENCES peliculas(id),
     FOREIGN KEY (sala_id)     REFERENCES salas(id)

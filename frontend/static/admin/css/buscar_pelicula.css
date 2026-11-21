@@ -1,0 +1,64 @@
+.contenedor-peliculas {
+    color: white;
+    display: grid;
+    gap: 20px;
+}
+.pelicula-tmdb {
+    border-radius: 10px;
+    background-color: #182232;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.pelicula-tmdb img {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 5px;
+    width: 100px;
+    height: 150px;
+}
+.pelicula-tmdb div {
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    justify-content: start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+.pelicula-tmdb form input {
+    display: none;
+}
+.pelicula-tmdb form button {
+    white-space: nowrap;
+    cursor: pointer;
+    margin-left: auto;
+    text-decoration: none;
+    background-color: #ffd500f5;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #000000;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+}
+.pelicula-tmdb form button:hover {
+    background-color: #d19b11f5;
+}
+
+@media (max-width: 700px) {
+    .pelicula-tmdb {
+    flex-direction: column;
+    }
+    .pelicula-tmdb img {
+    width: 300px;
+    height: 450px;
+    }
+    .pelicula-tmdb form button {
+        margin-bottom: 20px;
+    }
+}

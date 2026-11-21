@@ -1,7 +1,9 @@
+
 from datetime import datetime, timedelta
+from decimal import Decimal
+
 from src.repositories.Funciones import obtener_datos_butacas
-from src.repositories.Funciones import dar_de_baja_funcion as dar_de_baja_funcion_db
-from src.repositories.Funciones import tiene_compras_activas
+from src.repositories.Funciones import eliminar_funcion as eliminar_funcion_db
 from src.repositories.Funciones import obtener_funcion_por_id
 from src.repositories.Funciones import actualizar_funcion as actualizar_funcion_db
 from src.repositories.Funciones import obtener_duracion_pelicula
@@ -11,7 +13,8 @@ from src.repositories.Funciones import crear_funcion as crear_funcion_db
 from src.repositories.Funciones import obtener_detalle_funcion
 from src.repositories.Funciones import obtener_funciones
 
-#GET/funciones/
+
+# GET /funciones/
 def listar_funciones(filtros, incluir_pasadas):
     funciones = obtener_funciones(filtros, incluir_pasadas)
 
@@ -41,8 +44,7 @@ def listar_funciones(filtros, incluir_pasadas):
     return respuesta
 
 
-
-#GET/funciones/{id}
+# GET /funciones/{id}
 def obtener_detalle_funcion_servicio(funcion_id):
     respuesta = obtener_detalle_funcion(funcion_id)
 
@@ -96,7 +98,8 @@ def obtener_butacas_funcion(funcion_id):
 
     return respuesta
 
-# POST/funciones 
+
+# POST /funciones
 def crear_funcion(datos):
     respuesta = {}
     codigo = 201
@@ -192,8 +195,7 @@ def crear_funcion(datos):
     return respuesta, codigo
 
 
-
-# PATCH	/funciones/{id}
+# PATCH /funciones/{id}
 def actualizar_funcion(funcion_id, datos):
     respuesta = {}
     codigo = 200
@@ -222,46 +224,66 @@ def actualizar_funcion(funcion_id, datos):
 
         if isinstance(inicio, str):
             try:
-                inicio = datetime.strptime(inicio, "%Y-%m-%d %H:%M:%S")
+                inicio = datetime.fromisoformat(inicio)
             except ValueError:
                 inicio = None
 
         if (
             not isinstance(sala_id, int)
+            or isinstance(sala_id, bool)
             or sala_id <= 0
-            or inicio is None
+            or not isinstance(inicio, datetime)
+            or not isinstance(precio, (int, float, Decimal))
+            or isinstance(precio, bool)
             or precio <= 0
         ):
             respuesta = {"error": "Los datos enviados no son válidos"}
             codigo = 422
 
-        else:
-            respuesta = {
-                "id": funcion_id,
-                "sala_id": sala_id,
-                "inicio": inicio.strftime("%Y-%m-%d %H:%M:%S"),
-                "precio": float(precio)
-            }
+        elif not existe_sala(sala_id):
+            respuesta = {"error": "La sala no existe"}
+            codigo = 404
 
-            codigo = 200
+        else:
+            pelicula = obtener_duracion_pelicula(funcion["pelicula_id"])
+
+            if pelicula is None:
+                respuesta = {"error": "La película no existe"}
+                codigo = 404
+
+            else:
+                duracion = pelicula["duracion_min"]
+                fin = inicio + timedelta(minutes=duracion)
+
+                if existe_superposicion(
+                    sala_id, inicio, fin, funcion_id
+                ):
+                    respuesta = {
+                        "error": "La sala tiene otra función en ese horario o no cumple los 20 minutos de limpieza"
+                    }
+                    codigo = 422
+
+                else:
+                    actualizar_funcion_db(
+                        funcion_id,
+                        sala_id,
+                        inicio,
+                        fin,
+                        precio
+                    )
+
+                    respuesta = {
+                        "id": funcion_id,
+                        "sala_id": sala_id,
+                        "inicio": inicio.isoformat(),
+                        "precio": float(precio)
+                    }
 
     return respuesta, codigo
 
 
-# DELETE/funciones/{id} 
-def dar_de_baja_funcion(funcion_id):
-    respuesta = 204
-
-    datos = obtener_datos_butacas(funcion_id)
-
-    if datos is None:
-        respuesta = 404
-
-    else:
-        if tiene_compras_activas(funcion_id):
-            respuesta = 409
-
-        else:
-            dar_de_baja_funcion_db(funcion_id)
+# DELETE /funciones/{id}
+def eliminar_funcion(funcion_id):
+    respuesta = eliminar_funcion_db(funcion_id)
 
     return respuesta

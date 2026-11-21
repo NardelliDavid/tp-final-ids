@@ -27,7 +27,7 @@ def ver_peliculas_disponibles_db():
         return resultado
 
 # Endpoint para buscar peliculas en TMDB por titulo
-@peliculas_bp.route("/backoffice/buscar_peliculas_tmdb", methods=["GET"])
+@peliculas_bp.route("/backoffice/buscar_peliculas_tmdb", methods=["POST"])
 def buscar_peliculas_tmdb():
     try:
         email_usuario = obtener_usuario_autenticado()
@@ -40,7 +40,7 @@ def buscar_peliculas_tmdb():
                 respuesta = jsonify({"Error":"Usted no es administrador"}), 403
             else:
                 # Obtiene el titulo de la pelicula como parametro, verifica si existe y si es valido
-                titulo = request.args.get("titulo")
+                titulo = request.json.get("titulo")
                 if not titulo:
                     respuesta = jsonify({"Error": "Falta el parametro 'titulo' en la URL"}), 400
                 else:
@@ -154,7 +154,7 @@ def agregar_pelicula_tmdb():
     return respuesta
 
 # Endpoint para eliminar peliculas de la base de datos por id
-@peliculas_bp.route("/backoffice/eliminar_pelicula_tmdb", methods=["POST"])
+@peliculas_bp.route("/backoffice/eliminar_pelicula_tmdb", methods=["DELETE"])
 def eliminar_pelicula_tmdb():
 
     email_usuario = obtener_usuario_autenticado()
@@ -170,7 +170,7 @@ def eliminar_pelicula_tmdb():
             if not id_pelicula:
                 respuesta = jsonify({"Error": "No se envio el campo 'id'"}), 400
             else:
-                resultado = eliminar_pelicula_db(id_pelicula)
-                respuesta = jsonify(resultado)
+                contenido, codigo = eliminar_pelicula_db(id_pelicula)
+                respuesta = jsonify(contenido), codigo
 
     return respuesta

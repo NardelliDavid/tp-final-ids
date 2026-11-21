@@ -1,6 +1,6 @@
 from db.conexion_db import conexion
 
-#GET/funciones/
+# GET /funciones/
 def obtener_funciones(filtros, incluir_pasadas):
     conn = conexion()
     cursor = conn.cursor(dictionary=True)
@@ -74,7 +74,7 @@ def obtener_funciones(filtros, incluir_pasadas):
     return funciones
 
 
-#GET/funciones/{id}
+# GET /funciones/{id}
 def obtener_detalle_funcion(funcion_id):
     conn = conexion()
     cursor = conn.cursor(dictionary=True)
@@ -127,7 +127,6 @@ def obtener_datos_butacas(funcion_id):
     conn = conexion()
     cursor = conn.cursor(dictionary=True)
 
-    # Obtiene las filas y columnas de la sala de la función.
     consulta = """
         SELECT salas.filas, salas.columnas
         FROM funciones
@@ -139,8 +138,6 @@ def obtener_datos_butacas(funcion_id):
     sala = cursor.fetchone()
 
     if sala is not None:
-
-        # Busca las butacas que pertenecen a compras no canceladas.
         consulta = """
             SELECT entradas.fila, entradas.columna
             FROM entradas
@@ -164,8 +161,8 @@ def obtener_datos_butacas(funcion_id):
 
     return respuesta
 
- 
-# POST/funciones 
+
+# POST /funciones
 def obtener_duracion_pelicula(pelicula_id):
     conn = conexion()
     cursor = conn.cursor(dictionary=True)
@@ -204,7 +201,7 @@ def existe_sala(sala_id):
     return sala is not None
 
 
-def existe_superposicion(sala_id, inicio, fin):
+def existe_superposicion(sala_id, inicio, fin, funcion_id=None):
     conn = conexion()
     cursor = conn.cursor()
 
@@ -217,7 +214,13 @@ def existe_superposicion(sala_id, inicio, fin):
         AND DATE_ADD(fin, INTERVAL 20 MINUTE) > %s
     """
 
-    cursor.execute(consulta, (sala_id, fin, inicio))
+    parametros = [sala_id, fin, inicio]
+
+    if funcion_id is not None:
+        consulta += " AND id != %s"
+        parametros.append(funcion_id)
+
+    cursor.execute(consulta, parametros)
     funcion = cursor.fetchone()
 
     cursor.close()
@@ -246,7 +249,7 @@ def crear_funcion(pelicula_id, sala_id, inicio, fin, precio):
     return funcion_id
 
 
-# PATCH	/funciones/{id}
+# PATCH /funciones/{id}
 def obtener_funcion_por_id(funcion_id):
     conn = conexion()
     cursor = conn.cursor(dictionary=True)
@@ -289,7 +292,8 @@ def actualizar_funcion(funcion_id, sala_id, inicio, fin, precio):
 
     return filas_modificadas
 
-# DELETE/funciones/{id} 
+
+# DELETE /funciones/{id}
 def existe_funcion(funcion_id):
     conn = conexion()
     cursor = conn.cursor()
@@ -346,3 +350,71 @@ def dar_de_baja_funcion(funcion_id):
 
     cursor.close()
     conn.close()
+
+
+def eliminar_funcion(funcion_id):
+    conn = conexion()
+    cursor = conn.cursor()
+
+    consulta = """
+        SELECT id
+        FROM funciones
+        WHERE id = %s
+        FOR UPDATE
+    """
+
+    cursor.execute(consulta, (funcion_id,))
+    funcion = cursor.fetchone()
+
+    if funcion is None:
+        conn.rollback()
+        respuesta = 404
+
+    else:
+        consulta = """
+            SELECT id
+            FROM entradas
+            WHERE funcion_id = %s
+            LIMIT 1
+        """
+
+        cursor.execute(consulta, (funcion_id,))
+        entrada = cursor.fetchone()
+
+        if entrada is not None:
+            conn.rollback()
+            respuesta = 409
+
+        else:
+            consulta = """
+                DELETE FROM funciones
+                WHERE id = %s
+            """
+
+            cursor.execute(consulta, (funcion_id,))
+            conn.commit()
+            respuesta = 204
+
+    cursor.close()
+    conn.close()
+
+    return respuesta
+
+
+def obtener_salas():
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
+
+    consulta = """
+        SELECT id, local, nombre
+        FROM salas
+        ORDER BY local, id
+    """
+
+    cursor.execute(consulta)
+    salas = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return salas

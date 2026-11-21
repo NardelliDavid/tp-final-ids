@@ -1,3 +1,4 @@
+from src.routes.Funciones import verificar_administrador
 from flask import Blueprint, jsonify, request
 from mysql.connector import Error
 from src.repositories.servicios_repository import obtener_servicios_activos, crear_servicio,modificar_servicio,eliminar_servicio
@@ -22,6 +23,9 @@ def listar_servicios():
 #se encarga de gestionar la creación de un nuevo servicio en Cine
 @servicios_bp.route("/servicios", methods=["POST"])
 def agregar_servicio():
+    mensaje, codigo = verificar_administrador()
+    if codigo != 200:
+        return jsonify({"mensaje": mensaje}), codigo
 
     datos = request.get_json(silent=True) #si el JSON está mal formado o no se puede interpretar como JSON, el método devuelva None en lugar de generar un error HTTP automáticamente.
 
@@ -56,6 +60,9 @@ def agregar_servicio():
 
 @servicios_bp.route("/servicios/<int:id_servicio>", methods=["PATCH"])
 def modificar_servicio_endpoint(id_servicio):
+    mensaje, codigo = verificar_administrador()
+    if codigo != 200:
+        return jsonify({"mensaje": mensaje}), codigo
 
     datos = request.get_json(silent=True)
 
@@ -118,6 +125,9 @@ def modificar_servicio_endpoint(id_servicio):
 
 @servicios_bp.route("/servicios/<int:id_servicio>", methods=["DELETE"])
 def eliminar_servicio_endpoint(id_servicio):
+    mensaje, codigo = verificar_administrador()
+    if codigo != 200:
+        return jsonify({"mensaje": mensaje}), codigo
 
     mensaje = None
     codigo = 500
