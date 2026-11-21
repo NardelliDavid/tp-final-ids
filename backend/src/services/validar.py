@@ -4,7 +4,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from db.conexion_db import conexion
 
 serializador = URLSafeTimedSerializer("mi_clave_segura")  # Clave secreta para firmar los tokens
-TIEMPO_EXPIRACION = 3600  # Duración del token en segundos (3600 = 1 hora)
+TIEMPO_EXPIRACION = 3600  # Duración del token en segundos 
 
 
 # Registro de usuarios (POST /auth/registro)

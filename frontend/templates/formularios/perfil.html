@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Cine Paradiso</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b111e; color: #e2e8f0; min-height: 100vh; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 22px 48px; border-bottom: 1px solid #1e293b; }
+        .navbar .logo { color: #fbbf24; font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; text-decoration: none; }
+        .navbar .nav-links a { color: #cbd5e1; text-decoration: none; font-size: 0.9rem; margin: 0 8px; }
+        .navbar .nav-links a:hover { color: #fbbf24; }
+        .navbar .separador { color: #475569; }
+        .main-container { max-width: 900px; margin: 45px auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        @media (max-width: 768px) { .main-container { grid-template-columns: 1fr; } }
+        .card { background-color: #182232; border: 1px solid #263349; border-radius: 12px; padding: 32px; }
+        .card h1 { font-size: 1.5rem; font-weight: 700; color: #ffffff; margin-bottom: 24px; }
+        .campo { margin-bottom: 18px; }
+        .campo label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; }
+        .campo .valor-box { width: 100%; background-color: #273549; border: 1px solid #334155; border-radius: 6px; padding: 11px 14px; color: #f8fafc; font-size: 0.95rem; }
+        .btn-dorado { background-color: #fbbf24; color: #0f172a; font-weight: 700; font-size: 0.95rem; border: none; border-radius: 8px; padding: 11px 22px; cursor: pointer; margin-top: 6px; display: inline-block; text-decoration: none; }
+        .btn-dorado:hover { background-color: #f59e0b; }
+        .btn-secundario { background-color: transparent; color: #cbd5e1; border: 1px solid #334155; border-radius: 8px; padding: 10px 18px; font-size: 0.9rem; text-decoration: none; display: inline-block; margin-left: 10px; }
+        .btn-secundario:hover { border-color: #fbbf24; color: #fbbf24; }
+        .nota-dorada { margin-top: 24px; background-color: #111927; border-left: 3px solid #fbbf24; border-radius: 6px; padding: 14px 16px; font-size: 0.85rem; color: #94a3b8; line-height: 1.4; }
+        .alerta-error { background-color: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; color: #fca5a5; padding: 12px 14px; border-radius: 6px; margin-bottom: 18px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="{{ url_for('auth.login') }}" class="logo">CINE PARADISO</a>
+        <nav class="nav-links">
+            <a href="{{ url_for('auth.login') }}">Cartelera</a>
+            <span class="separador">|</span>
+            <a href="{{ url_for('auth.perfil') }}">Mi Perfil</a>
+            <span class="separador">|</span>
+            <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <section class="card">
+            <h1>Mi Perfil</h1>
+
+            {% if mensaje %}
+                <div class="alerta-error">{{ mensaje }}</div>
+            {% endif %}
+
+            <div class="campo">
+                <label>Nombre</label>
+                <div class="valor-box">{{ usuario.get("nombre", "Usuario") }}</div>
+            </div>
+
+            <div class="campo">
+                <label>Correo electrónico</label>
+                <div class="valor-box">{{ usuario.get("email", "") }}</div>
+            </div>
+
+            <div class="campo">
+                <label>Rol de cuenta</label>
+                <div class="valor-box">{{ usuario.get("rol", "cliente") | capitalize }}</div>
+            </div>
+
+            <a href="{{ url_for('auth.logout') }}" class="btn-dorado">Cerrar sesión</a>
+            <a href="{{ url_for('auth.login') }}" class="btn-secundario">Volver</a>
+
+            <div class="nota-dorada">
+                Tu sesión está protegida con un token temporal válido por 1 hora. Si expira, deberás volver a iniciar sesión.
+            </div>
+        </section>
+
+        <section class="card">
+            <h1>Seguridad y Cuenta</h1>
+
+            <div class="campo">
+                <label>Estado del token</label>
+                <div class="valor-box">Activo y verificado</div>
+            </div>
+
+            <div class="campo">
+                <label>ID de usuario</label>
+                <div class="valor-box">#{{ usuario.get("id", "-") }}</div>
+            </div>
+
+            <div class="nota-dorada">
+                Desde aquí podés verificar tus datos registrados en Cine Paradiso. Ante cualquier cambio en tu contraseña, recordá cerrar sesión en dispositivos compartidos.
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
