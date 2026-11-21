@@ -1,83 +1,116 @@
 {% extends "admin/base.html" %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/peliculas.css') }}">{% endblock %}
-{% block title %}CINE PARADISO PELICULAS{% endblock %}
-{% block subtitle%}Gestión de películas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/peliculas.css') }}">
+{% endblock %}
+
+{% block title %}CINE PARADISO - PELÍCULAS{% endblock %}
+
+{% block subtitle %}Gestión de películas{% endblock %}
 
 {% block page_content %}
-    <div class="import">
-        <form action="{{ url_for('peliculas.buscar_pelicula_tmdb')}}" method="POST">
-            <input type="text" name="titulo" placeholder="Titulo de la pelicula...">
-            <button>Buscar en TMDB</button>
-        </form>
+
+<div class="movies-header">
+    <div>
+        <h2>Películas registradas</h2>
+        <p>Administrá las películas disponibles en el sistema.</p>
     </div>
-    <!--Contenedor de busqueda y filtros-->
-    <!--
-    <section class="filter-container">
-        <div class="filter-row">
-            
-            <div class="search-card">
-                <label for="search-input">Buscar película</label>
-                <input type="text" id="search-input" placeholder="Escribir título">
-            </div>
 
-            
-            <div class="genre-card">
-                <label for="genre-select">Género</label>
-                <select id="genre-select">
-                    <option value="">Todos los géneros</option>
-                    <option value="accion">Acción</option>
-                    <option value="drama">Drama</option>
-                    <option value="romance">Romance</option>
-                    <option value="terror">Terror</option>
-                </select>
-            </div>
+    <a class="button-import"
+       href="{{ url_for('peliculas.importar_peliculas') }}">
+        Obtener películas por TMDB
+    </a>
+</div>
 
-           
-            <div class="restriction-card">
-                <label for="restriction-select">Restricción</label>
-                <select id="restriction-select">
-                    <option value="">Todas</option>
-                    <option value="atp">ATP</option>
-                    <option value="+10">+10</option>
-                    <option value="+15">+15</option>
-                    <option value="+18">+18</option>
-                </select>
-            </div>
+{% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensaje in mensajes %}
+        <p class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</p>
+    {% endfor %}
+{% endwith %}
 
-        </div>
-    </section>
-    -->
+<div class="search-container">
+    <label for="buscar-pelicula">Buscar película</label>
+    <input
+        type="text"
+        id="buscar-pelicula"
+        placeholder="Escribí el título de una película..."
+    >
+</div>
 
-<!--Definimos las tarjetas de peliculas-->
-    <section class="movies-row">
-        <!--Muestra el mensaje de exito o error al tratar de eliminar la pelicula-->
-        {% with mensajes = get_flashed_messages(with_categories=true) %}
-            {% for categoria, mensaje in mensajes %}
-                <p class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</p>
-            {% endfor %}
-        {% endwith %}
+<section class="movies-row">
+
+    {% if peliculas %}
 
         {% for pelicula in peliculas %}
+
         <article class="movie-card">
-            {% if pelicula['poster'] %}
-                <img src="{{ pelicula['poster'] }}" alt="poster de {{ pelicula['titulo'] }}"> 
+
+            {% if pelicula.poster %}
+                <img
+                    src="{{ pelicula.poster }}"
+                    alt="Póster de {{ pelicula.titulo }}"
+                >
             {% else %}
-                <img src="{{ url_for('static', filename='images/sin_poster.png') }}" alt="sin_poster.png"> 
+                <div class="poster-placeholder">
+                    Sin póster
+                </div>
             {% endif %}
-            
+
             <div class="movie-info">
-                <h3>{{ pelicula['titulo'] }}</h3>
-                <p>Clasificacion: {{ pelicula['clasificacion'] }}</p>
-                <p>Duracion: {{ pelicula['duracion'] }}m</p>
-            </div>  
-            {% if respuesta %}
-                <div>{{ respuesta }}</div>
-            {% endif %}
-            <form class="form-delete"
-             method="POST" action="{{ url_for('peliculas.eliminar_pelicula', id_api=pelicula['id_api']) }}">
-                <button type="submit" class="btn-delete">Eliminar</button>
+
+                <h3>{{ pelicula.titulo }}</h3>
+
+                <p>
+                    Clasificación:
+                    {{ pelicula.clasificacion }}
+                </p>
+
+                <p>
+                    Duración:
+                    {{ pelicula.duracion }} minutos
+                </p>
+
+            </div>
+
+            <form
+                class="form-delete"
+                method="POST"
+                action="{{ url_for('peliculas.eliminar_pelicula', id_api=pelicula.id_api) }}"
+                onsubmit="return confirm('¿Estás seguro de que querés eliminar esta película?');"
+            >
+                <button type="submit" class="btn-delete">
+                    Eliminar
+                </button>
             </form>
+
         </article>
+
         {% endfor %}
-    </section>
+
+    {% else %}
+
+        <div class="empty-movies">
+            <h3>No hay películas registradas</h3>
+            <p>Podés obtener películas desde TMDB utilizando el botón superior.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+<script>
+    const buscador = document.getElementById("buscar-pelicula");
+    const tarjetas = document.querySelectorAll(".movie-card");
+
+    buscador.addEventListener("input", function () {
+        const texto = this.value.toLowerCase().trim();
+
+        tarjetas.forEach(function (tarjeta) {
+            const titulo = tarjeta.querySelector("h3").textContent.toLowerCase();
+
+            tarjeta.style.display = titulo.includes(texto) ? "flex" : "none";
+        });
+    });
+</script>
+
 {% endblock %}
