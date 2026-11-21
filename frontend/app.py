@@ -18,23 +18,9 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(qr_bp)
 app.register_blueprint(compras_bp)
 
-BACKEND_URL = "http://127.0.0.1:5000"
-
 @app.route("/")
 def index():
     return redirect(url_for("auth.login_admin"))
-
-"""
-@app.route('/admin/horarios')
-def horarios():
-    return render_template('admin/horarios.html')
-
-
-@app.route('/admin/ventas_estadisticas')
-def ventas_estadisticas():
-    return render_template('admin/ventas_estadisticas.html')
-"""
-
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
