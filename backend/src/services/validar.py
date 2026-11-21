@@ -1,11 +1,13 @@
-from werkzeug.security import generate_password_hash, check_password_hash  # encripta la contraseña
-from itsdangerous import URLSafeTimedSerializer  # crea el token de seguridad
-from db.conexion_db import conexion  # Importa la función que conecta a MySQL
+from werkzeug.security import generate_password_hash, check_password_hash  # Encripta y valida contraseñas
+# itsdangerous: firma datos y estampa la fecha/hora de creación para que el token expire
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from db.conexion_db import conexion
 
-serializador = URLSafeTimedSerializer("mi_clave_segura")
+serializador = URLSafeTimedSerializer("mi_clave_segura")  # Clave secreta para firmar los tokens
+TIEMPO_EXPIRACION = 3600  # Duración del token en segundos (3600 = 1 hora)
 
 
-# Lógica del Endpoint de Registro (POST /auth/registro)
+# Registro de usuarios (POST /auth/registro)
 def registrar_usuario(nombre, email, password):
     password_encriptada = generate_password_hash(password)
 
@@ -24,10 +26,8 @@ def registrar_usuario(nombre, email, password):
     except Exception:
         return {"mensaje": "El email ya se encuentra registrado o hubo un error en la BD"}, 400
 
-    
 
-
-# Lógica del Endpoint de Login (POST /auth/login)
+# Login de usuarios (POST /auth/login)
 def autenticar_usuario(email, password):
     try:
         conn = conexion()
@@ -42,12 +42,13 @@ def autenticar_usuario(email, password):
             db_id, db_nombre, db_email, db_password_hash, db_rol = usuario
 
             if check_password_hash(db_password_hash, password):
-                # Genera un token encriptando el email del usuario
+                # Firma el email con la hora actual (dumps) y una sal específica para auth
                 token_real = serializador.dumps(db_email, salt="auth-salt")
 
                 return {
                     "mensaje": "Inicio de sesión exitoso",
-                    "token": token_real,  # <-- Aquí devolvemos el token real que pide el enunciado
+                    "token": token_real,
+                    "expira_en": TIEMPO_EXPIRACION,
                     "usuario": {
                         "id": db_id,
                         "nombre": db_nombre,
@@ -61,24 +62,17 @@ def autenticar_usuario(email, password):
         return {"mensaje": "Hubo un error en el servidor al intentar iniciar sesión"}, 500
 
 
-# Función de seguridad (Guardia) que antes estaba en perfil.py
+# Guardia de seguridad: valida el token recibido en el header Authorization
 def verificar_token(auth_header):
-    """
-    Lee la cabecera 'Authorization', extrae el token y lo desencripta
-    para obtener el email del usuario que tiene la sesión activa.
-    """
     if not auth_header:
         return None
 
     try:
-        # Saca la palabra Bearer si viene en la cabecera para quedarnos solo con el token
-        if "Bearer " in auth_header:
-            token = auth_header.split(" ")[1]
-        else:
-            token = auth_header
+        # Quita el prefijo "Bearer " si viene incluido
+        token = auth_header.split(" ")[1] if "Bearer " in auth_header else auth_header
 
-        # Desencripta usando la misma clave y sal del login
-        email = serializador.loads(token, salt="auth-salt")
+        # Verifica la firma y comprueba que no haya superado max_age (en segundos)
+        email = serializador.loads(token, salt="auth-salt", max_age=TIEMPO_EXPIRACION)
         return email
-    except Exception:
-        return None  # Si el token es inválido o expiró, rebota la petición
+    except (SignatureExpired, BadSignature, Exception):
+        return None  # Token vencido o adulterado
