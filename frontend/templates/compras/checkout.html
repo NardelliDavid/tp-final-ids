@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Revisar compra - Cine Paradiso</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/main.css') }}">
+
+    <style>
+        .checkout {
+            width: min(94%, 1100px);
+            margin: 35px auto;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .checkout h1 {
+            margin-bottom: 25px;
+        }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.9fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .checkout-principal {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .checkout-seccion {
+            padding: 22px;
+            background: #182232;
+            border-radius: 10px;
+        }
+
+        .checkout-seccion h2 {
+            margin: 0 0 18px;
+            font-size: 1.25rem;
+        }
+
+        .funcion-datos {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .dato {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .dato small {
+            color: #aebbd0;
+            font-size: 0.85rem;
+        }
+
+        .dato strong {
+            overflow-wrap: anywhere;
+        }
+
+        .butacas-lista {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .butaca-etiqueta {
+            min-width: 48px;
+            padding: 10px 14px;
+            background: #35465d;
+            border-radius: 7px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .checkout-fila {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #35465d;
+        }
+
+        .checkout-fila:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-fila span:last-child {
+            white-space: nowrap;
+        }
+
+        .checkout-subtotal {
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+
+        .servicio-detalle {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .servicio-detalle small {
+            color: #aebbd0;
+        }
+
+        .checkout-resumen {
+            position: sticky;
+            top: 20px;
+        }
+
+        .checkout-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 0;
+            border-top: 1px solid #35465d;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .checkout-total strong {
+            font-size: 1.6rem;
+            color: #efb443;
+            white-space: nowrap;
+        }
+
+        .checkout-aclaracion {
+            color: #aebbd0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .checkout-botones {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .checkout-botones a,
+        .checkout-botones button {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 16px;
+            border: none;
+            border-radius: 7px;
+            font-size: 1rem;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .volver {
+            background: #35465d;
+            color: #fff;
+        }
+
+        .confirmar {
+            background: #efb443;
+            color: #111827;
+            font-weight: bold;
+        }
+
+        .volver:hover {
+            background: #405570;
+        }
+
+        .confirmar:hover {
+            background: #f5c15d;
+        }
+
+        @media (max-width: 750px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-resumen {
+                position: static;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .funcion-datos {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-seccion {
+                padding: 17px;
+            }
+
+            .checkout-fila {
+                gap: 10px;
+                font-size: 0.93rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="checkout">
+
+        <h1>Revisá tu compra</h1>
+
+        {% for mensaje in get_flashed_messages() %}
+            <p role="status">{{ mensaje }}</p>
+        {% endfor %}
+
+        <div class="checkout-layout">
+
+            <div class="checkout-principal">
+
+                <section class="checkout-seccion">
+                    <h2>Información de la función</h2>
+
+                    <div class="funcion-datos">
+
+                        <div class="dato">
+                            <small>Película</small>
+                            <strong>{{ funcion.pelicula_titulo }}</strong>
+                        </div>
+
+                        <div class="dato">
+                            <small>Cine</small>
+                            <strong>{{ funcion.local }}</strong>
+                        </div>
+
+                        <div class="dato">
+                            <small>Sala</small>
+                            <strong>{{ funcion.sala_nombre }}</strong>
+                        </div>
+
+                        <div class="dato">
+                            <small>Fecha y hora</small>
+                            <strong>
+                                {{ funcion.inicio[8:10] }}/{{ funcion.inicio[5:7] }}/{{ funcion.inicio[0:4] }}
+                                · {{ funcion.inicio[11:16] }}
+                            </strong>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="checkout-seccion">
+                    <h2>Butacas seleccionadas</h2>
+
+                    <div class="butacas-lista">
+                        {% for butaca in butacas %}
+                            <span class="butaca-etiqueta">{{ butaca }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="checkout-fila checkout-subtotal">
+                        <span>{{ butacas|length }} entradas</span>
+                        <span>${{ "%.2f"|format(total_entradas) }}</span>
+                    </div>
+                </section>
+
+                <section class="checkout-seccion">
+                    <h2>Servicios adicionales</h2>
+
+                    {% if servicios %}
+                        {% for servicio in servicios %}
+                            <div class="checkout-fila">
+
+                                <div class="servicio-detalle">
+                                    <strong>{{ servicio.nombre }}</strong>
+                                    <small>
+                                        {{ servicio.cantidad }} ×
+                                        ${{ "%.2f"|format(servicio.precio) }}
+                                    </small>
+                                </div>
+
+                                <span>
+                                    ${{ "%.2f"|format(servicio.subtotal) }}
+                                </span>
+
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No seleccionaste servicios adicionales.</p>
+                    {% endif %}
+
+                    <div class="checkout-fila checkout-subtotal">
+                        <span>Subtotal de servicios</span>
+                        <span>${{ "%.2f"|format(total_servicios) }}</span>
+                    </div>
+                </section>
+
+            </div>
+
+            <aside class="checkout-resumen">
+                <section class="checkout-seccion">
+
+                    <h2>Resumen de compra</h2>
+
+                    <div class="checkout-fila">
+                        <span>Entradas</span>
+                        <span>${{ "%.2f"|format(total_entradas) }}</span>
+                    </div>
+
+                    <div class="checkout-fila">
+                        <span>Servicios</span>
+                        <span>${{ "%.2f"|format(total_servicios) }}</span>
+                    </div>
+
+                    <div class="checkout-total">
+                        <span>Total</span>
+                        <strong>${{ "%.2f"|format(total) }}</strong>
+                    </div>
+
+                    <p class="checkout-aclaracion">
+                        El importe definitivo será calculado y validado
+                        al confirmar la compra.
+                    </p>
+
+                    <div class="checkout-botones">
+
+                        <a class="volver"
+                           href="{{ url_for('compras.nueva_compra', funcion_id=funcion.id) }}">
+                            Volver a modificar
+                        </a>
+
+                        <form method="post"
+                              action="{{ url_for('compras.finalizar_compra', funcion_id=funcion.id) }}">
+
+                            <button class="confirmar" type="submit">
+                                Confirmar compra
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </section>
+            </aside>
+
+        </div>
+    </main>
+</body>
+</html>
