@@ -32,7 +32,7 @@ def login():
                 else:
                     session["token"] = resultado["token"]
                     session["usuario"] = usuario
-                    return redirect(url_for("auth.login"))
+                    return redirect(url_for("carteleras.index"))
 
             else:
                 mensaje = "No se pudo iniciar sesión. Revisá tus datos."

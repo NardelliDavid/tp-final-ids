@@ -7,6 +7,7 @@ from blueprints.servicios import servicios_bp
 from blueprints.auth import auth_bp
 from blueprints.qr import qr_bp
 from blueprints.compras import compras_bp
+from blueprints.carteleras import carteleras_bp
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = "clave-local-desarrollo"
@@ -19,11 +20,11 @@ app.register_blueprint(servicios_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(qr_bp)
 app.register_blueprint(compras_bp)
-
+app.register_blueprint(carteleras_bp)
 
 @app.route("/")
 def index():
-    return redirect(url_for("auth.login_admin"))
+    return redirect(url_for("carteleras.index"))
 
 
 # Error 404: página no encontrada
