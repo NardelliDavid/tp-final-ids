@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>500 - Error interno | Cine Paradiso</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #0f172a;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            text-align: center;
+            max-width: 550px;
+        }
+
+        .logo {
+            color: #f3b201;
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #a0aec0;
+            letter-spacing: 4px;
+            font-size: 12px;
+            margin-bottom: 40px;
+        }
+
+        .numero {
+            color: #f3b201;
+            font-size: 110px;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 15px;
+        }
+
+        .descripcion {
+            color: #a0aec0;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .boton {
+            display: inline-block;
+            background-color: #f3b201;
+            color: #101827;
+            padding: 13px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .boton:hover {
+            background-color: #d99d00;
+        }
+
+        .pie {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 45px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="error-container">
+
+        <div class="logo">CINE PARADISO</div>
+        <div class="subtitle">BACKOFFICE</div>
+
+        <div class="numero">500</div>
+
+        <h1>¡Algo salió mal!</h1>
+
+        <p class="descripcion">
+            Ocurrió un problema inesperado en el servidor.
+            Estamos trabajando para solucionarlo.
+            Por favor, intentá nuevamente más tarde.
+        </p>
+
+        <a href="/" class="boton">
+            Volver al inicio
+        </a>
+
+        <p class="pie">
+            CINE PARADISO · BACKOFFICE
+        </p>
+
+    </main>
+
+</body>
+</html>

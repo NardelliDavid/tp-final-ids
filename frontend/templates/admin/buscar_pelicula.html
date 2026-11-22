@@ -1,0 +1,105 @@
+
+{% extends "admin/base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/buscar_pelicula.css') }}">
+{% endblock %}
+
+{% block title %}CINE PARADISO - IMPORTAR PELÍCULAS{% endblock %}
+
+{% block subtitle %}Importar películas desde TMDB{% endblock %}
+
+{% block page_content %}
+
+<div class="import-header">
+    <div>
+        <h2>Obtener películas por TMDB</h2>
+        <p>Buscá películas y seleccioná las que quieras agregar al catálogo.</p>
+    </div>
+
+    <a href="{{ url_for('peliculas.peliculas') }}" class="button-back">
+        Volver a películas
+    </a>
+</div>
+
+<form
+    class="tmdb-search"
+    action="{{ url_for('peliculas.buscar_pelicula_tmdb') }}"
+    method="POST"
+>
+    <input
+        type="text"
+        name="titulo"
+        placeholder="Título de la película..."
+        value="{{ busqueda|default('') }}"
+        required
+    >
+
+    <button type="submit">
+        Buscar en TMDB
+    </button>
+</form>
+
+{% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensaje in mensajes %}
+        <p class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</p>
+    {% endfor %}
+{% endwith %}
+
+<section class="contenedor-peliculas">
+
+    {% if peliculas %}
+
+        {% for pelicula in peliculas %}
+
+        <article class="pelicula-tmdb">
+
+            {% if pelicula.poster %}
+                <img src="{{ pelicula.poster }}" alt="Póster de {{ pelicula.nombre }}">
+            {% else %}
+                <div class="poster-placeholder">Sin póster</div>
+            {% endif %}
+
+            <div class="pelicula-info">
+                <h3>{{ pelicula.nombre }}</h3>
+                <p>{{ pelicula.sinopsis }}</p>
+            </div>
+
+            <form
+                action="{{ url_for('peliculas.agregar_pelicula_tmdb') }}"
+                method="POST"
+            >
+                <input
+                    type="hidden"
+                    name="id_tmdb"
+                    value="{{ pelicula.tmdb_id }}"
+                >
+
+                <button type="submit">
+                    Seleccionar
+                </button>
+            </form>
+
+        </article>
+
+        {% endfor %}
+
+    {% elif busqueda %}
+
+        <div class="sin-resultados">
+            <h3>No se encontraron películas</h3>
+            <p>Probá con otro título.</p>
+        </div>
+
+    {% else %}
+
+        <div class="sin-resultados">
+            <h3>Buscá una película</h3>
+            <p>Los resultados de TMDB aparecerán en esta sección.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,43 +1,222 @@
+
 {% extends "admin/base.html" %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/funciones.css') }}">{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin/css/funciones.css') }}">
+{% endblock %}
+
 {% block title %}CINE PARADISO FUNCIONES{% endblock %}
 {% block subtitle %}Gestión de funciones{% endblock %}
 
 {% block page_content %}
-    <div class="button">
-        <a href="" class="btn-function">+ Nueva función</a>
-    </div>
-    <!-- Sección de tarjetas de funciones -->
-    <section class="function-list">
-        <div class="function-card">
-            <div class="function">
-                <h3>Interstellar</h3>
-            </div>
-            <div class="actions">
-                <a href="" class="btn-delete">Eliminar</a>
-                <a href="" class="btn-edit">Editar</a>
-            </div>
-        </div>
-        <div class="function-card">
-            <div class="function">
-                <h3>Titanic</h3>
-            </div>
-            <div class="actions">
-                <a href="" class="btn-delete">Eliminar</a>
-                <a href="" class="btn-edit">Editar</a>
-            </div> 
-        </div>
-        <div class="function-card">
-            <div class="function">
-                <h3>Matrix</h3>
-            </div>
-            <div class="actions">
-                <a href="" class="btn-delete">Eliminar</a>
-                <a href="" class="btn-edit">Editar</a>
-            </div>    
-        </div>
+
+    {% if mensaje %}
+        <p>{{ mensaje }}</p>
+    {% endif %}
+
+    <!-- Botón para crear una nueva función -->
+    <section class="create-function">
+
+        <button type="button"
+                class="btn-function"
+                onclick="document.getElementById('modalFuncion').showModal()">
+            + Nueva función
+        </button>
+
     </section>
 
 
+    <!-- Modal para crear una función -->
+    <dialog id="modalFuncion" class="modal-function">
 
-{% endblock%}
+        <div class="modal-header">
+            <h2>Nueva función</h2>
+
+            <button type="button"
+                    class="btn-close"
+                    onclick="document.getElementById('modalFuncion').close()">
+                ×
+            </button>
+        </div>
+
+        <form method="POST" action="{{ url_for('funciones.crear_funcion') }}">
+
+            <label for="pelicula_id">Película:</label>
+
+            <select name="pelicula_id" id="pelicula_id" required>
+                <option value="">Seleccionar película</option>
+
+                {% for pelicula in peliculas %}
+                    <option value="{{ pelicula.id }}">
+                        {{ pelicula.titulo }}
+                    </option>
+                {% endfor %}
+            </select>
+
+
+            <label for="sala_id">Sala:</label>
+
+            <select name="sala_id" id="sala_id" required>
+                <option value="">Seleccionar sala</option>
+
+                {% for sala in salas %}
+                    <option value="{{ sala.id }}">
+                        {{ sala.local }} - {{ sala.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+
+
+            <label for="inicio">Fecha y hora:</label>
+
+            <input type="datetime-local"
+                   name="inicio"
+                   id="inicio"
+                   required>
+
+
+            <label for="precio">Precio:</label>
+
+            <input type="number"
+                   name="precio"
+                   id="precio"
+                   step="0.01"
+                   min="0"
+                   required>
+
+
+            <div class="modal-actions">
+
+                <button type="button"
+                        class="btn-cancel"
+                        onclick="document.getElementById('modalFuncion').close()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="btn-function">
+                    Crear función
+                </button>
+
+            </div>
+
+        </form>
+
+    </dialog>
+
+
+    <!-- Listado de funciones -->
+    <section class="function-list">
+
+        <h2>Funciones registradas</h2>
+
+        {% for funcion in funciones %}
+
+            <div class="function-card">
+
+                <div class="function">
+
+                    <!-- Datos de la película y la sala -->
+                    <h3>{{ funcion.pelicula.titulo }}</h3>
+
+                    <p>Local: {{ funcion.local.nombre }}</p>
+
+                    <p>Sala: {{ funcion.sala.nombre }}</p>
+
+                    <p>Fecha: {{ funcion.inicio }}</p>
+
+                    <p>Precio: ${{ funcion.precio }}</p>
+
+                    <p>Butacas libres: {{ funcion.butacas_libres }}</p>
+
+                </div>
+
+
+                <!-- Acciones de la función -->
+                <div class="actions">
+
+                    <a href="{{ url_for('funciones.detalle_funcion', funcion_id=funcion.id) }}"
+                       class="btn-edit">
+                        Ver detalle
+                    </a>
+
+
+                    <a href="{{ url_for('funciones.butacas_funcion', funcion_id=funcion.id) }}"
+                       class="btn-edit">
+                        Ver butacas
+                    </a>
+
+
+                    <!-- Editar función -->
+                    <details>
+
+                        <summary class="btn-edit">Editar</summary>
+
+                        <form method="POST"
+                              action="{{ url_for('funciones.editar_funcion', funcion_id=funcion.id) }}">
+
+                            <label>Sala:</label>
+
+                            <select name="sala_id" required>
+
+                                {% for sala in salas %}
+
+                                    <option value="{{ sala.id }}"
+                                        {% if sala.id == funcion.sala.id %}selected{% endif %}>
+                                        {{ sala.local }} - {{ sala.nombre }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+
+                            <label>Fecha y hora:</label>
+
+                            <input type="datetime-local"
+                                   name="inicio"
+                                   value="{{ funcion.inicio[:16] }}"
+                                   required>
+
+
+                            <label>Precio:</label>
+
+                            <input type="number"
+                                   name="precio"
+                                   value="{{ funcion.precio }}"
+                                   step="0.01"
+                                   min="0"
+                                   required>
+
+
+                            <button type="submit" class="btn-function">
+                                Guardar cambios
+                            </button>
+
+                        </form>
+
+                    </details>
+
+
+                    <!-- Eliminar función -->
+                    <form method="POST"
+                          action="{{ url_for('funciones.eliminar_funcion', funcion_id=funcion.id) }}">
+
+                        <button type="submit" class="btn-delete">
+                            Eliminar
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <p>No hay funciones disponibles.</p>
+
+        {% endfor %}
+
+    </section>
+
+{% endblock %}

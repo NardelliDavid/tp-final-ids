@@ -9,6 +9,7 @@ from src.routes.peliculas import peliculas_bp
 from src.routes.dashboard import dashboard_bp
 from src.routes.Funciones import funciones_bp
 from src.routes.Carteleras import carteleras_bp
+from src.routes.compras import compras_bp
 
 app = Flask(__name__)
 app.register_blueprint(servicios_bp)
@@ -20,24 +21,7 @@ app.register_blueprint(peliculas_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(funciones_bp)
 app.register_blueprint(carteleras_bp)
-
-@app.route("/")
-def index():
-    try:
-        conn = conexion()
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT * FROM peliculas;")
-        consulta = cursor.fetchall()
-
-        cursor.close()
-        conn.close()
-
-        resultado = jsonify(consulta), 200
-    except Exception as e:
-        resultado = jsonify({"mensaje": str(e)}), 500
-
-    return resultado
+app.register_blueprint(compras_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
