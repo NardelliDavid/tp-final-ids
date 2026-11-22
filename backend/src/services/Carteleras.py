@@ -3,13 +3,12 @@ from datetime import date
 from src.repositories.Carteleras import obtener_cartelera
 from src.repositories.Carteleras import obtener_generos_pelicula
 from src.repositories.Carteleras import obtener_locales
+from src.repositories.Carteleras import obtener_pelicula
+from src.repositories.Carteleras import obtener_funciones_pelicula
 
 # GET /cartelera
-def listar_cartelera(fecha, local, genero):
-    if fecha is None:
-        fecha = date.today()
-
-    peliculas = obtener_cartelera(fecha, local, genero)
+def listar_cartelera():
+    peliculas = obtener_cartelera()
 
     respuesta = []
 
@@ -33,7 +32,6 @@ def listar_cartelera(fecha, local, genero):
         respuesta.append(elemento)
 
     return respuesta
-
 
 # GET /locales
 def listar_locales():
@@ -66,3 +64,28 @@ def listar_locales():
     respuesta = list(locales.values())
 
     return respuesta
+
+
+# GET /peliculas/<id>/funciones
+def listar_funciones_pelicula(pelicula_id):
+    pelicula = obtener_pelicula(pelicula_id)
+
+    if pelicula is None:
+        return None
+
+    funciones = []
+
+    for funcion in obtener_funciones_pelicula(pelicula_id):
+        funciones.append({
+            "id": funcion["id"],
+            "inicio": funcion["inicio"].isoformat(),
+            "fin": funcion["fin"].isoformat(),
+            "precio": float(funcion["precio"]),
+            "local": funcion["local"],
+            "sala": funcion["sala"]
+        })
+
+    return {
+        "pelicula": pelicula,
+        "funciones": funciones
+    }

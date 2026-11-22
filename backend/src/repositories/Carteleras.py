@@ -3,7 +3,7 @@ from db.conexion_db import conexion
 
 
 # GET /cartelera
-def obtener_cartelera(fecha, local, genero):
+def obtener_cartelera():
     conn = conexion()
     cursor = conn.cursor(dictionary=True)
 
@@ -17,34 +17,11 @@ def obtener_cartelera(fecha, local, genero):
         FROM peliculas
         INNER JOIN funciones
             ON peliculas.id = funciones.pelicula_id
-        INNER JOIN salas
-            ON funciones.sala_id = salas.id
-        WHERE DATE(funciones.inicio) >= %s
-        AND funciones.estado = 'activa'
+        WHERE funciones.estado = 'activa'
+        ORDER BY peliculas.titulo ASC
     """
 
-    parametros = [fecha]
-
-    if local is not None:
-        consulta += " AND salas.local = %s"
-        parametros.append(local)
-
-    if genero is not None:
-        consulta += """
-            AND EXISTS (
-                SELECT 1
-                FROM pelicula_genero
-                INNER JOIN generos
-                    ON pelicula_genero.genero_id = generos.id
-                WHERE pelicula_genero.pelicula_id = peliculas.id
-                AND generos.nombre = %s
-            )
-        """
-        parametros.append(genero)
-
-    consulta += " ORDER BY peliculas.titulo ASC"
-
-    cursor.execute(consulta, parametros)
+    cursor.execute(consulta)
     peliculas = cursor.fetchall()
 
     cursor.close()
@@ -97,3 +74,51 @@ def obtener_locales():
     conn.close()
 
     return salas
+
+# GET /peliculas/<id>/funciones
+def obtener_pelicula(pelicula_id):
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
+
+    consulta = """
+        SELECT id, titulo, sinopsis, poster_url, duracion_min, clasificacion
+        FROM peliculas
+        WHERE id = %s
+    """
+
+    cursor.execute(consulta, (pelicula_id,))
+    pelicula = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return pelicula
+
+
+def obtener_funciones_pelicula(pelicula_id):
+    conn = conexion()
+    cursor = conn.cursor(dictionary=True)
+
+    consulta = """
+        SELECT
+            funciones.id,
+            funciones.inicio,
+            funciones.fin,
+            funciones.precio,
+            salas.local,
+            salas.nombre AS sala
+        FROM funciones
+        INNER JOIN salas
+            ON funciones.sala_id = salas.id
+        WHERE funciones.pelicula_id = %s
+        AND funciones.estado = 'activa'
+        ORDER BY funciones.inicio ASC
+    """
+
+    cursor.execute(consulta, (pelicula_id,))
+    funciones = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return funciones

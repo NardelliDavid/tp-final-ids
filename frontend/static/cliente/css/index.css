@@ -1,0 +1,83 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+body {
+    background-color: #182232;
+}
+
+.contenedor {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 50px 100px;
+    gap: 20px;
+}
+@media (max-width: 768px) {
+    .contenedor {
+        padding: 30px 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contenedor {
+        padding: 20px;
+    }
+}
+
+.contenedor h1 {
+    color: white;
+}
+
+.cartelera {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    justify-items: center;
+    align-items: start;
+    gap: 20px;
+}
+
+.pelicula {
+    width: 200px;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-content: start;
+    gap: 10px;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgb(35, 42, 52);
+}
+
+.pelicula img {
+    border-radius: 10px;
+    width: 200px;
+    height: 300px;
+    margin-bottom: 10px;
+}
+
+.pelicula h6 {
+    color: gray;
+    overflow-wrap: break-word;
+}
+
+.ver-funciones {
+    text-align: center;
+    padding: 5px;
+    color: black;
+    background-color: #f2bb2ef5;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.ver-funciones:visited {
+    color: black;
+}
+
+.datos {
+    width: 100%;
+    display: grid;
+    gap: 10px;
+}

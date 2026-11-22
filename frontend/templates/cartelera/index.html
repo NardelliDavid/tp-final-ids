@@ -1,0 +1,38 @@
+{% extends "cartelera/base.html" %}
+
+{% block titulo %}Cartelera{% endblock %}
+
+{% block estilos %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='cliente/css/index.css') }}">
+{% endblock %}
+
+{% block contenido %}
+
+<div class="contenedor">
+    <h1>Cartelera</h1>
+
+    <div class="cartelera">
+        {% if cartelera %}
+            {% for pelicula in cartelera %}
+                <div class="pelicula">
+
+                    {% if pelicula.poster_url %}
+                        <img src="{{ pelicula.poster_url }}" alt="poster">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/sin_poster.png') }}" alt="sin poster">
+                    {% endif %}
+
+                    <div class="datos">
+                        <h4>{{ pelicula.titulo }}</h4>
+                        <h6>{{ pelicula.generos | join(' - ') }}</h6>
+                        <h6>{{ pelicula.clasificacion }} - {{ pelicula.duracion_min }} min</h6>
+                        <a href="{{ url_for('carteleras.funciones_pelicula', pelicula_id=pelicula.id) }}" class="ver-funciones">VER FUNCIONES</a>
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

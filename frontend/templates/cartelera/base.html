@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='cliente/css/header.css') }}">
+
+    {% block estilos %}{% endblock %}
+
+    <title>{% block titulo %}Cine Paradiso{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>CINE PARADISO</h1>
+
+        {% if not session.get('token') %}
+            <div>
+                <a href="{{ url_for('auth.login') }}">INICIAR SESION</a>
+                <p>|</p>
+                <a href="{{ url_for('auth.registro') }}">REGISTRARSE</a>
+            </div>
+        {% else %}
+            <details class="menu-perfil">
+                <summary>
+                    <img src="{{ url_for('static', filename='images/user.png') }}" alt="Perfil">
+                </summary>
+
+                <div class="opciones-perfil">
+                    <a href="#">PERFIL</a>
+                    <a href="{{ url_for('auth.logout') }}">CERRAR SESION</a>
+                </div>
+            </details>
+        {% endif %}
+    </header>
+
+    {% block contenido %}{% endblock %}
+
+</body>
+</html>

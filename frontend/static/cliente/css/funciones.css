@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+body {
+    background-color: #182232;
+}
+
+.contenedor {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 50px 100px;
+    gap: 30px;
+}
+
+@media (max-width: 768px) {
+    .contenedor {
+        padding: 30px 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contenedor {
+        padding: 20px;
+    }
+}
+
+/* Información de la película */
+.pelicula-info {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 25px;
+    color: white;
+    align-items: start;
+}
+
+.pelicula-info img {
+    width: 200px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.datos-pelicula {
+    display: grid;
+    gap: 15px;
+}
+
+.datos-pelicula h2 {
+    color: white;
+}
+
+.datos-pelicula h6 {
+    color: gray;
+}
+
+.datos-pelicula p {
+    color: white;
+    line-height: 1.6;
+}
+
+/* Funciones */
+.funciones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+/* Tarjetas */
+.funcion {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgb(35, 42, 52);
+    color: white;
+}
+
+.funcion p {
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+/* Botón */
+.elegir-asientos {
+    text-align: center;
+    padding: 5px;
+    color: black;
+    background-color: #f2bb2ef5;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.elegir-asientos:visited {
+    color: black;
+}
+
+/* Sin funciones */
+.sin-funciones {
+    color: gray;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pelicula-info {
+        grid-template-columns: 150px 1fr;
+        gap: 15px;
+    }
+
+    .pelicula-info img {
+        width: 150px;
+        height: 225px;
+    }
+
+    .funciones {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .pelicula-info {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .pelicula-info img {
+        width: 200px;
+        height: 300px;
+    }
+
+    .funciones {
+        grid-template-columns: 1fr;
+    }
+}
+/* Pantallas medianas */
+@media (max-width: 768px) {
+    .datos-pelicula h2 {
+        font-size: 22px;
+    }
+
+    .datos-pelicula p {
+        font-size: 14px;
+    }
+
+    .funcion p,
+    .elegir-asientos {
+        font-size: 14px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+    .datos-pelicula h2 {
+        font-size: 20px;
+    }
+
+    .datos-pelicula p {
+        font-size: 13px;
+    }
+
+    .funcion p,
+    .elegir-asientos {
+        font-size: 12px;
+    }
+}

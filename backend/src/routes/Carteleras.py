@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from src.services.Carteleras import listar_cartelera
 from src.services.Carteleras import listar_locales
-from src.validators.Carteleras import validar_filtros_cartelera
 from src.validators.Carteleras import validar_consulta_locales
+from src.services.Carteleras import listar_funciones_pelicula
 
 carteleras_bp = Blueprint("carteleras", __name__)
 
@@ -10,26 +10,7 @@ carteleras_bp = Blueprint("carteleras", __name__)
 # GET /cartelera
 @carteleras_bp.route("/cartelera", methods=["GET"])
 def obtener_cartelera():
-    filtros = {}
-
-    parametros = ["fecha", "local", "genero"]
-
-    for parametro in parametros:
-        valor = request.args.get(parametro)
-
-        if valor is not None:
-            filtros[parametro] = valor
-
-    if not validar_filtros_cartelera(filtros):
-        return jsonify({
-            "error": "Los filtros enviados no son válidos"
-        }), 422
-
-    fecha = filtros.get("fecha")
-    local = filtros.get("local")
-    genero = filtros.get("genero")
-
-    respuesta = listar_cartelera(fecha, local, genero)
+    respuesta = listar_cartelera()
 
     return jsonify(respuesta), 200
 
@@ -45,5 +26,16 @@ def obtener_locales():
         }), 422
 
     respuesta = listar_locales()
+
+    return jsonify(respuesta), 200
+
+
+# GET /peliculas/<id>/funciones
+@carteleras_bp.route("/peliculas/<int:pelicula_id>/funciones", methods=["GET"])
+def obtener_funciones_pelicula(pelicula_id):
+    respuesta = listar_funciones_pelicula(pelicula_id)
+
+    if respuesta is None:
+        return jsonify({"error": "La película no existe"}), 404
 
     return jsonify(respuesta), 200
