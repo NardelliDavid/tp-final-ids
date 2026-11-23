@@ -1,11 +1,22 @@
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from mysql.connector import Error
+
 from src.routes.perfil import obtener_usuario_autenticado
-from src.repositories.compras_repository import (obtener_funcion,butaca_esta_ocupada,registrar_compra,)
-from src.repositories.compras_repository import obtener_detalle_compra, cancelar_compra
+
+from src.repositories.compras_repository import (
+    obtener_funcion,
+    butaca_esta_ocupada,
+    registrar_compra,
+    obtener_detalle_compra,
+    cancelar_compra
+)
+
+from src.services.correo import enviar_comprobante
+
 
 compras_bp = Blueprint("compras", __name__)
+
 
 @compras_bp.route("/compras", methods=["POST"])
 def crear_compra_endpoint():
@@ -89,7 +100,12 @@ def crear_compra_endpoint():
                                             repetidas = True
                                         else:
                                             butacas_vistas.append(posicion)
-                                            if butaca_esta_ocupada(funcion_id, numero_fila, columna):
+
+                                            if butaca_esta_ocupada(
+                                                funcion_id,
+                                                numero_fila,
+                                                columna
+                                            ):
                                                 ocupada = True
 
                         if formato_invalido:
@@ -118,6 +134,7 @@ def crear_compra_endpoint():
                             for servicio in servicios:
                                 if type(servicio) != dict:
                                     servicios_invalidos = True
+
                                 else:
                                     servicio_id = servicio.get("servicio_id")
                                     cantidad = servicio.get("cantidad")
@@ -133,10 +150,50 @@ def crear_compra_endpoint():
                             if servicios_invalidos:
                                 mensaje = "Datos de servicios inválidos"
                                 codigo = 422
+
                             else:
                                 respuesta, codigo = registrar_compra(
-                                    email_usuario, funcion_id, butacas_vistas, servicios
+                                    email_usuario,
+                                    funcion_id,
+                                    butacas_vistas,
+                                    servicios
                                 )
+
+                                # Enviar el comprobante solamente
+                                # si la compra quedó registrada.
+                                if codigo == 201 and respuesta is not None:
+                                    try:
+                                        compra_id = respuesta["id"]
+
+                                        detalle, codigo_detalle = (
+                                            obtener_detalle_compra(
+                                                compra_id,
+                                                email_usuario
+                                            )
+                                        )
+
+                                        if codigo_detalle == 200:
+                                            enviar_comprobante(
+                                                detalle,
+                                                email_usuario
+                                            )
+
+                                            respuesta["correo_enviado"] = True
+
+                                        else:
+                                            print(
+                                                "No se pudo obtener el detalle "
+                                                "para enviar el correo."
+                                            )
+                                            respuesta["correo_enviado"] = False
+
+                                    except Exception as e:
+                                        print(
+                                            "ERROR AL ENVIAR COMPROBANTE:",
+                                            e
+                                        )
+
+                                        respuesta["correo_enviado"] = False
 
                 except Error as e:
                     print("ERROR MYSQL:", e)
@@ -147,6 +204,7 @@ def crear_compra_endpoint():
         respuesta = {"mensaje": mensaje}
 
     return jsonify(respuesta), codigo
+
 
 @compras_bp.route("/compras/<int:id_compra>", methods=["GET"])
 def obtener_compra_endpoint(id_compra):
@@ -160,11 +218,16 @@ def obtener_compra_endpoint(id_compra):
         return jsonify({"mensaje": "Compra inválida"}), 400
 
     try:
-        respuesta, codigo = obtener_detalle_compra(id_compra, email_usuario)
+        respuesta, codigo = obtener_detalle_compra(
+            id_compra,
+            email_usuario
+        )
+
         return jsonify(respuesta), codigo
 
     except Exception:
         return jsonify({"mensaje": "Error interno del servidor"}), 500
+
 
 @compras_bp.route("/compras/<int:id_compra>/cancelacion", methods=["POST"])
 def cancelar_compra_endpoint(id_compra):
@@ -178,9 +241,12 @@ def cancelar_compra_endpoint(id_compra):
         return jsonify({"mensaje": "Compra inválida"}), 400
 
     try:
-        respuesta, codigo = cancelar_compra(id_compra, email_usuario)
+        respuesta, codigo = cancelar_compra(
+            id_compra,
+            email_usuario
+        )
+
         return jsonify(respuesta), codigo
 
     except Exception:
-
         return jsonify({"mensaje": "Error interno del servidor"}), 500
