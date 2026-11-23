@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -14,7 +13,7 @@ from src.repositories.Funciones import obtener_detalle_funcion
 from src.repositories.Funciones import obtener_funciones
 
 
-# GET /funciones/
+# GET /funciones/*
 def listar_funciones(filtros, incluir_pasadas):
     funciones = obtener_funciones(filtros, incluir_pasadas)
 
@@ -34,7 +33,7 @@ def listar_funciones(filtros, incluir_pasadas):
                 "id": funcion["sala_id"],
                 "nombre": funcion["sala_nombre"]
             },
-            "inicio": funcion["inicio"].isoformat(),
+            "inicio": funcion["inicio"].strftime("%Y-%m-%d %H:%M:%S"),
             "precio": float(funcion["precio"]),
             "butacas_libres": funcion["butacas_libres"]
         }
@@ -50,7 +49,7 @@ def obtener_detalle_funcion_servicio(funcion_id):
 
     if respuesta is not None:
         respuesta["precio"] = float(respuesta["precio"])
-        respuesta["inicio"] = respuesta["inicio"].isoformat()
+        respuesta["inicio"] = respuesta["inicio"].strftime("%Y-%m-%d %H:%M:%S")
 
     return respuesta
 
@@ -187,8 +186,8 @@ def crear_funcion(datos):
                             "funcion_id": funcion_id,
                             "pelicula_id": pelicula_id,
                             "sala_id": sala_id,
-                            "inicio": inicio.isoformat(),
-                            "fin": fin.isoformat(),
+                            "inicio": inicio.strftime("%Y-%m-%d %H:%M:%S"),
+                            "fin": fin.strftime("%Y-%m-%d %H:%M:%S"),
                             "precio": precio
                         }
 
@@ -240,6 +239,10 @@ def actualizar_funcion(funcion_id, datos):
             respuesta = {"error": "Los datos enviados no son válidos"}
             codigo = 422
 
+        elif inicio <= datetime.now():
+            respuesta = {"error": "La función no puede programarse en el pasado"}
+            codigo = 422
+
         elif not existe_sala(sala_id):
             respuesta = {"error": "La sala no existe"}
             codigo = 404
@@ -275,7 +278,7 @@ def actualizar_funcion(funcion_id, datos):
                     respuesta = {
                         "id": funcion_id,
                         "sala_id": sala_id,
-                        "inicio": inicio.isoformat(),
+                        "inicio": inicio.strftime("%Y-%m-%d %H:%M:%S"),
                         "precio": float(precio)
                     }
 
