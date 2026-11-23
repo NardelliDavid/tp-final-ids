@@ -1,0 +1,274 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Butacas de función | Cine Paradiso{% endblock %}
+
+{% block subtitle %}Distribución de butacas{% endblock %}
+
+{% block extra_css %}
+<style>
+.butacas-container {
+    padding: 25px;
+    color: #f5f5f5;
+}
+
+.butacas-header {
+    margin-bottom: 25px;
+}
+
+.butacas-header h2 {
+    color: #e5b85c;
+    margin-bottom: 8px;
+}
+
+.butacas-header p {
+    color: #aaa;
+}
+
+.butacas-resumen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.resumen-item {
+    background: #172333;
+    border: 1px solid rgba(229, 184, 92, 0.25);
+    border-radius: 10px;
+    padding: 15px 22px;
+    min-width: 130px;
+}
+
+.resumen-item span {
+    display: block;
+    color: #aaa;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.resumen-item strong {
+    font-size: 23px;
+}
+
+.resumen-item.libres strong {
+    color: #4ade80;
+}
+
+.resumen-item.ocupadas strong {
+    color: #f87171;
+}
+
+.sala-container {
+    background: #172333;
+    border: 1px solid rgba(229, 184, 92, 0.3);
+    border-radius: 15px;
+    padding: 30px 20px;
+    overflow-x: auto;
+}
+
+.pantalla {
+    background: linear-gradient(180deg, #e5b85c, #b98a37);
+    color: #172333;
+    text-align: center;
+    padding: 12px;
+    border-radius: 50% 50% 8px 8px;
+    max-width: 650px;
+    margin: 0 auto 45px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    box-shadow: 0 8px 25px rgba(229, 184, 92, 0.15);
+}
+
+.butacas-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--columnas), minmax(38px, 1fr));
+    gap: 12px;
+    max-width: 650px;
+    margin: 0 auto;
+    min-width: max-content;
+}
+
+.butaca {
+    width: 42px;
+    height: 42px;
+    border-radius: 9px 9px 5px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid transparent;
+    cursor: default;
+}
+
+.butaca.libre {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #4ade80;
+    color: #4ade80;
+}
+
+.butaca.ocupada {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #f87171;
+    color: #f87171;
+}
+
+.butacas-leyenda {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #ddd;
+    font-size: 14px;
+}
+
+.leyenda-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.leyenda-libre {
+    background: #4ade80;
+}
+
+.leyenda-ocupada {
+    background: #f87171;
+}
+
+.butacas-actions {
+    margin-top: 30px;
+}
+
+.btn-volver {
+    display: inline-block;
+    background: linear-gradient(135deg, #d7a84b, #f1ce79);
+    color: #172333;
+    padding: 12px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-volver:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.sin-butacas {
+    text-align: center;
+    color: #aaa;
+    padding: 30px;
+}
+
+@media (max-width: 600px) {
+    .butacas-container {
+        padding: 12px;
+    }
+
+    .sala-container {
+        padding: 20px 10px;
+    }
+
+    .butaca {
+        width: 36px;
+        height: 36px;
+        font-size: 10px;
+    }
+
+    .butacas-grid {
+        gap: 8px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="butacas-container">
+
+    <div class="butacas-header">
+        <h2>Butacas de la función #{{ funcion_id }}</h2>
+        <p>Estado actual de los asientos de esta sala.</p>
+    </div>
+
+    <div class="butacas-resumen">
+
+        <div class="resumen-item libres">
+            <span>Butacas libres</span>
+            <strong>{{ libres }}</strong>
+        </div>
+
+        <div class="resumen-item ocupadas">
+            <span>Butacas ocupadas</span>
+            <strong>{{ ocupadas }}</strong>
+        </div>
+
+        <div class="resumen-item">
+            <span>Capacidad total</span>
+            <strong>{{ butacas|length }}</strong>
+        </div>
+
+    </div>
+
+    <div class="sala-container">
+
+        {% if butacas %}
+
+            <div class="pantalla">
+                PANTALLA
+            </div>
+
+            <div
+                class="butacas-grid"
+                style="--columnas: {{ columnas if columnas else 8 }};"
+            >
+                {% for butaca in butacas %}
+                    <div
+                        class="butaca {{ butaca.estado_css }}"
+                        title="Butaca {{ butaca.codigo }} - {{ butaca.estado }}"
+                    >
+                        {{ butaca.codigo }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="butacas-leyenda">
+
+                <div class="leyenda-item">
+                    <div class="leyenda-color leyenda-libre"></div>
+                    Libre
+                </div>
+
+                <div class="leyenda-item">
+                    <div class="leyenda-color leyenda-ocupada"></div>
+                    Ocupada
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="sin-butacas">
+                No hay información de butacas para esta función.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <div class="butacas-actions">
+        <a href="{{ url_for('funciones.funciones') }}" class="btn-volver">
+            ← Volver a funciones
+        </a>
+    </div>
+
+</div>
+{% endblock %}
