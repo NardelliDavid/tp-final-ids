@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -353,7 +354,7 @@
                     </div>
 
                     <div class="resumen-total">
-                        <span>Total pagado</span>
+                        <span>Total de la compra</span>
                         <strong>
                             ${{ "%.2f" | format(compra.total) }}
                         </strong>
@@ -375,7 +376,7 @@
                         </div>
                     {% endif %}
 
-                    {% if compra.estado == "activa" %}
+                    {% if puede_cancelar %}
                         <div class="comprobante-acciones">
 
                             <form
