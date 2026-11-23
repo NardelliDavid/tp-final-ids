@@ -1,8 +1,9 @@
-
 import base64
 import io
 import requests
 import qrcode
+
+from datetime import datetime, timedelta
 
 from flask import (
     Blueprint,
@@ -272,6 +273,22 @@ def detalle_compra(id_compra):
 
     compra = respuesta.json()
 
+    # Comprueba si todavía se puede cancelar la compra.
+    puede_cancelar = False
+
+    if compra.get("estado") == "activa" and compra.get("funcion"):
+        inicio = compra["funcion"].get("inicio")
+
+        if inicio:
+            try:
+                inicio_funcion = datetime.fromisoformat(inicio)
+                limite_cancelacion = datetime.now() + timedelta(hours=2)
+
+                puede_cancelar = inicio_funcion >= limite_cancelacion
+
+            except (TypeError, ValueError):
+                puede_cancelar = False
+
     # Genera la imagen QR a partir del token original del backend.
     qr_imagen = None
 
@@ -289,6 +306,7 @@ def detalle_compra(id_compra):
         "compras/detalle.html",
         compra=compra,
         qr_imagen=qr_imagen,
+        puede_cancelar=puede_cancelar,
     )
 
 
