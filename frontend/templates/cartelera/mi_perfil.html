@@ -1,6 +1,8 @@
 {% extends "cartelera/base.html" %}
 
-{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='cliente/css/mi_perfil.css') }}">{% endblock %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='cliente/css/mi_perfil.css') }}">
+{% endblock %}
 
 {% block contenido %}
 <div class="perfil-contenedor">
@@ -8,33 +10,45 @@
         <div class="tarjeta-perfil">
             <h2>Mis datos</h2>
             <span>Nombre</span>
-            <p>Ana pérez</p> 
+            <p>Ana pérez</p>
             <span>Correo</span>
-            <p>ana@mail.com</p> 
-        <a href="#" class="btn-editar">Editar datos o contraseña</a>
+            <p>ana@mail.com</p>
+            <a href="#" class="btn-editar">Editar datos o contraseña</a>
         </div>
 
         <div class="tarjeta-datos">
             <h2>Películas vistas</h2>
-            <div class="pelicula-item">
-                <div class="poster"></div>
-                <div class="pelicula-info">
-                    <h3>Interestellar</h3>
-                    <span>Funcion del 26/10/2026</span>
-                </div>
-            </div>
-            <div class="pelicula-item">
-                <div class="poster"></div>
-                <div class="pelicula-info">
-                    <h3>Titanic</h3>
-                    <h4>Funcion del 14/10/2026</h4>
-                </div>    
-            </div>
+
+            {% if mensaje_historial %}
+                <p>{{ mensaje_historial }}</p>
+
+            {% elif peliculas_vistas %}
+
+                {% for pelicula in peliculas_vistas %}
+                    <div class="pelicula-item">
+                        <div class="poster">
+                            {% if pelicula.poster_url %}
+                                <img src="{{ pelicula.poster_url }}" alt="{{ pelicula.titulo }}">
+                            {% endif %}
+                        </div>
+                        <div class="pelicula-info">
+                            <h3>{{ pelicula.titulo }}</h3>
+                            {% if pelicula.fecha_funcion %}
+                                <span>Función del {{ pelicula.fecha_funcion[:10] }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% else %}
+                <p>Todavía no tenés películas vistas.</p>
+            {% endif %}
         </div>
     </div>
+
     <div class="perfil-columna-der">
         <h2>Mis compras y consumos</h2>
-         
+
         <div class="tabla-compras">
             <div class="fila-encabezado">
                 <span>N.º</span>
@@ -45,61 +59,65 @@
                 <span>ESTADO</span>
             </div>
 
-            <div class="fila-compra">
-                <span>120</span>
-                <div class="col-pelicula">
-                    <p>Cinema Paradiso</p>
-                    <span>Centro · Sala 2 · 05/11 20:30</span>
-                </div>    
-                <span>C7, C8</span>
-                <span>2 × Combo pochoclos</span>
-                <span>$ 15.000</span>
-                <div><span class="estado-confirmada">Confirmada</span></div>
-                <div class="acciones-compra">
-                    <a href="#" class="btn-qr">Ver QR</a>
-                    <a href="#" class="btn-cancelar">Cancelar</a>
-                </div>
-            </div>
-  
-            <div class="fila-compra">
-                <span>98</span>
-                <div class="col-pelicula">
-                    <p>Interstellar</p>
-                    <span>Norte · Sala 1 · 28/10 21:00</span>
-                </div>
-                <span>F4, F5, F6</span>
-                <span>1 × Estacionamiento</span>
-                <span>$ 15.500</span>
-                <div><span class="estado-utilizada">Utilizada</span></div>
-                <div class="acciones-compra"></div>
-            </div>  
+            {% if mensaje_historial %}
+                <p>{{ mensaje_historial }}</p>
 
-            <div class="fila-compra">
-                <span>91</span>
-                <div class="col-pelicula">
-                    <p>Avatar</p>
-                    <span>Sur · Sala 1 · 21/10 19:00</span>
-                </div>
-                <span>82</span>
-                <span></span>
-                <span>$ 3800</span>
-                <div><span class="estado-cancelada">cancelada</span></div>
-                <div class="acciones-compra"></div>
-            </div>
+            {% elif compras %}
 
-            <div class="fila-compra">
-                <span>85</span>
-                <div class="col-pelicula">
-                    <p>Titanic</p>
-                    <span>Centro · Sala 1 · 14/10 18:00</span>
-                </div>
-                <span>D3, D4</span>
-                <span>2 x bebida</span>
-                <span>$ 13000</span>
-                <div><span class="estado-utilizada">Utilizada</span></div>
-                <div class="acciones-compra"></div>
-            </div>
-        </div>   
+                {% for compra in compras %}
+                    <div class="fila-compra">
+                        <span>{{ compra.id }}</span>
+
+                        <div class="col-pelicula">
+                            <p>{{ compra.pelicula }}</p>
+                            <span>
+                                {{ compra.local }} · {{ compra.sala }}
+                                {% if compra.inicio %}
+                                    · {{ compra.inicio[8:10] }}/{{ compra.inicio[5:7] }}
+                                    {{ compra.inicio[11:16] }}
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <span>{{ compra.butacas | join(', ') }}</span>
+
+                        <span>
+                            {% for servicio in compra.servicios %}
+                                {{ servicio.cantidad }} × {{ servicio.nombre }}
+                                {% if not loop.last %}<br>{% endif %}
+                            {% else %}
+                                Sin servicios
+                            {% endfor %}
+                        </span>
+
+                        <span>$ {{ compra.total }}</span>
+
+                        <div>
+                            {% if compra.estado == 'activa' %}
+                                <span class="estado-confirmada">Confirmada</span>
+
+                            {% elif compra.estado == 'utilizada' %}
+                                <span class="estado-utilizada">Utilizada</span>
+
+                            {% elif compra.estado == 'cancelada' %}
+                                <span class="estado-cancelada">Cancelada</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="acciones-compra">
+                            {% if compra.estado == 'activa' %}
+                                <a href="#" class="btn-qr">Ver QR</a>
+                                <a href="#" class="btn-cancelar">Cancelar</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% else %}
+                <p>Todavía no tenés compras realizadas.</p>
+            {% endif %}
+        </div>
+
         <div class="aviso-qr">
             <p>Una pelicula figura como vista cuando se validó el QR de la compra en el ingreso a la sala.</p>
         </div>
