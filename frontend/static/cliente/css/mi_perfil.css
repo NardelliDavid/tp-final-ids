@@ -1,0 +1,208 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+body {
+    background-color: #182232;
+    color: #ffffff;
+}
+.perfil-contenedor{
+    display: flex;
+    width: 100%;
+    margin: 32px 0;
+    padding: 0 24px;
+    gap: 24px;
+}
+
+.perfil-columna-izq {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 320px;
+    flex-shrink: 0;
+}
+.perfil-columna-der {
+    flex: 1;
+    display:flex;
+    flex-direction: column;
+}
+
+/* Estilo compartido para las tarjetas de la izquierda */
+.tarjeta-perfil,
+.tarjeta-datos,
+.perfil-columna-der {
+    background-color: #252d3b;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.tarjeta-perfil h2,
+.tarjeta-datos h2,
+.perfil-columna-der h2 {
+    font-size: 18px;
+    margin-bottom: 18px;
+}
+/*tarjeta "Mis datos" */
+.tarjeta-perfil span {
+    display: block;
+    font-size: 12px;
+    color: #9aa5b8;
+    margin-bottom: 4px;
+}
+.tarjeta-perfil p {
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+.btn-editar {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 8px 14px;
+    border: 1px solid #f2bb2e;
+    border-radius: 6px;
+    color: #f2bb2e;
+    text-decoration: none;
+    font-size: 12px;
+}
+/*tarjeta peliculas vistas*/
+.pelicula-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.poster {
+    width: 42px;
+    height: 56px;
+    background-color: #0f141d;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.pelicula-info h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+.pelicula-info span,
+.pelicula-info h4 {
+    font-size: 12px;
+    color: #9aa5b8;
+    font-weight: normal;
+}
+/*tarjeta de compras y consumos*/
+.fila-encabezado {
+    display: grid;
+    grid-template-columns: 45px 2fr 1fr 1.5fr 95px 115px 160px;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #374151;
+    font-size: 11px;
+    color: #9aa5b8;
+}
+
+/* Cada hilera de compra: misma grilla que .fila-encabezado */
+.fila-compra {
+    display: grid;
+    grid-template-columns: 45px 2fr 1fr 1.5fr 95px 115px 160px;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid #374151;
+    font-size: 13px;
+}
+.col-pelicula span {
+    font-size: 12px;
+    color: #9aa5b8;
+}
+/* Estilo base compartido para las pastillas de estado */
+.estado-confirmada,
+.estado-utilizada,
+.estado-cancelada {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+/* Confirmada: azul */
+.estado-confirmada {
+    background-color: #1e3a8a;
+    color: #93c5fd;
+}
+
+/* Utilizada: verde */
+.estado-utilizada {
+    background-color: #14532d;
+    color: #86efac;
+}
+
+/* Cancelada: roja */
+.estado-cancelada {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+}
+/* Contenedor de botones a la derecha */
+.acciones-compra {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+.btn-qr {
+    padding: 6px 12px;
+    background-color: #f2bb2e;
+    color: #121824;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+}
+.btn-cancelar {
+    padding: 6px 12px;
+    border: 1px solid #f2bb2e;
+    color: #f2bb2e;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+}
+/*aviso qr*/
+.aviso-qr {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background-color: #374151;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+/*Adaptable para tablets y celulares*/
+@media (max-width: 900px) {
+    .perfil-contenedor {
+        flex-direction: column;
+        margin: 20px 0;
+        padding: 0 16px;
+        gap: 16px;
+    }
+
+    .perfil-columna-izq,
+    .perfil-columna-der {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .tarjeta-perfil,
+    .tarjeta-datos,
+    .perfil-columna-der {
+        padding: 18px;
+    }
+    .tabla-compras {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .fila-encabezado,
+    .fila-compra {
+        min-width: 720px;
+    }
+}
