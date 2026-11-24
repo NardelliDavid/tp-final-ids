@@ -1,0 +1,108 @@
+{% extends "cartelera/base.html" %}
+
+{% block estilos %}<link rel="stylesheet" href="{{ url_for('static', filename='cliente/css/mi_perfil.css') }}">{% endblock %}
+
+{% block contenido %}
+<div class="perfil-contenedor">
+    <div class="perfil-columna-izq">
+        <div class="tarjeta-perfil">
+            <h2>Mis datos</h2>
+            <span>Nombre</span>
+            <p>Ana pérez</p> 
+            <span>Correo</span>
+            <p>ana@mail.com</p> 
+        <a href="#" class="btn-editar">Editar datos o contraseña</a>
+        </div>
+
+        <div class="tarjeta-datos">
+            <h2>Películas vistas</h2>
+            <div class="pelicula-item">
+                <div class="poster"></div>
+                <div class="pelicula-info">
+                    <h3>Interestellar</h3>
+                    <span>Funcion del 26/10/2026</span>
+                </div>
+            </div>
+            <div class="pelicula-item">
+                <div class="poster"></div>
+                <div class="pelicula-info">
+                    <h3>Titanic</h3>
+                    <h4>Funcion del 14/10/2026</h4>
+                </div>    
+            </div>
+        </div>
+    </div>
+    <div class="perfil-columna-der">
+        <h2>Mis compras y consumos</h2>
+         
+        <div class="tabla-compras">
+            <div class="fila-encabezado">
+                <span>N.º</span>
+                <span>PELÍCULA Y FUNCIÓN</span>
+                <span>BUTACAS</span>
+                <span>SERVICIOS</span>
+                <span>TOTAL</span>
+                <span>ESTADO</span>
+            </div>
+
+            <div class="fila-compra">
+                <span>120</span>
+                <div class="col-pelicula">
+                    <p>Cinema Paradiso</p>
+                    <span>Centro · Sala 2 · 05/11 20:30</span>
+                </div>    
+                <span>C7, C8</span>
+                <span>2 × Combo pochoclos</span>
+                <span>$ 15.000</span>
+                <div><span class="estado-confirmada">Confirmada</span></div>
+                <div class="acciones-compra">
+                    <a href="#" class="btn-qr">Ver QR</a>
+                    <a href="#" class="btn-cancelar">Cancelar</a>
+                </div>
+            </div>
+  
+            <div class="fila-compra">
+                <span>98</span>
+                <div class="col-pelicula">
+                    <p>Interstellar</p>
+                    <span>Norte · Sala 1 · 28/10 21:00</span>
+                </div>
+                <span>F4, F5, F6</span>
+                <span>1 × Estacionamiento</span>
+                <span>$ 15.500</span>
+                <div><span class="estado-utilizada">Utilizada</span></div>
+                <div class="acciones-compra"></div>
+            </div>  
+
+            <div class="fila-compra">
+                <span>91</span>
+                <div class="col-pelicula">
+                    <p>Avatar</p>
+                    <span>Sur · Sala 1 · 21/10 19:00</span>
+                </div>
+                <span>82</span>
+                <span></span>
+                <span>$ 3800</span>
+                <div><span class="estado-cancelada">cancelada</span></div>
+                <div class="acciones-compra"></div>
+            </div>
+
+            <div class="fila-compra">
+                <span>85</span>
+                <div class="col-pelicula">
+                    <p>Titanic</p>
+                    <span>Centro · Sala 1 · 14/10 18:00</span>
+                </div>
+                <span>D3, D4</span>
+                <span>2 x bebida</span>
+                <span>$ 13000</span>
+                <div><span class="estado-utilizada">Utilizada</span></div>
+                <div class="acciones-compra"></div>
+            </div>
+        </div>   
+        <div class="aviso-qr">
+            <p>Una pelicula figura como vista cuando se validó el QR de la compra en el ingreso a la sala.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
