@@ -19,7 +19,7 @@ def mi_perfil():
     try:
         respuesta = requests.get(
             f"{BACKEND_URL}/usuarios/me/historial",
-            headers={"Authorization": f"Bearer {token}"},
+            json={"token": token},
             timeout=5
         )
 
