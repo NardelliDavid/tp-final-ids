@@ -60,11 +60,64 @@ body {
     display: inline-block;
     margin-top: 6px;
     padding: 8px 14px;
+    background-color: transparent;
     border: 1px solid #f2bb2e;
     border-radius: 6px;
     color: #f2bb2e;
     text-decoration: none;
     font-size: 12px;
+}
+.campo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.campo-form label {
+    font-size: 12px;
+    color: #9aa5b8;
+}
+.campo-form input {
+    width: 100%;
+    padding: 9px 12px;
+    background-color: #182232;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+}
+
+.botones-panel {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.btn-guardar-panel {
+    flex: 1;
+    padding: 9px 12px;
+    background-color: #f2bb2e;
+    border: none;
+    border-radius: 6px;
+    color: #121824;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cerrar-panel {
+    padding: 9px 12px;
+    background-color: #f2bb2e;
+    border: none;
+    border-radius: 6px;
+    color: #121824;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
 }
 /*tarjeta peliculas vistas*/
 .pelicula-item {
@@ -175,6 +228,19 @@ body {
     font-size: 12px;
     color: #ffffff;
 }
+.panel-desplegable {
+    display: none;
+    margin-top: 14px;
+    padding: 16px;
+    background-color: #0f141d;
+    border: 1px solid #2a364b;
+    border-radius: 8px;
+}
+
+.panel-desplegable.visible {
+    display: block;
+}
+
 
 /*Adaptable para tablets y celulares*/
 @media (max-width: 900px) {
