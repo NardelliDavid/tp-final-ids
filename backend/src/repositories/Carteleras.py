@@ -4,7 +4,9 @@ from db.conexion_db import conexion
 
 # GET /cartelera
 def obtener_cartelera():
+    #abre el canal de comunicacion con MySQL
     conn = conexion()
+    # abre el canal para ejecutar las consultas MySQL y traer los registros
     cursor = conn.cursor(dictionary=True)
 
     consulta = """
@@ -24,6 +26,7 @@ def obtener_cartelera():
     cursor.execute(consulta)
     peliculas = cursor.fetchall()
 
+    # se cierran para liberar memoria y no agotar el límite de conexiones de la base de datos
     cursor.close()
     conn.close()
 
