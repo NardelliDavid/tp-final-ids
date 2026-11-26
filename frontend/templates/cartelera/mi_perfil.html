@@ -10,10 +10,36 @@
         <div class="tarjeta-perfil">
             <h2>Mis datos</h2>
             <span>Nombre</span>
-            <p>Ana pérez</p>
+            <p id="dato-nombre">{{ usuario.get("nombre", "") }}</p>
             <span>Correo</span>
-            <p>ana@mail.com</p>
-            <a href="#" class="btn-editar">Editar datos o contraseña</a>
+            <p id="dato-correo">{{ usuario.get("email", usuario.get("correo", "")) }}</p>
+            {% if mensaje_perfil %}
+                <p id="mensaje-perfil" class="mensaje-error">{{ mensaje_perfil }}</p>
+            {% endif %}    
+          
+            <button type="button" class="btn-editar" id="btn-toggle-editar">Editar datos o contraseña</button>
+         
+            <form class="panel-desplegable" id="form-editar-perfil" method="POST" action="{{ url_for('perfil_cliente.mi_perfil') }}">
+                <div class="campo-form">
+                    <label for="input-nombre">Nombre</label>
+                    <input type="text" id="input-nombre" name="nombre" value="{{ usuario.get('nombre', '') }}">
+                </div>
+
+                <div class="campo-form">
+                    <label for="input-password-actual">Contraseña actual</label>
+                    <input type="password" id="input-password-actual" name="password_actual" placeholder="Necesario si cambias la contraseña">
+                </div>
+
+                <div class="campo-form">
+                    <label for="input-password-nueva">Nueva contraseña</label>
+                    <input type="password" id="input-password-nueva" name="password_nueva" placeholder="Dejar vacía si no cambiás">
+                </div>
+
+                <div class="botones-panel">
+                    <button type="submit" class="btn-guardar-panel">Guardar cambios</button>
+                    <button type="button" class="btn-cerrar-panel" id="btn-cancelar-editar">Cancelar</button>
+                </div>
+            </form>
         </div>
 
         <div class="tarjeta-datos">
@@ -106,9 +132,11 @@
 
                         <div class="acciones-compra">
                             {% if compra.estado == 'activa' %}
-                                <a href="#" class="btn-qr">Ver QR</a>
-                                <a href="#" class="btn-cancelar">Cancelar</a>
-                            {% endif %}
+                                <a href="{{ url_for('compras.detalle_compra',id_compra=compra.id) }}" class="btn-qr">Ver QR</a>
+                                <form method="POST" action="{{ url_for('compras.cancelar_compra',id_compra=compra.id) }}" onsubmit="return confirm('¿Querés cancelar esta compra?')">
+                                <button type="submit" class="btn-cancelar">Cancelar</button>
+                                </form>     
+                                {% endif %}
                         </div>
                     </div>
                 {% endfor %}
@@ -123,4 +151,25 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const btnToggleEditar = document.getElementById("btn-toggle-editar");
+    const formEditarPerfil = document.getElementById("form-editar-perfil");
+    const btnCancelarEditar = document.getElementById("btn-cancelar-editar");
+
+    if (btnToggleEditar && formEditarPerfil) {
+        btnToggleEditar.addEventListener("click", (e) => {
+            e.preventDefault();
+            formEditarPerfil.classList.toggle("visible");
+        });
+    }
+
+    if (btnCancelarEditar && formEditarPerfil) {
+        btnCancelarEditar.addEventListener("click", () => {
+            formEditarPerfil.classList.remove("visible");
+        });
+    }
+});
+</script>
 {% endblock %}
