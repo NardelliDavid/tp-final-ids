@@ -13,10 +13,8 @@
             <p id="dato-nombre">{{ usuario.get("nombre", "") }}</p>
             <span>Correo</span>
             <p id="dato-correo">{{ usuario.get("email", usuario.get("correo", "")) }}</p>
-            {% if mensaje_error %}
-                <p id="mensaje-perfil" class="mensaje-error">{{ mensaje_error }}</p>
-            {% elif mensaje_exito %}
-                <p id="mensaje-perfil" class="mensaje-exito">{{ mensaje_exito }}</p>
+            {% if mensaje_perfil %}
+                <p id="mensaje-perfil" class="mensaje-error">{{ mensaje_perfil }}</p>
             {% endif %}    
           
             <button type="button" class="btn-editar" id="btn-toggle-editar">Editar datos o contraseña</button>
