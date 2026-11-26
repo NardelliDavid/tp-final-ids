@@ -1,3 +1,4 @@
+# archivo que arranca el servidor Flask en el puerto 5000. Sufunción es crear la aplicación, registrar todos los grupos de rutas (Blueprints) y dejar el servidor escuchando peticiones HTTP.
 from flask import Flask, jsonify
 from db.conexion_db import conexion
 
@@ -23,5 +24,7 @@ app.register_blueprint(funciones_bp)
 app.register_blueprint(carteleras_bp)
 app.register_blueprint(compras_bp)
 
+#Garantiza que el servidor (app.run()) solo arranque si ejecutamos python app.py directamente, y no si otro archivo importa app
 if __name__ == "__main__":
+# hace que el servidor se reinicie automáticamente cada vez que guardamos un cambio    
     app.run(debug=True)

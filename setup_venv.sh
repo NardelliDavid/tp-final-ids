@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Crea el entorno virtual (venv) e instala todas las librerías de requirements.txt automáticamente.
 set -e
 
 DIR="${1:-.}"
