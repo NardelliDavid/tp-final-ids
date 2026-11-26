@@ -51,10 +51,6 @@
                 ¿No tenés cuenta? Registrate acá
             </a>
 
-            <a class="logout" href="{{ url_for('auth.login_admin') }}">
-                ¿Sos administrador? Ingresá acá
-            </a>
-
         {% else %}
 
             <h1>¡Hola, {{ session.get("usuario", {}).get("nombre", "Usuario") }}!</h1>

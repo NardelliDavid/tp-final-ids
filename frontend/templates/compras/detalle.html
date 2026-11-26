@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -10,79 +11,402 @@
 
     <style>
         .comprobante {
-            width: min(92%, 820px);
-            margin: 32px auto;
+            width: min(94%, 1050px);
+            margin: 35px auto;
             color: #fff;
             font-family: Arial, sans-serif;
         }
 
-        .comprobante a {
-            display: inline-block;
-            margin-top: 24px;
+        .comprobante-cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .comprobante-cabecera h1 {
+            margin: 0;
+        }
+
+        .comprobante-estado {
+            padding: 9px 15px;
+            border-radius: 20px;
+            background: #35465d;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .comprobante-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.8fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .comprobante-principal {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .comprobante-seccion {
+            padding: 22px;
+            background: #182232;
+            border-radius: 10px;
+        }
+
+        .comprobante-seccion h2 {
+            margin: 0 0 18px;
+            font-size: 1.25rem;
+        }
+
+        .funcion-datos {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .dato {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .dato small {
+            color: #aebbd0;
+            font-size: 0.85rem;
+        }
+
+        .dato strong {
+            overflow-wrap: anywhere;
+        }
+
+        .comprobante-lista {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comprobante-fila {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 13px 0;
+            border-bottom: 1px solid #35465d;
+        }
+
+        .comprobante-fila:last-child {
+            border-bottom: none;
+        }
+
+        .comprobante-fila span:last-child {
+            white-space: nowrap;
+        }
+
+        .entrada-nombre,
+        .servicio-nombre {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .entrada-nombre small,
+        .servicio-nombre small {
+            color: #aebbd0;
+        }
+
+        .comprobante-resumen {
+            position: sticky;
+            top: 20px;
+        }
+
+        .resumen-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 0;
+            margin-top: 8px;
+            border-top: 1px solid #35465d;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .resumen-total strong {
             color: #efb443;
+            font-size: 1.6rem;
+            white-space: nowrap;
+        }
+
+        .comprobante-acciones {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .comprobante-acciones a,
+        .comprobante-acciones button {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 16px;
+            border: none;
+            border-radius: 7px;
+            font-size: 1rem;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .boton-volver {
+            background: #35465d;
+            color: #fff;
+        }
+
+        .boton-cancelar {
+            background: #efb443;
+            color: #111827;
+            font-weight: bold;
+        }
+
+        .boton-volver:hover {
+            background: #405570;
+        }
+
+        .boton-cancelar:hover {
+            background: #f5c15d;
+        }
+
+        .comprobante-mensaje {
+            margin-bottom: 20px;
+            padding: 13px 16px;
+            background: #182232;
+            border-radius: 8px;
+        }
+
+        .comprobante-qr {
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 1px solid #35465d;
+            text-align: center;
+        }
+
+        .comprobante-qr img {
+            display: block;
+            width: 190px;
+            max-width: 100%;
+            height: auto;
+            margin: 15px auto;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .comprobante-qr p {
+            color: #aebbd0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 750px) {
+            .comprobante-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .comprobante-resumen {
+                position: static;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .funcion-datos {
+                grid-template-columns: 1fr;
+            }
+
+            .comprobante-seccion {
+                padding: 17px;
+            }
+
+            .comprobante-fila {
+                gap: 10px;
+                font-size: 0.93rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <main class="comprobante">
-        <h1>Compra #{{ compra.id }}</h1>
-        <p>Estado: {{ compra.estado }}</p>
-                {% for mensaje in get_flashed_messages() %}
-            <p role="status">{{ mensaje }}</p>
+
+        <header class="comprobante-cabecera">
+            <h1>Comprobante de compra</h1>
+
+            <span class="comprobante-estado">
+                Compra #{{ compra.id }} · {{ compra.estado }}
+            </span>
+        </header>
+
+        {% for mensaje in get_flashed_messages() %}
+            <p class="comprobante-mensaje" role="status">
+                {{ mensaje }}
+            </p>
         {% endfor %}
 
-        {% if compra.estado == "activa" %}
-            <form method="post"
-                  action="{{ url_for('compras.cancelar_compra', id_compra=compra.id) }}"
-                  onsubmit="return confirm('¿Querés cancelar esta compra completa?')">
-                <button class="boton-nuevo-servicio" type="submit">
-                    Cancelar compra
-                </button>
-            </form>
-        {% endif %}
+        <div class="comprobante-layout">
 
-        {% if compra.funcion %}
-            <h2>{{ compra.funcion.pelicula }}</h2>
-            <p>{{ compra.funcion.local }} — {{ compra.funcion.sala }}</p>
-            <p>Función: {{ compra.funcion.inicio | replace("T", " ") }}</p>
-        {% endif %}
+            <div class="comprobante-principal">
 
-        <h2>Entradas</h2>
+                {% if compra.funcion %}
+                    <section class="comprobante-seccion">
+                        <h2>Información de la función</h2>
 
-        <div class="servicios-lista">
-            {% for entrada in compra.entradas %}
-                <article class="servicio-tarjeta">
-                    <div class="servicio-informacion">
-                        <h3>Butaca {{ entrada.butaca }}</h3>
-                        <p>${{ "%.2f" | format(entrada.precio) }}</p>
+                        <div class="funcion-datos">
+
+                            <div class="dato">
+                                <small>Película</small>
+                                <strong>{{ compra.funcion.pelicula }}</strong>
+                            </div>
+
+                            <div class="dato">
+                                <small>Cine</small>
+                                <strong>{{ compra.funcion.local }}</strong>
+                            </div>
+
+                            <div class="dato">
+                                <small>Sala</small>
+                                <strong>{{ compra.funcion.sala }}</strong>
+                            </div>
+
+                            <div class="dato">
+                                <small>Fecha y hora</small>
+                                <strong>
+                                    {{ compra.funcion.inicio | replace("T", " ") }}
+                                </strong>
+                            </div>
+
+                        </div>
+                    </section>
+                {% endif %}
+
+                <section class="comprobante-seccion">
+                    <h2>Entradas</h2>
+
+                    <div class="comprobante-lista">
+                        {% for entrada in compra.entradas %}
+                            <div class="comprobante-fila">
+
+                                <div class="entrada-nombre">
+                                    <strong>Butaca {{ entrada.butaca }}</strong>
+                                    <small>Entrada individual</small>
+                                </div>
+
+                                <span>
+                                    ${{ "%.2f" | format(entrada.precio) }}
+                                </span>
+
+                            </div>
+                        {% endfor %}
                     </div>
-                </article>
-            {% endfor %}
-        </div>
+                </section>
 
-        <h2>Servicios</h2>
+                <section class="comprobante-seccion">
+                    <h2>Servicios adicionales</h2>
 
-        <div class="servicios-lista">
-            {% for servicio in compra.servicios %}
-                <article class="servicio-tarjeta">
-                    <div class="servicio-informacion">
-                        <h3>{{ servicio.nombre }}</h3>
-                        <p>Cantidad: {{ servicio.cantidad }}</p>
-                        <p>Subtotal: ${{ "%.2f" | format(servicio.subtotal) }}</p>
+                    <div class="comprobante-lista">
+                        {% for servicio in compra.servicios %}
+                            <div class="comprobante-fila">
+
+                                <div class="servicio-nombre">
+                                    <strong>{{ servicio.nombre }}</strong>
+                                    <small>Cantidad: {{ servicio.cantidad }}</small>
+                                </div>
+
+                                <span>
+                                    ${{ "%.2f" | format(servicio.subtotal) }}
+                                </span>
+
+                            </div>
+                        {% else %}
+                            <p>No se incluyeron servicios adicionales.</p>
+                        {% endfor %}
                     </div>
-                </article>
-            {% else %}
-                <p>La compra no incluye servicios adicionales.</p>
-            {% endfor %}
+                </section>
+
+            </div>
+
+            <aside class="comprobante-resumen">
+                <section class="comprobante-seccion">
+
+                    <h2>Resumen de compra</h2>
+
+                    <div class="comprobante-fila">
+                        <span>Entradas</span>
+                        <span>{{ compra.entradas | length }}</span>
+                    </div>
+
+                    <div class="comprobante-fila">
+                        <span>Servicios</span>
+                        <span>{{ compra.servicios | length }}</span>
+                    </div>
+
+                    <div class="resumen-total">
+                        <span>Total de la compra</span>
+                        <strong>
+                            ${{ "%.2f" | format(compra.total) }}
+                        </strong>
+                    </div>
+
+                    {% if compra.estado == "activa" and qr_imagen %}
+                        <div class="comprobante-qr">
+                            <h2>Tu código QR de ingreso</h2>
+
+                            <img
+                                src="data:image/png;base64,{{ qr_imagen }}"
+                                alt="Código QR de la compra {{ compra.id }}"
+                            >
+
+                            <p>
+                                Presentá este código QR al ingresar al cine.
+                                Es válido para la función correspondiente.
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    {% if puede_cancelar %}
+                        <div class="comprobante-acciones">
+
+                            <form
+                                method="post"
+                                action="{{ url_for('compras.cancelar_compra', id_compra=compra.id) }}"
+                                onsubmit="return confirm('¿Querés cancelar esta compra completa?')"
+                            >
+                                <button class="boton-cancelar" type="submit">
+                                    Cancelar compra
+                                </button>
+                            </form>
+
+                        </div>
+                    {% endif %}
+
+                    {% if compra.funcion %}
+                        <div class="comprobante-acciones">
+                            <a
+                                class="boton-volver"
+                                href="{{ url_for('compras.nueva_compra', funcion_id=compra.funcion.id) }}"
+                            >
+                                Volver a elegir butacas
+                            </a>
+                        </div>
+                    {% endif %}
+
+                </section>
+            </aside>
+
         </div>
-
-        <h2>Total: ${{ "%.2f" | format(compra.total) }}</h2>
-
-        {% if compra.funcion %}
-            <a href="{{ url_for('compras.nueva_compra', funcion_id=compra.funcion.id) }}">
-                Volver a elegir butacas
-            </a>
-        {% endif %}
     </main>
 </body>
 </html>

@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -94,7 +95,8 @@
                                name="butacas"
                                value="{{ butaca.codigo }}"
                                aria-label="{{ butaca.codigo }}: {{ butaca.estado }}"
-                               {% if butaca.estado != "libre" %}disabled{% endif %}>
+                               {% if butaca.estado != "libre" %}disabled{% endif %}
+                               {% if butaca.codigo in butacas_seleccionadas %}checked{% endif %}>
                         <span>{{ butaca.codigo }}</span>
                     </label>
                 {% endfor %}
@@ -117,7 +119,7 @@
                                    name="servicio_{{ servicio.id }}"
                                    min="0"
                                    step="1"
-                                   value="0">
+                                   value="{{ cantidades_servicios.get(servicio.id|string, 0) }}">
                         </label>
                     </article>
                 {% else %}
@@ -126,7 +128,7 @@
             </div>
 
             <button class="boton-nuevo-servicio confirmar-compra" type="submit">
-                Confirmar compra
+                Revisar compra
             </button>
         </form>
     </main>

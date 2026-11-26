@@ -13,28 +13,31 @@ def obtener_usuario_autenticado():
 # Crea el Blueprint exclusivo para el módulo de Perfil
 perfil_bp = Blueprint('perfil', __name__)
 
-
-# endpoint GET /usuarios/me  Obtener los datos del perfil del usuario actual
-@perfil_bp.route('/usuarios/me', methods=['GET'])
+# endpoint POST /usuarios/me
+@perfil_bp.route('/usuarios/me', methods=['POST'])
 def obtener_perfil():
-    # Valida que el cliente tenga un token real y activo
-    email_usuario = verificar_token(request.headers.get('Authorization'))
+    datos = request.get_json()
+    token = datos.get('token') if datos else None
+    email_usuario = verificar_token(token)
     if not email_usuario:
-        return jsonify({"mensaje": "Token inválido o inexistente. No autorizado."}), 401
+        return jsonify({
+            "mensaje": "Token inválido o inexistente. No autorizado."
+        }), 401
 
     respuesta, status_code = consultar_datos_perfil(email_usuario)
     return jsonify(respuesta), status_code
 
-
-# endpoint PATCH /usuarios/me  Modificar campos editables (nombre o contraseña)
+# endpoint PATCH /usuarios/me - Modificar campos editables
 @perfil_bp.route('/usuarios/me', methods=['PATCH'])
 def modificar_perfil():
+    datos = request.get_json() or {}
     # Verifica autenticación
-    email_usuario = verificar_token(request.headers.get('Authorization'))
+    token = datos.get('token')
+    email_usuario = verificar_token(token)
+
     if not email_usuario:
         return jsonify({"mensaje": "No autorizado"}), 401
 
-    datos = request.get_json() or {}
     nombre_nuevo = datos.get('nombre')
     pwd_actual = datos.get('password_actual')
     pwd_nueva = datos.get('password_nueva')
@@ -42,14 +45,18 @@ def modificar_perfil():
     respuesta, status_code = actualizar_datos_perfil(
         email_usuario, nombre_nuevo, pwd_actual, pwd_nueva
     )
+
     return jsonify(respuesta), status_code
 
-
-# endpoint GET /usuarios/me/historial  Reunir compras y películas vistas
+# endpoint GET /usuarios/me/historial - Reunir compras y películas vistas
 @perfil_bp.route('/usuarios/me/historial', methods=['GET'])
 def obtener_historial():
+    datos = request.get_json() or {}
+
     # Verificamos autenticación
-    email_usuario = verificar_token(request.headers.get('Authorization'))
+    token = datos.get('token')
+    email_usuario = verificar_token(token)
+
     if not email_usuario:
         return jsonify({"mensaje": "No autorizado"}), 401
 

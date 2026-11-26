@@ -12,7 +12,7 @@
 </head>
 <body>
     <header>
-        <h1>CINE PARADISO</h1>
+        <a href="{{ url_for('index') }}" class="titulo">CINE PARADISO</a>
 
         {% if not session.get('token') %}
             <div>
@@ -27,7 +27,7 @@
                 </summary>
 
                 <div class="opciones-perfil">
-                    <a href="#">PERFIL</a>
+                    <a href="{{ url_for('perfil_cliente.mi_perfil') }}">PERFIL</a>
                     <a href="{{ url_for('auth.logout') }}">CERRAR SESION</a>
                 </div>
             </details>

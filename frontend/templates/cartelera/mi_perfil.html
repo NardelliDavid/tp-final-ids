@@ -1,0 +1,175 @@
+{% extends "cartelera/base.html" %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='cliente/css/mi_perfil.css') }}">
+{% endblock %}
+
+{% block contenido %}
+<div class="perfil-contenedor">
+    <div class="perfil-columna-izq">
+        <div class="tarjeta-perfil">
+            <h2>Mis datos</h2>
+            <span>Nombre</span>
+            <p id="dato-nombre">{{ usuario.get("nombre", "") }}</p>
+            <span>Correo</span>
+            <p id="dato-correo">{{ usuario.get("email", usuario.get("correo", "")) }}</p>
+            {% if mensaje_perfil %}
+                <p id="mensaje-perfil" class="mensaje-error">{{ mensaje_perfil }}</p>
+            {% endif %}    
+          
+            <button type="button" class="btn-editar" id="btn-toggle-editar">Editar datos o contraseña</button>
+         
+            <form class="panel-desplegable" id="form-editar-perfil" method="POST" action="{{ url_for('perfil_cliente.mi_perfil') }}">
+                <div class="campo-form">
+                    <label for="input-nombre">Nombre</label>
+                    <input type="text" id="input-nombre" name="nombre" value="{{ usuario.get('nombre', '') }}">
+                </div>
+
+                <div class="campo-form">
+                    <label for="input-password-actual">Contraseña actual</label>
+                    <input type="password" id="input-password-actual" name="password_actual" placeholder="Necesario si cambias la contraseña">
+                </div>
+
+                <div class="campo-form">
+                    <label for="input-password-nueva">Nueva contraseña</label>
+                    <input type="password" id="input-password-nueva" name="password_nueva" placeholder="Dejar vacía si no cambiás">
+                </div>
+
+                <div class="botones-panel">
+                    <button type="submit" class="btn-guardar-panel">Guardar cambios</button>
+                    <button type="button" class="btn-cerrar-panel" id="btn-cancelar-editar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="tarjeta-datos">
+            <h2>Películas vistas</h2>
+
+            {% if mensaje_historial %}
+                <p>{{ mensaje_historial }}</p>
+
+            {% elif peliculas_vistas %}
+
+                {% for pelicula in peliculas_vistas %}
+                    <div class="pelicula-item">
+                        <div class="poster">
+                            {% if pelicula.poster_url %}
+                                <img src="{{ pelicula.poster_url }}" alt="{{ pelicula.titulo }}">
+                            {% endif %}
+                        </div>
+                        <div class="pelicula-info">
+                            <h3>{{ pelicula.titulo }}</h3>
+                            {% if pelicula.fecha_funcion %}
+                                <span>Función del {{ pelicula.fecha_funcion[:10] }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% else %}
+                <p>Todavía no tenés películas vistas.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="perfil-columna-der">
+        <h2>Mis compras y consumos</h2>
+
+        <div class="tabla-compras">
+            <div class="fila-encabezado">
+                <span>N.º</span>
+                <span>PELÍCULA Y FUNCIÓN</span>
+                <span>BUTACAS</span>
+                <span>SERVICIOS</span>
+                <span>TOTAL</span>
+                <span>ESTADO</span>
+            </div>
+
+            {% if mensaje_historial %}
+                <p>{{ mensaje_historial }}</p>
+
+            {% elif compras %}
+
+                {% for compra in compras %}
+                    <div class="fila-compra">
+                        <span>{{ compra.id }}</span>
+
+                        <div class="col-pelicula">
+                            <p>{{ compra.pelicula }}</p>
+                            <span>
+                                {{ compra.local }} · {{ compra.sala }}
+                                {% if compra.inicio %}
+                                    · {{ compra.inicio[8:10] }}/{{ compra.inicio[5:7] }}
+                                    {{ compra.inicio[11:16] }}
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <span>{{ compra.butacas | join(', ') }}</span>
+
+                        <span>
+                            {% for servicio in compra.servicios %}
+                                {{ servicio.cantidad }} × {{ servicio.nombre }}
+                                {% if not loop.last %}<br>{% endif %}
+                            {% else %}
+                                Sin servicios
+                            {% endfor %}
+                        </span>
+
+                        <span>$ {{ compra.total }}</span>
+
+                        <div>
+                            {% if compra.estado == 'activa' %}
+                                <span class="estado-confirmada">Confirmada</span>
+
+                            {% elif compra.estado == 'utilizada' %}
+                                <span class="estado-utilizada">Utilizada</span>
+
+                            {% elif compra.estado == 'cancelada' %}
+                                <span class="estado-cancelada">Cancelada</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="acciones-compra">
+                            {% if compra.estado == 'activa' %}
+                                <a href="{{ url_for('compras.detalle_compra',id_compra=compra.id) }}" class="btn-qr">Ver QR</a>
+                                <form method="POST" action="{{ url_for('compras.cancelar_compra',id_compra=compra.id) }}" onsubmit="return confirm('¿Querés cancelar esta compra?')">
+                                <button type="submit" class="btn-cancelar">Cancelar</button>
+                                </form>     
+                                {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% else %}
+                <p>Todavía no tenés compras realizadas.</p>
+            {% endif %}
+        </div>
+
+        <div class="aviso-qr">
+            <p>Una pelicula figura como vista cuando se validó el QR de la compra en el ingreso a la sala.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const btnToggleEditar = document.getElementById("btn-toggle-editar");
+    const formEditarPerfil = document.getElementById("form-editar-perfil");
+    const btnCancelarEditar = document.getElementById("btn-cancelar-editar");
+
+    if (btnToggleEditar && formEditarPerfil) {
+        btnToggleEditar.addEventListener("click", (e) => {
+            e.preventDefault();
+            formEditarPerfil.classList.toggle("visible");
+        });
+    }
+
+    if (btnCancelarEditar && formEditarPerfil) {
+        btnCancelarEditar.addEventListener("click", () => {
+            formEditarPerfil.classList.remove("visible");
+        });
+    }
+});
+</script>
+{% endblock %}

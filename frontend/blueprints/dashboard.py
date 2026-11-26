@@ -12,10 +12,10 @@ def dashboard():
     token = session.get("token")
 
     if not token:
-        return redirect(url_for("login_admin"))
+        return redirect(url_for("auth.login_admin"))
 
     if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("login_admin"))
+        return redirect(url_for("auth.login_admin"))
 
     # Fechas predeterminadas: últimos 30 días.
     hoy = date.today()

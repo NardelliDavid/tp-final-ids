@@ -1,6 +1,6 @@
 
 import requests
-from flask import Blueprint, render_template, session, redirect, url_for, request, jsonify
+from flask import Blueprint, render_template, session, redirect, url_for, request
 from config import BACKEND_URL
 
 funciones_bp = Blueprint("funciones", __name__)
@@ -10,6 +10,13 @@ def obtener_headers():
     return {
         "Authorization": f"Bearer {session['token']}"
     }
+
+
+def es_administrador():
+    return (
+        session.get("token")
+        and session.get("usuario", {}).get("rol") == "administrador"
+    )
 
 
 def normalizar_peliculas(datos):
@@ -50,21 +57,90 @@ def normalizar_peliculas(datos):
     ]
 
 
+def obtener_mensaje_error(respuesta, accion):
+    try:
+        datos = respuesta.json()
+    except ValueError:
+        datos = None
+
+    error = datos
+
+    if isinstance(error, dict):
+        error = (
+            error.get("error")
+            or error.get("mensaje")
+            or error.get("message")
+        )
+
+    while isinstance(error, dict):
+        error = (
+            error.get("error")
+            or error.get("mensaje")
+            or error.get("message")
+        )
+
+    if not isinstance(error, str) or not error.strip():
+        return (
+            f"No se pudo {accion}. "
+            "Revisá los datos e intentá nuevamente."
+        )
+
+    error_minusculas = error.lower()
+
+    if "no puede programarse en el pasado" in error_minusculas:
+        return (
+            "La fecha y hora deben ser posteriores al momento actual. "
+            "Revisá los datos e intentá nuevamente."
+        )
+
+    if "la sala no existe" in error_minusculas:
+        return "La sala seleccionada no existe. Elegí otra sala."
+
+    if "la película no existe" in error_minusculas:
+        return "La película seleccionada no existe."
+
+    if "formato de fecha" in error_minusculas:
+        return "El formato de la fecha y hora no es válido."
+
+    if "faltan datos obligatorios" in error_minusculas:
+        return "Completá todos los campos obligatorios."
+
+    if "datos enviados no son válidos" in error_minusculas:
+        return (
+            "Los datos ingresados no son válidos. "
+            "Revisalos e intentá nuevamente."
+        )
+
+    if "horario" in error_minusculas or "superposicion" in error_minusculas:
+        return (
+            "La sala ya tiene otra función en ese horario "
+            "o no cumple el tiempo de limpieza."
+        )
+
+    return error
+
+
+def redirigir_funciones(mensaje, tipo="error"):
+    return redirect(url_for(
+        "funciones.funciones",
+        mensaje=mensaje,
+        tipo_mensaje=tipo
+    ))
+
+
 @funciones_bp.route('/admin/funciones')
 def funciones():
-    if not session.get("token"):
+    if not es_administrador():
         return redirect(url_for("auth.login_admin"))
 
-    if session.get("usuario", {}).get("rol") != "administrador":
-        return redirect(url_for("auth.login_admin"))
-
-    funciones = []
+    lista_funciones = []
     peliculas = []
     salas = []
-    mensaje = None
+
+    mensaje = request.args.get("mensaje")
+    tipo_mensaje = request.args.get("tipo_mensaje", "error")
 
     try:
-        # Obtener funciones registradas
         respuesta = requests.get(
             f"{BACKEND_URL}/funciones",
             params={"incluir_pasadas": "true"},
@@ -73,11 +149,11 @@ def funciones():
         )
 
         if respuesta.ok:
-            funciones = respuesta.json()
-        else:
+            lista_funciones = respuesta.json()
+        elif not mensaje:
             mensaje = "No se pudieron cargar las funciones."
+            tipo_mensaje = "error"
 
-        # Obtener películas desde MySQL
         respuesta_peliculas = requests.get(
             f"{BACKEND_URL}/backoffice/peliculas",
             headers=obtener_headers(),
@@ -89,7 +165,6 @@ def funciones():
                 respuesta_peliculas.json()
             )
 
-        # Obtener salas desde MySQL
         respuesta_salas = requests.get(
             f"{BACKEND_URL}/salas",
             headers=obtener_headers(),
@@ -101,19 +176,21 @@ def funciones():
 
     except requests.RequestException:
         mensaje = "No se pudo conectar con el backend."
+        tipo_mensaje = "error"
 
     return render_template(
         'admin/funciones.html',
-        funciones=funciones,
+        funciones=lista_funciones,
         peliculas=peliculas,
         salas=salas,
-        mensaje=mensaje
+        mensaje=mensaje,
+        tipo_mensaje=tipo_mensaje
     )
 
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>')
 def detalle_funcion(funcion_id):
-    if not session.get("token"):
+    if not es_administrador():
         return redirect(url_for("auth.login_admin"))
 
     try:
@@ -122,15 +199,41 @@ def detalle_funcion(funcion_id):
             headers=obtener_headers(),
             timeout=5
         )
-        return jsonify(respuesta.json()), respuesta.status_code
+
+        if not respuesta.ok:
+            return redirigir_funciones(
+                obtener_mensaje_error(respuesta, "obtener el detalle")
+            )
+
+        datos = respuesta.json()
+
+        if isinstance(datos, dict) and "OK" in datos:
+            datos = datos["OK"]
+
+        if not isinstance(datos, dict):
+            return redirigir_funciones(
+                "La información de la función no tiene un formato válido."
+            )
+
+        return render_template(
+            'admin/detalle_funcion.html',
+            funcion=datos
+        )
 
     except requests.RequestException:
-        return jsonify({"error": "No se pudo conectar con el backend."}), 500
+        return redirigir_funciones(
+            "No se pudo conectar con el backend."
+        )
+
+    except ValueError:
+        return redirigir_funciones(
+            "No se pudo interpretar la información de la función."
+        )
 
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>/butacas')
 def butacas_funcion(funcion_id):
-    if not session.get("token"):
+    if not es_administrador():
         return redirect(url_for("auth.login_admin"))
 
     try:
@@ -139,15 +242,64 @@ def butacas_funcion(funcion_id):
             headers=obtener_headers(),
             timeout=5
         )
-        return jsonify(respuesta.json()), respuesta.status_code
+
+        if not respuesta.ok:
+            return redirigir_funciones(
+                obtener_mensaje_error(respuesta, "obtener las butacas")
+            )
+
+        datos = respuesta.json()
+
+        if isinstance(datos, dict) and "OK" in datos:
+            datos = datos["OK"]
+
+        if not isinstance(datos, dict):
+            return redirigir_funciones(
+                "La información de las butacas no tiene un formato válido."
+            )
+
+        lista_butacas = datos.get("butacas", [])
+
+        if not isinstance(lista_butacas, list):
+            lista_butacas = []
+
+        libres = 0
+        ocupadas = 0
+
+        for butaca in lista_butacas:
+            estado = str(butaca.get("estado", "")).lower()
+
+            if estado == "libre":
+                libres += 1
+                butaca["estado_css"] = "libre"
+            else:
+                ocupadas += 1
+                butaca["estado_css"] = "ocupada"
+
+        return render_template(
+            'admin/butacas_funcion.html',
+            funcion_id=funcion_id,
+            butacas=lista_butacas,
+            filas=datos.get("filas", 0),
+            columnas=datos.get("columnas", 0),
+            libres=libres,
+            ocupadas=ocupadas
+        )
 
     except requests.RequestException:
-        return jsonify({"error": "No se pudo conectar con el backend."}), 500
+        return redirigir_funciones(
+            "No se pudo conectar con el backend."
+        )
+
+    except ValueError:
+        return redirigir_funciones(
+            "No se pudo interpretar la información de las butacas."
+        )
 
 
 @funciones_bp.route('/admin/funciones/crear', methods=["POST"])
 def crear_funcion():
-    if not session.get("token"):
+    if not es_administrador():
         return redirect(url_for("auth.login_admin"))
 
     datos = request.form.to_dict()
@@ -165,23 +317,29 @@ def crear_funcion():
         )
 
         if respuesta.ok:
-            return redirect(url_for("funciones.funciones"))
+            return redirigir_funciones(
+                "La función se creó correctamente.",
+                "exito"
+            )
 
-        return (
-            f"Error al crear la función: {respuesta.status_code} - {respuesta.text}",
-            respuesta.status_code
+        return redirigir_funciones(
+            obtener_mensaje_error(respuesta, "crear la función")
         )
 
     except requests.RequestException:
-        return "No se pudo conectar con el backend.", 500
+        return redirigir_funciones(
+            "No se pudo conectar con el backend."
+        )
 
     except (ValueError, KeyError):
-        return "Los datos ingresados no son válidos.", 400
+        return redirigir_funciones(
+            "Los datos ingresados no son válidos. Revisalos e intentá nuevamente."
+        )
 
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>/editar', methods=["POST"])
 def editar_funcion(funcion_id):
-    if not session.get("token"):
+    if not es_administrador():
         return redirect(url_for("auth.login_admin"))
 
     datos = request.form.to_dict()
@@ -198,20 +356,29 @@ def editar_funcion(funcion_id):
         )
 
         if respuesta.ok:
-            return redirect(url_for("funciones.funciones"))
+            return redirigir_funciones(
+                "Los cambios de la función se guardaron correctamente.",
+                "exito"
+            )
 
-        return jsonify(respuesta.json()), respuesta.status_code
+        return redirigir_funciones(
+            obtener_mensaje_error(respuesta, "modificar la función")
+        )
 
     except requests.RequestException:
-        return jsonify({"error": "No se pudo conectar con el backend."}), 500
+        return redirigir_funciones(
+            "No se pudo conectar con el backend."
+        )
 
     except (ValueError, KeyError):
-        return jsonify({"error": "Los datos ingresados no son válidos."}), 400
+        return redirigir_funciones(
+            "Los datos ingresados no son válidos. Revisalos e intentá nuevamente."
+        )
 
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>/eliminar', methods=["POST"])
 def eliminar_funcion(funcion_id):
-    if not session.get("token"):
+    if not es_administrador():
         return redirect(url_for("auth.login_admin"))
 
     try:
@@ -222,9 +389,16 @@ def eliminar_funcion(funcion_id):
         )
 
         if respuesta.status_code == 204:
-            return redirect(url_for("funciones.funciones"))
+            return redirigir_funciones(
+                "La función se eliminó correctamente.",
+                "exito"
+            )
 
-        return jsonify(respuesta.json()), respuesta.status_code
+        return redirigir_funciones(
+            obtener_mensaje_error(respuesta, "eliminar la función")
+        )
 
     except requests.RequestException:
-        return jsonify({"error": "No se pudo conectar con el backend."}), 500
+        return redirigir_funciones(
+            "No se pudo conectar con el backend."
+        )

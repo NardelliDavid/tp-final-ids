@@ -2,13 +2,15 @@ blinker==1.9.0
 certifi==2026.10.23
 charset-normalizer==3.5.2
 click==8.5.0
-Flask==3.1.3
+Flask==3.1.3 # El framework web principal que usamos para armar la API del backend y el servidor del frontend
 idna==3.20
-itsdangerous==2.2.0
+itsdangerous==2.2.0 # libreria para verificar y firmar el token
 Jinja2==3.1.6
 MarkupSafe==3.0.4
-mysql-connector==2.2.9
-requests==2.34.2
+mysql-connector==2.2.9 # El conector oficial que permite que Python se comunique con la base de datos MySQL y ejecute consultas SQL
+requests==2.34.2 # La librería que usa el frontend para hacer llamadas HTTP (GET, POST, PATCH) hacia la API del backend.
 urllib3==2.8.0
-Werkzeug==3.1.9
-python-dotenv==1.2.4
+Werkzeug==3.1.9 # Trae las herramientas de seguridad (generate_password_hash y check_password_hash) con las que encriptan y validan las contraseñas.
+python-dotenv==1.2.4 # Permite leer las variables ocultas del archivo .env (DB_HOST, DB_USER, etc.) desde Python.
+qrcode[pil] # librería que genera las imágenes de códigos QR para las entradas compradas.
+

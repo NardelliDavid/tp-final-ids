@@ -11,13 +11,10 @@ Sistema web de venta de entradas para los 3 locales de Cine Paradiso: cartelera,
 
 - David Joel Nardelli
 - Ariadna Fadda
-- Eduardo Mamani
-- Frank Perez
 - Jerónimo Naveira
 - José Toro
 - Milagros Borgstrand
 - Lorena Franco
-- Sofía Bariego
 - Valentino Carrera
 
 ## Organización del trabajo
@@ -72,5 +69,23 @@ Los documentos están referenciados entre sí: los códigos **S1–S25** remiten
 6. En una terminal navegamos con cd hasta la carpeta del backend y en la otra hasta la del frontend
 7. En ambas terminales ejecutamos `python app.py` y se van a levantar el frontend y el backend.
 
-Nota: en el archivo **conexion_db.py** van a tener que modificar el usuario y contraseña si corresponde para que se pueda conectar a la base de datos. El archivo **init_db.sql** contiene las tablas y datos iniciales para la creacion de la base de datos.
-Crear un archivo .env local (ignorado por Git) con las variables de conexión a MySQL (DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE) para configurar la base de datos de cada entorno sin modificar conexion_db.py.
+Nota: El archivo **init_db.sql** contiene las tablas y datos iniciales para la creacion de la base de datos.
+
+1. Clonamos el repositorio.
+2. Dentro de la carpeta del repositorio creamos un archivo .env y dentro de este archivo pegamos lo siguiente:
+    ```env
+    DB_HOST=localhost
+    DB_USER= ###
+    DB_PASSWORD= ###
+    DB_DATABASE=cine_paradiso
+
+    BREVO_API_KEY=tu_clave_aca
+    BREVO_REMITENTE=antotororivas@gmail.com
+    BREVO_NOMBRE=Cine Paradiso
+    ```
+3. Abrimos una terminal y ejecutamos `bash setup_venv.sh`.
+4. Luego de crear el entorno virtual lo activamos con `source venv/bin/activate` (Esto es en Linux).
+5. Con el entorno virtual activado ejecutamos `python setup_db.py`.
+6. Tenemos que abrir 2 terminales dentro del proyecto y luego activamos el entorno virtual en ambas.
+7. En la primera terminal ejecutamos `bash run_frontend.sh` y en la segunda `bash run_backend.sh`.
+El backend se ejecuta en el puerto 5000 y el frontend en el 5001.
