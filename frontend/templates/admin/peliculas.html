@@ -51,9 +51,10 @@
                     alt="Póster de {{ pelicula.titulo }}"
                 >
             {% else %}
-                <div class="poster-placeholder">
-                    Sin póster
-                </div>
+                <img
+                    src="{{ url_for('static', filename='images/sin_poster.png') }}"
+                    alt="Sin poster"
+                >
             {% endif %}
 
             <div class="movie-info">

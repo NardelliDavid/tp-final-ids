@@ -7,13 +7,9 @@ carteleras_bp = Blueprint("carteleras", __name__)
 
 @carteleras_bp.route("/index")
 def index():
-    token = session.get("token")
-    if not verificar_cliente(token):
-        return redirect(url_for("auth.login"))
 
     respuesta = requests.get(
                 f"{BACKEND_URL}/cartelera",
-                headers={"Authorization": f"Bearer {token}"},
                 timeout=10
             )
     

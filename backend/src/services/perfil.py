@@ -61,7 +61,7 @@ def actualizar_datos_perfil(email_usuario, nombre_nuevo, pwd_actual, pwd_nueva):
             if not check_password_hash(db_password_hash, pwd_actual):
                 cursor.close()
                 conn.close()
-                return {"mensaje": "la contraseña actual es incorrecta"}, 401
+                return {"mensaje": "La contraseña actual es incorrecta"}, 401
 
             # Si es válida, encriptamos la nueva de forma segura
             nuevo_hash = generate_password_hash(pwd_nueva)
@@ -77,9 +77,9 @@ def actualizar_datos_perfil(email_usuario, nombre_nuevo, pwd_actual, pwd_nueva):
         cursor.close()
         conn.close()
 
-        return {"mensaje": "el usuario actualizado."}, 200
+        return {"mensaje": "El usuario se a actualizado."}, 200
     except Exception:
-        return {"mensaje": "datos inválidos."}, 400
+        return {"mensaje": "Datos inválidos."}, 400
 
 
 # Lógica del endpoint GET /usuarios/me/historial (Reunir compras y películas vistas)

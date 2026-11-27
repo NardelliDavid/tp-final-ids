@@ -8,18 +8,17 @@
 <div class="perfil-contenedor">
     <div class="perfil-columna-izq">
         <div class="tarjeta-perfil">
+            {% if mensaje_perfil %}
+                <p class="mensaje-perfil">{{ mensaje_perfil }}</p>
+            {% endif %}   
             <h2>Mis datos</h2>
             <span>Nombre</span>
             <p id="dato-nombre">{{ usuario.get("nombre", "") }}</p>
             <span>Correo</span>
             <p id="dato-correo">{{ usuario.get("email", usuario.get("correo", "")) }}</p>
-            {% if mensaje_perfil %}
-                <p id="mensaje-perfil" class="mensaje-error">{{ mensaje_perfil }}</p>
-            {% endif %}    
-          
             <button type="button" class="btn-editar" id="btn-toggle-editar">Editar datos o contraseña</button>
          
-            <form class="panel-desplegable" id="form-editar-perfil" method="POST" action="{{ url_for('perfil_cliente.mi_perfil') }}">
+            <form class="panel-desplegable" id="form-editar-perfil" method="POST" action="{{ url_for('perfil_cliente.modificar_perfil') }}">
                 <div class="campo-form">
                     <label for="input-nombre">Nombre</label>
                     <input type="text" id="input-nombre" name="nombre" value="{{ usuario.get('nombre', '') }}">
@@ -52,11 +51,9 @@
 
                 {% for pelicula in peliculas_vistas %}
                     <div class="pelicula-item">
-                        <div class="poster">
-                            {% if pelicula.poster_url %}
-                                <img src="{{ pelicula.poster_url }}" alt="{{ pelicula.titulo }}">
-                            {% endif %}
-                        </div>
+                        {% if pelicula.poster_url %}
+                            <img src="{{ pelicula.poster_url }}" class="poster" alt="{{ pelicula.titulo }}">
+                        {% endif %}
                         <div class="pelicula-info">
                             <h3>{{ pelicula.titulo }}</h3>
                             {% if pelicula.fecha_funcion %}

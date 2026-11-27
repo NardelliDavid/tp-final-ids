@@ -29,7 +29,7 @@
         {% for funcion in funciones %}
             <div class="funcion">
                 <p>{{ funcion.local }} - {{ funcion.sala }}</p>
-                <p>{{ funcion.inicio }}</p>
+                <p>{{ funcion.inicio | replace('T', ' ')}}</p>
                 <p>${{ funcion.precio }}</p>
                 <a href="{{ url_for('compras.nueva_compra', funcion_id=funcion.id) }}" class="elegir-asientos">ELEGIR ASIENTOS</a>
             </div>
