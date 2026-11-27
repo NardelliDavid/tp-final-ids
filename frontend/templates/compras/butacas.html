@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="es">
 <head>
@@ -75,11 +74,30 @@
         .confirmar-compra {
             margin-top: 24px;
         }
+
+        .volver-cartelera {
+            display: inline-block;
+            margin: 12px 0 20px;
+            padding: 10px 16px;
+            border-radius: 6px;
+            background: #35465d;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+
+        .volver-cartelera:hover {
+            background: #465c78;
+        }
     </style>
 </head>
 <body>
     <main class="compra">
         <h1>Elegí tus butacas</h1>
+
+        <a href="{{ url_for('carteleras.index') }}" class="volver-cartelera">
+            Volver a elegir película
+        </a>
 
         {% for mensaje in get_flashed_messages() %}
             <p role="status">{{ mensaje }}</p>
