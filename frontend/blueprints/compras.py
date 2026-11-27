@@ -16,7 +16,7 @@ from flask import (
 )
 
 from config import BACKEND_URL
-
+from utils import *
 
 compras_bp = Blueprint("compras", __name__)
 
@@ -25,14 +25,20 @@ CLAVE_COMPRA_PENDIENTE = "compra_pendiente"
 
 @compras_bp.route("/compras/nueva/<int:funcion_id>")
 def nueva_compra(funcion_id):
+    token = session.get("token")
+    if not verificar_cliente(token):
+        return redirect(url_for("auth.login"))
+    
     try:
         respuesta = requests.get(
             f"{BACKEND_URL}/funciones/{funcion_id}/butacas",
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5,
         )
 
         respuesta_servicios = requests.get(
             f"{BACKEND_URL}/servicios",
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5,
         )
 
@@ -66,14 +72,11 @@ def nueva_compra(funcion_id):
     methods=["POST"],
 )
 def confirmar_compra(funcion_id):
-    destino = url_for("compras.nueva_compra", funcion_id=funcion_id)
-
     token = session.get("token")
-    usuario = session.get("usuario", {})
-
-    if not token or usuario.get("rol") != "cliente":
-        flash("Iniciá sesión con una cuenta de cliente para comprar.")
-        return redirect(destino)
+    if not verificar_cliente(token):
+        return redirect(url_for("auth.login"))
+    
+    destino = url_for("compras.nueva_compra", funcion_id=funcion_id)
 
     butacas = request.form.getlist("butacas")
 
@@ -113,6 +116,8 @@ def confirmar_compra(funcion_id):
 # Muestra el resumen antes de registrar la compra.
 @compras_bp.route("/compras/nueva/<int:funcion_id>/revision")
 def revisar_compra(funcion_id):
+    token = session.get("token")
+
     compra_pendiente = session.get(CLAVE_COMPRA_PENDIENTE)
 
     if not compra_pendiente or compra_pendiente.get("funcion_id") != funcion_id:
@@ -124,11 +129,13 @@ def revisar_compra(funcion_id):
     try:
         respuesta_funcion = requests.get(
             f"{BACKEND_URL}/funciones/{funcion_id}",
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5,
         )
 
         respuesta_servicios = requests.get(
             f"{BACKEND_URL}/servicios",
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5,
         )
 
@@ -190,14 +197,9 @@ def revisar_compra(funcion_id):
     methods=["POST"],
 )
 def finalizar_compra(funcion_id):
-    destino = url_for("compras.revisar_compra", funcion_id=funcion_id)
-
     token = session.get("token")
-    usuario = session.get("usuario", {})
-
-    if not token or usuario.get("rol") != "cliente":
-        flash("Iniciá sesión con una cuenta de cliente para comprar.")
-        return redirect(url_for("auth.login"))
+    
+    destino = url_for("compras.revisar_compra", funcion_id=funcion_id)
 
     compra_pendiente = session.get(CLAVE_COMPRA_PENDIENTE)
 
@@ -254,8 +256,7 @@ def finalizar_compra(funcion_id):
 @compras_bp.route("/compras/<int:id_compra>")
 def detalle_compra(id_compra):
     token = session.get("token")
-
-    if not token:
+    if not verificar_cliente(token):
         return redirect(url_for("auth.login"))
 
     try:
@@ -316,8 +317,7 @@ def detalle_compra(id_compra):
 )
 def cancelar_compra(id_compra):
     token = session.get("token")
-
-    if not token:
+    if not verificar_cliente(token):
         return redirect(url_for("auth.login"))
 
     try:

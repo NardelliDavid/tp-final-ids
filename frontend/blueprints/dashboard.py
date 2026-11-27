@@ -2,19 +2,15 @@ import requests
 from datetime import date, timedelta
 from flask import Blueprint, render_template, session, redirect, url_for, request
 from config import BACKEND_URL
+from utils import *
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
 
 @dashboard_bp.route('/admin/dashboard')
 def dashboard():
-
     token = session.get("token")
-
-    if not token:
-        return redirect(url_for("auth.login_admin"))
-
-    if session.get("usuario", {}).get("rol") != "administrador":
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     # Fechas predeterminadas: últimos 30 días.
@@ -26,11 +22,6 @@ def dashboard():
     desde = request.args.get("desde", fecha_desde_default)
     hasta = request.args.get("hasta", fecha_hasta_default)
 
-    # Enviar las fechas al backend.
-    headers = {
-        "Authorization": f"Bearer {token}"
-    }
-
     parametros = {
         "desde": desde,
         "hasta": hasta
@@ -39,7 +30,7 @@ def dashboard():
     try:
         respuesta = requests.get(
             f"{BACKEND_URL}/backoffice/dashboard",
-            headers=headers,
+            headers={"Authorization": f"Bearer {token}"},
             params=parametros,
             timeout=10
         )

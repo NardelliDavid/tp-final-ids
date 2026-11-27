@@ -1,6 +1,6 @@
 import requests
 from flask import Blueprint, render_template, request, session, redirect, url_for
-
+from utils import *
 from config import BACKEND_URL
 
 servicios_bp = Blueprint("servicios", __name__)
@@ -8,10 +8,7 @@ servicios_bp = Blueprint("servicios", __name__)
 
 @servicios_bp.route("/admin/servicios")
 def servicios():
-    if not session.get("token"):
-        return redirect(url_for("auth.login_admin"))
-
-    if session.get("usuario", {}).get("rol") != "administrador":
+    if not verificar_administrador(session.get("token")):
         return redirect(url_for("auth.login_admin"))
 
     respuesta = requests.get(f"{BACKEND_URL}/servicios", timeout=5)
@@ -22,9 +19,7 @@ def servicios():
 @servicios_bp.route("/admin/servicios/nuevo", methods=["POST"])
 def nuevo_servicio():
     token = session.get("token")
-    rol = session.get("usuario", {}).get("rol")
-
-    if not token or rol != "administrador":
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     nombre = request.form.get("nombre", "").strip()
@@ -58,9 +53,7 @@ def nuevo_servicio():
 @servicios_bp.route("/admin/servicios/<int:id_servicio>/eliminar", methods=["POST"])
 def eliminar_servicio(id_servicio):
     token = session.get("token")
-    rol = session.get("usuario", {}).get("rol")
-
-    if not token or rol != "administrador":
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     try:
@@ -80,9 +73,7 @@ def eliminar_servicio(id_servicio):
 @servicios_bp.route("/admin/servicios/<int:id_servicio>/editar", methods=["POST"])
 def editar_servicio(id_servicio):
     token = session.get("token")
-    rol = session.get("usuario", {}).get("rol")
-
-    if not token or rol != "administrador":
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     nombre = request.form.get("nombre", "").strip()

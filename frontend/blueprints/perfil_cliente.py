@@ -1,27 +1,27 @@
 import requests
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, redirect, render_template, session, url_for
 from config import BACKEND_URL
+from utils import *
 
 perfil_cliente_bp = Blueprint("perfil_cliente", __name__)
 
- 
 @perfil_cliente_bp.route("/mi_perfil")
 def mi_perfil():
     token = session.get("token")
-
-    if not token:
+    if not verificar_cliente(token):
         return redirect(url_for("auth.login"))
+
+    headers = {"Authorization": f"Bearer {token}"}
 
     usuario = {}
     compras = []
     peliculas_vistas = []
     mensaje_historial = None
     mensaje_perfil = None
-    
     try:
-        resp_perfil = requests.post(
+        resp_perfil = requests.get(
             f"{BACKEND_URL}/usuarios/me",
-            json={"token": token},
+            headers=headers,
             timeout=5
         )
 
@@ -43,7 +43,7 @@ def mi_perfil():
     try:
         respuesta = requests.get(
             f"{BACKEND_URL}/usuarios/me/historial",
-            json={"token": token},
+            headers=headers,
             timeout=5
         )
 

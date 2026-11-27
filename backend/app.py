@@ -1,6 +1,5 @@
 # archivo que arranca el servidor Flask en el puerto 5000. Sufunción es crear la aplicación, registrar todos los grupos de rutas (Blueprints) y dejar el servidor escuchando peticiones HTTP.
-from flask import Flask, jsonify
-from db.conexion_db import conexion
+from flask import Flask
 
 from src.routes.QR import qr_bp
 from src.routes.servicios import servicios_bp

@@ -5,6 +5,7 @@ from src.services.perfil import (
     actualizar_datos_perfil,
     consultar_historial_usuario
 )
+from ..services.validar import *
 # Mantiene compatibilidad con QR.py que importa esta función desde acá
 def obtener_usuario_autenticado():
     return verificar_token(request.headers.get('Authorization'))
@@ -14,15 +15,14 @@ def obtener_usuario_autenticado():
 perfil_bp = Blueprint('perfil', __name__)
 
 # endpoint POST /usuarios/me
-@perfil_bp.route('/usuarios/me', methods=['POST'])
+@perfil_bp.route('/usuarios/me', methods=['GET'])
 def obtener_perfil():
-    datos = request.get_json()
-    token = datos.get('token') if datos else None
-    email_usuario = verificar_token(token)
-    if not email_usuario:
+    if not verificar_cliente():
         return jsonify({
             "mensaje": "Token inválido o inexistente. No autorizado."
         }), 401
+
+    email_usuario = verificar_token(request.headers.get("Authorization"))
 
     respuesta, status_code = consultar_datos_perfil(email_usuario)
     return jsonify(respuesta), status_code
@@ -30,14 +30,12 @@ def obtener_perfil():
 # endpoint PATCH /usuarios/me - Modificar campos editables
 @perfil_bp.route('/usuarios/me', methods=['PATCH'])
 def modificar_perfil():
-    datos = request.get_json() or {}
-    # Verifica autenticación
-    token = datos.get('token')
-    email_usuario = verificar_token(token)
-
-    if not email_usuario:
+    if not verificar_cliente():
         return jsonify({"mensaje": "No autorizado"}), 401
 
+    email_usuario = verificar_token(request.headers.get("Authorization"))
+
+    datos = request.get_json() or {}
     nombre_nuevo = datos.get('nombre')
     pwd_actual = datos.get('password_actual')
     pwd_nueva = datos.get('password_nueva')
@@ -51,14 +49,10 @@ def modificar_perfil():
 # endpoint GET /usuarios/me/historial - Reunir compras y películas vistas
 @perfil_bp.route('/usuarios/me/historial', methods=['GET'])
 def obtener_historial():
-    datos = request.get_json() or {}
-
-    # Verificamos autenticación
-    token = datos.get('token')
-    email_usuario = verificar_token(token)
-
-    if not email_usuario:
+    if not verificar_cliente():
         return jsonify({"mensaje": "No autorizado"}), 401
+
+    email_usuario = verificar_token(request.headers.get("Authorization"))
 
     respuesta, status_code = consultar_historial_usuario(email_usuario)
     return jsonify(respuesta), status_code

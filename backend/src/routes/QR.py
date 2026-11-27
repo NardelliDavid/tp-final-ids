@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request
 from db.conexion_db import conexion
 from src.routes.perfil import obtener_usuario_autenticado
+from ..services.validar import *
 
 qr_bp = Blueprint("qr", __name__)
 
@@ -13,8 +14,8 @@ def error(mensaje, codigo, status):
 @qr_bp.route("/qr/validaciones", methods=["POST"])
 def validar_qr():
     email = obtener_usuario_autenticado()
-    if email is None:
-        return jsonify({"mensaje": "No autorizado. Iniciá sesión"}), 401
+    if not verificar_administrador():
+        return jsonify({"error": "No autorizado"}), 401
 
     datos = request.get_json(silent=True)
     if type(datos) != dict:

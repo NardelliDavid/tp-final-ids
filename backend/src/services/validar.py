@@ -2,6 +2,8 @@ from werkzeug.security import generate_password_hash, check_password_hash  # Enc
 # itsdangerous: firma datos y estampa la fecha/hora de creación para que el token expire
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from db.conexion_db import conexion
+from flask import request
+from ..repositories.validators import buscar_usuario_por_mail
 
 serializador = URLSafeTimedSerializer("mi_clave_segura")  # Clave secreta para firmar los tokens
 TIEMPO_EXPIRACION = 3600  # Duración del token en segundos 
@@ -76,3 +78,33 @@ def verificar_token(auth_header):
         return email
     except (SignatureExpired, BadSignature, Exception):
         return None  # Token vencido o adulterado
+
+
+# Funciones para verificar que el usuario que realizo la solicitud sea
+# un cliente o un administrador
+
+def obtener_usuario_autenticado():
+    email = verificar_token(request.headers.get("Authorization"))
+
+    if not email:
+        return None
+
+    return buscar_usuario_por_mail(email)
+
+
+def verificar_administrador():
+    usuario = obtener_usuario_autenticado()
+
+    if usuario and usuario.get("rol") == "administrador":
+        return True
+
+    return False
+
+
+def verificar_cliente():
+    usuario = obtener_usuario_autenticado()
+
+    if usuario and usuario.get("rol") == "cliente":
+        return True
+
+    return False
