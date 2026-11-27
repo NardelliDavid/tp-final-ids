@@ -66,7 +66,7 @@ def registro():
 
             # Muestra mensaje verde de éxito si el backend responde 201 (Creado)
             if respuesta.status_code == 201:
-                exito = "Cuenta creada con éxito. Ya podés iniciar sesión."
+                exito = "Cuenta creada con éxito. Te llevamos al inicio de sesión ."
             else:
                 # Lee el mensaje de error que devuelve el backend si el email ya existe o falta algún dato
                 resultado = respuesta.json()
