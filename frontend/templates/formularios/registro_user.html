@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    {% if exito %}
+        <meta http-equiv="refresh" content="3;url={{ url_for('auth.login') }}">
+    {% endif %}
+
     <title>Crear cuenta | Cine Paradiso</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/login_usuario.css') }}">
