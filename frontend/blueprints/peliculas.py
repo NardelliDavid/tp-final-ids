@@ -4,32 +4,20 @@ from flask import (
     redirect, url_for, flash, abort
 )
 from config import BACKEND_URL
+from utils import *
 
 peliculas_bp = Blueprint("peliculas", __name__)
 
-
-def verificar_administrador():
-    token = session.get("token")
-
-    if not token:
-        abort(403)
-
-    if session.get("usuario", {}).get("rol") != "administrador":
-        abort(403)
-
-    return token
-
-
 @peliculas_bp.route('/admin/peliculas')
 def peliculas():
-    token = verificar_administrador()
-
-    headers = {"Authorization": f"Bearer {token}"}
-
+    token = session.get("token")
+    if not verificar_administrador(token):
+        return redirect(url_for("auth.login_admin"))
+    
     try:
         respuesta = requests.get(
             f"{BACKEND_URL}/backoffice/peliculas",
-            headers=headers,
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -67,7 +55,8 @@ def peliculas():
 
 @peliculas_bp.route('/admin/importar_peliculas')
 def importar_peliculas():
-    token = verificar_administrador()
+    if not verificar_administrador(session.get("token")):
+        return redirect(url_for("auth.login_admin"))
 
     return render_template(
         "admin/buscar_pelicula.html",
@@ -78,15 +67,15 @@ def importar_peliculas():
 
 @peliculas_bp.route('/admin/eliminar_pelicula/<int:id_api>', methods=["POST"])
 def eliminar_pelicula(id_api):
-    token = verificar_administrador()
-
-    headers = {"Authorization": f"Bearer {token}"}
+    token = session.get("token")
+    if not verificar_administrador(token):
+        return redirect(url_for("auth.login_admin"))
 
     try:
         respuesta = requests.delete(
             f"{BACKEND_URL}/backoffice/eliminar_pelicula_tmdb",
             json={"id": id_api},
-            headers=headers,
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -111,7 +100,9 @@ def eliminar_pelicula(id_api):
 
 @peliculas_bp.route('/admin/buscar_pelicula_tmdb', methods=["POST"])
 def buscar_pelicula_tmdb():
-    token = verificar_administrador()
+    token = session.get("token")
+    if not verificar_administrador(token):
+        return redirect(url_for("auth.login_admin"))
 
     titulo = request.form.get("titulo", "").strip()
 
@@ -119,13 +110,11 @@ def buscar_pelicula_tmdb():
         flash("Ingresá el título de la película.", "error")
         return redirect(url_for("peliculas.importar_peliculas"))
 
-    headers = {"Authorization": f"Bearer {token}"}
-
     try:
         respuesta = requests.post(
             f"{BACKEND_URL}/backoffice/buscar_peliculas_tmdb",
             json={"titulo": titulo},
-            headers=headers,
+            headers={"Authorization": f"Bearer {token}"},
             timeout=10
         )
 
@@ -164,7 +153,9 @@ def buscar_pelicula_tmdb():
 
 @peliculas_bp.route('/admin/agregar_pelicula_tmdb', methods=["POST"])
 def agregar_pelicula_tmdb():
-    token = verificar_administrador()
+    token = session.get("token")
+    if not verificar_administrador(token):
+        return redirect(url_for("auth.login_admin"))
 
     id_tmdb = request.form.get("id_tmdb", type=int)
 
@@ -172,13 +163,11 @@ def agregar_pelicula_tmdb():
         flash("Seleccioná una película válida.", "error")
         return redirect(url_for("peliculas.importar_peliculas"))
 
-    headers = {"Authorization": f"Bearer {token}"}
-
     try:
         respuesta = requests.post(
             f"{BACKEND_URL}/backoffice/agregar_pelicula_tmdb",
             json={"id": id_tmdb},
-            headers=headers,
+            headers={"Authorization": f"Bearer {token}"},
             timeout=10
         )
 

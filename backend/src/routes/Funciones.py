@@ -54,10 +54,8 @@ def verificar_administrador():
 # GET /salas
 @funciones_bp.route("/salas", methods=["GET"])
 def listar_salas():
-    mensaje, codigo = verificar_administrador()
-
-    if codigo != 200:
-        return jsonify({"error": mensaje}), codigo
+    if not verificar_administrador():
+        return jsonify({"error": "No autorizado"}), 401
 
     salas = obtener_salas()
 
@@ -120,10 +118,8 @@ def obtener_butacas(funcion_id):
 # POST /funciones
 @funciones_bp.route("/funciones", methods=["POST"])
 def registrar_funcion():
-    mensaje, codigo = verificar_administrador()
-
-    if codigo != 200:
-        return jsonify({"error": mensaje}), codigo
+    if not verificar_administrador():
+        return jsonify({"error": "No autorizado"}), 401
 
     datos = request.get_json(silent=True)
 
@@ -141,10 +137,8 @@ def registrar_funcion():
 # PATCH /funciones/{id}
 @funciones_bp.route("/funciones/<int:funcion_id>", methods=["PATCH"])
 def modificar_funcion(funcion_id):
-    mensaje, codigo = verificar_administrador()
-
-    if codigo != 200:
-        return jsonify({"error": mensaje}), codigo
+    if not verificar_administrador():
+        return jsonify({"error": "No autorizado"}), 401
 
     datos = request.get_json(silent=True)
 
@@ -165,10 +159,8 @@ def modificar_funcion(funcion_id):
 # DELETE /funciones/{id}
 @funciones_bp.route("/funciones/<int:funcion_id>", methods=["DELETE"])
 def eliminar_funcion_ruta(funcion_id):
-    mensaje, codigo = verificar_administrador()
-
-    if codigo != 200:
-        return jsonify({"error": mensaje}), codigo
+    if not verificar_administrador():
+        return jsonify({"error": "No autorizado"}), 401
 
     respuesta = eliminar_funcion(funcion_id)
 

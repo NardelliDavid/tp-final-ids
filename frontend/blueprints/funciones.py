@@ -2,22 +2,9 @@
 import requests
 from flask import Blueprint, render_template, session, redirect, url_for, request
 from config import BACKEND_URL
+from utils import *
 
 funciones_bp = Blueprint("funciones", __name__)
-
-
-def obtener_headers():
-    return {
-        "Authorization": f"Bearer {session['token']}"
-    }
-
-
-def es_administrador():
-    return (
-        session.get("token")
-        and session.get("usuario", {}).get("rol") == "administrador"
-    )
-
 
 def normalizar_peliculas(datos):
     """
@@ -130,7 +117,8 @@ def redirigir_funciones(mensaje, tipo="error"):
 
 @funciones_bp.route('/admin/funciones')
 def funciones():
-    if not es_administrador():
+    token = session.get("token")
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     lista_funciones = []
@@ -144,7 +132,7 @@ def funciones():
         respuesta = requests.get(
             f"{BACKEND_URL}/funciones",
             params={"incluir_pasadas": "true"},
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -156,7 +144,7 @@ def funciones():
 
         respuesta_peliculas = requests.get(
             f"{BACKEND_URL}/backoffice/peliculas",
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -167,7 +155,7 @@ def funciones():
 
         respuesta_salas = requests.get(
             f"{BACKEND_URL}/salas",
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -190,13 +178,14 @@ def funciones():
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>')
 def detalle_funcion(funcion_id):
-    if not es_administrador():
+    token = session.get("token")
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     try:
         respuesta = requests.get(
             f"{BACKEND_URL}/funciones/{funcion_id}",
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -233,13 +222,14 @@ def detalle_funcion(funcion_id):
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>/butacas')
 def butacas_funcion(funcion_id):
-    if not es_administrador():
+    token = session.get("token")
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     try:
         respuesta = requests.get(
             f"{BACKEND_URL}/funciones/{funcion_id}/butacas",
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -299,7 +289,8 @@ def butacas_funcion(funcion_id):
 
 @funciones_bp.route('/admin/funciones/crear', methods=["POST"])
 def crear_funcion():
-    if not es_administrador():
+    token = session.get("token")
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     datos = request.form.to_dict()
@@ -312,7 +303,7 @@ def crear_funcion():
         respuesta = requests.post(
             f"{BACKEND_URL}/funciones",
             json=datos,
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -339,7 +330,8 @@ def crear_funcion():
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>/editar', methods=["POST"])
 def editar_funcion(funcion_id):
-    if not es_administrador():
+    token = session.get("token")
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     datos = request.form.to_dict()
@@ -351,7 +343,7 @@ def editar_funcion(funcion_id):
         respuesta = requests.patch(
             f"{BACKEND_URL}/funciones/{funcion_id}",
             json=datos,
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 
@@ -378,13 +370,14 @@ def editar_funcion(funcion_id):
 
 @funciones_bp.route('/admin/funciones/<int:funcion_id>/eliminar', methods=["POST"])
 def eliminar_funcion(funcion_id):
-    if not es_administrador():
+    token = session.get("token")
+    if not verificar_administrador(token):
         return redirect(url_for("auth.login_admin"))
 
     try:
         respuesta = requests.delete(
             f"{BACKEND_URL}/funciones/{funcion_id}",
-            headers=obtener_headers(),
+            headers={"Authorization": f"Bearer {token}"},
             timeout=5
         )
 

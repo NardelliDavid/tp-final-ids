@@ -5,7 +5,6 @@ from config import BACKEND_URL
 
 auth_bp = Blueprint("auth", __name__)
 
-
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     mensaje = None

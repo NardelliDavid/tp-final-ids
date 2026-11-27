@@ -1,21 +1,19 @@
 import requests
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from config import BACKEND_URL
+from utils import *
 
 carteleras_bp = Blueprint("carteleras", __name__)
 
 @carteleras_bp.route("/index")
 def index():
     token = session.get("token")
-    if session.get("usuario", {}).get("rol") == "administrador":
-        return redirect(url_for("auth.logout"))
-    headers = {
-            "Authorization": f"Bearer {token}"
-        }
+    if not verificar_cliente(token):
+        return redirect(url_for("auth.login"))
 
     respuesta = requests.get(
                 f"{BACKEND_URL}/cartelera",
-                headers=headers,
+                headers={"Authorization": f"Bearer {token}"},
                 timeout=10
             )
     
@@ -24,16 +22,12 @@ def index():
 @carteleras_bp.route("/pelicula/<int:pelicula_id>/funciones")
 def funciones_pelicula(pelicula_id):
     token = session.get("token")
-    if not token:
-        return redirect(url_for('auth.login'))
-    if session.get("usuario", {}).get("rol") == "administrador":
-        return redirect(url_for("auth.logout"))
-    headers = {
-                "Authorization": f"Bearer {token}"
-            }
+    if not verificar_cliente(token):
+        return redirect(url_for("auth.login"))
+
     respuesta = requests.get(
         f"{BACKEND_URL}/peliculas/{pelicula_id}/funciones",
-        headers=headers,
+        headers={"Authorization": f"Bearer {token}"},
         timeout=10
     )
 

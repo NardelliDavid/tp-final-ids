@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from mysql.connector import Error
-
+from ..services.validar import *
 from src.routes.perfil import obtener_usuario_autenticado
 
 from src.repositories.compras_repository import (
@@ -24,13 +24,11 @@ def crear_compra_endpoint():
     respuesta = None
     codigo = 400
 
-    email_usuario = obtener_usuario_autenticado()
-
-    if email_usuario is None:
+    if not verificar_cliente():
         mensaje = "No autorizado. Iniciá sesión"
         codigo = 401
-
     else:
+        email_usuario = verificar_token(request.headers.get("Authorization"))
         datos = request.get_json(silent=True)
 
         if type(datos) != dict:
@@ -205,14 +203,13 @@ def crear_compra_endpoint():
 
     return jsonify(respuesta), codigo
 
-
 @compras_bp.route("/compras/<int:id_compra>", methods=["GET"])
 def obtener_compra_endpoint(id_compra):
 
-    email_usuario = obtener_usuario_autenticado()
-
-    if email_usuario is None:
+    if not verificar_cliente():
         return jsonify({"mensaje": "No autorizado. Iniciá sesión"}), 401
+
+    email_usuario = verificar_token(request.headers.get("Authorization"))
 
     if id_compra <= 0:
         return jsonify({"mensaje": "Compra inválida"}), 400
@@ -228,14 +225,13 @@ def obtener_compra_endpoint(id_compra):
     except Exception:
         return jsonify({"mensaje": "Error interno del servidor"}), 500
 
-
 @compras_bp.route("/compras/<int:id_compra>/cancelacion", methods=["POST"])
 def cancelar_compra_endpoint(id_compra):
 
-    email_usuario = obtener_usuario_autenticado()
-
-    if email_usuario is None:
+    if not verificar_cliente():
         return jsonify({"mensaje": "No autorizado. Iniciá sesión"}), 401
+
+    email_usuario = verificar_token(request.headers.get("Authorization"))
 
     if id_compra <= 0:
         return jsonify({"mensaje": "Compra inválida"}), 400

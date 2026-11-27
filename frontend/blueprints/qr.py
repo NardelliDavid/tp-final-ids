@@ -7,6 +7,7 @@ from flask import (
     redirect,
     url_for
 )
+from utils import *
 from config import BACKEND_URL
 
 qr_bp = Blueprint("qr", __name__)
@@ -14,10 +15,7 @@ qr_bp = Blueprint("qr", __name__)
 
 @qr_bp.route('/admin/validacion_qr')
 def validacion_qr():
-    if not session.get("token"):
-        return redirect(url_for("auth.login_admin"))
-
-    if session.get("usuario", {}).get("rol") != "administrador":
+    if not verificar_administrador(session.get("token")):
         return redirect(url_for("auth.login_admin"))
 
     return redirect(url_for("qr.admin_qr"))
@@ -25,10 +23,7 @@ def validacion_qr():
 
 @qr_bp.route("/admin/formulario_validar_qr", methods=["GET", "POST"])
 def formulario_validar_qr():
-    if not session.get("token"):
-        return redirect(url_for("auth.login_admin"))
-
-    if session.get("usuario", {}).get("rol") != "administrador":
+    if not verificar_administrador(session.get("token")):
         return redirect(url_for("auth.login_admin"))
 
     return render_template("admin/validar_qr.html")
@@ -36,11 +31,7 @@ def formulario_validar_qr():
 
 @qr_bp.route("/admin/qr", methods=["GET", "POST"])
 def admin_qr():
-    if not session.get("token"):
-        return redirect(url_for("auth.login_admin"))
-
-    if session.get("usuario", {}).get("rol") != "administrador":
-        session.clear()
+    if not verificar_administrador(session.get("token")):
         return redirect(url_for("auth.login_admin"))
 
     resultado = None
